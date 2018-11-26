@@ -1,33 +1,21 @@
-# Turbo Builder files and folders
-target/
-bin/
+# See http://help.github.com/ignore-files/ for more about ignoring files.
 
-
-# Operating system common files
-.DS_Store
-.DS_Store?
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-thumbs.db
-
+# compiled output
+/dist
+/tmp
+/out-tsc
 
 # dependencies
 /node_modules
-/vendor
-
 
 # IDEs and editors
 /.idea
 .project
 .classpath
-.buildpath
 .c9/
 *.launch
 .settings/
 *.sublime-workspace
-
 
 # IDE - VSCode
 .vscode/*
@@ -35,3 +23,17 @@ thumbs.db
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+
+# System Files
+.DS_Store
+Thumbs.db
