@@ -1,6 +1,6 @@
 {
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../dist/turbogui-angular",
+  "dest": "../../target/turbogui-angular",
   "lib": {
     "entryFile": "src/public_api.ts"
   }

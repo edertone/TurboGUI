@@ -2,7 +2,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": "./",
-    "outDir": "./dist/out-tsc",
+    "outDir": "./target/out-tsc",
     "sourceMap": true,
     "declaration": false,
     "module": "es2015",
@@ -19,10 +19,10 @@
     ],
     "paths": {
       "turbogui-angular": [
-        "dist/turbogui-angular"
+        "target/turbogui-angular"
       ],
       "turbogui-angular/*": [
-        "dist/turbogui-angular/*"
+        "target/turbogui-angular/*"
       ]
     }
   }
