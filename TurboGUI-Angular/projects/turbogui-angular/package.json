@@ -1,8 +1,27 @@
 {
   "name": "turbogui-angular",
   "version": "0.0.1",
+  "description": "A library that tries to help with the most common user interface elements on several frameworks and platforms",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/edertone/TurboGUI"
+  },
+  "keywords": [
+    "general",
+    "purpose",
+    "front",
+    "end",
+    "library"
+  ],
+  "author": "edertone",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/edertone/TurboGUI/issues"
+  },
+  "homepage": "turbogui.org",
   "peerDependencies": {
-    "@angular/common": "^7.0.0",
-    "@angular/core": "^7.0.0"
+    "@angular/common": "7.0.0",
+    "@angular/core": "7.0.0",
+    "turbocommons-ts": "0.8.2"
   }
 }
