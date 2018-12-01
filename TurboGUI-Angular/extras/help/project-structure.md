@@ -14,4 +14,4 @@
 
 ## Library distribution package.json
 
-- This package.json file is generated as part of the library build process into target/turbogui-angular. It is the package.json file that gets released with our library. This file must not be modified.
+- This package.json file is generated as part of the library build process into target/turbogui-angular. It is the package.json file that gets released with our library. **This file must not be modified**.
