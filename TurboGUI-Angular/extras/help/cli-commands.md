@@ -40,3 +40,7 @@ We can use our packed library in another local application without having to pub
 `npm install ../path/to/packed/library/packed-library-0.0.1.tgz`
 
 This command will add our packed library as a dependency to the new project where we want to test it.
+
+## Update the library on an application that already uses it
+
+We can update the library changes that we perform during development easily on a project that already uses it. We can build our library and then simply copy the generated files on target/turbogui-angular to the node_modules/turbogui-angular folder of our project 

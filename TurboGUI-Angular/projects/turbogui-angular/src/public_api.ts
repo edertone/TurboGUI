@@ -2,6 +2,5 @@
  * Public API Surface of turbogui-angular
  */
 
-export * from './lib/turbogui-angular.service';
-export * from './lib/turbogui-angular.component';
-export * from './lib/turbogui-angular.module';
+export * from './main/model/modules/turbogui-angular.module';
+export * from './main/controller/dialog.service';
