@@ -1,30 +1,32 @@
 {
-  "name": "turbogui-angular",
-  "version": "0.0.3",
-  "description": "A library that tries to help with the most common user interface elements on several frameworks and platforms",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/edertone/TurboGUI"
-  },
-  "keywords": [
-    "general",
-    "purpose",
-    "front",
-    "end",
-    "library"
-  ],
-  "author": "edertone",
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/edertone/TurboGUI/issues"
-  },
-  "homepage": "https://turbogui.org",
-  "peerDependencies": {
-    "@angular/common": "~7.0.0",
-    "@angular/core": "~7.0.0",
-    "@angular/animations": "^7.0.4",
-    "@angular/cdk": "^7.1.0",
-    "@angular/material": "^7.1.0",
-    "turbocommons-ts": "0.8.3"
-  }
+    "name": "turbogui-angular",
+    "version": "0.0.3",
+    "description": "A library that tries to help with the most common user interface elements on several frameworks and platforms",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/edertone/TurboGUI"
+    },
+    "keywords": [
+        "general",
+        "purpose",
+        "front",
+        "end",
+        "library"
+    ],
+    "author": "edertone",
+    "license": "Apache-2.0",
+    "bugs": {
+        "url": "https://github.com/edertone/TurboGUI/issues"
+    },
+    "homepage": "https://turbogui.org",
+    "dependencies": {
+        "turbocommons-ts": "0.8.3"
+    },
+    "peerDependencies": {
+        "@angular/common": "~7.0.0",
+        "@angular/core": "~7.0.0",
+        "@angular/animations": "^7.0.4",
+        "@angular/cdk": "^7.1.0",
+        "@angular/material": "^7.1.0"
+    }
 }
