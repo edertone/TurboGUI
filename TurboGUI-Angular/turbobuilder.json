@@ -1,0 +1,42 @@
+{
+    "$schema": "https://raw.githubusercontent.com/edertone/TurboBuilder/master/TurboBuilder-Node/src/main/resources/json-schema/turbobuilder.schema.json",
+    "metadata": {
+        "name": "turbogui-angular",
+        "description": "A library that tries to help with the most common user interface elements on several frameworks and platforms",
+        "builderVersion": "0.6.0"
+    },
+    "validate": {
+        "runBeforeBuild": true,
+        "projectStructure": {
+            "readmeFileMandatory": true,
+            "extrasFolderMandatory": true,
+            "extrasSubFoldersMandatory": [
+                "help",
+                "todo"
+            ],
+            "extrasTodoExtension": true
+        },
+        "copyrightHeaders": []
+    },
+    "build": {
+        "printTodoFiles": false,
+        "replaceVersion": {
+            "enabled": false,
+            "wildCard": "@@--build-version--@@",
+            "extensions": [
+                "js",
+                "php",
+                "json"
+            ]
+        },
+        "lib_angular": {}
+    },
+    "release": {
+        "printTodoFiles": true,
+        "gitChangeLog": true,
+        "gitChangeLogCount": 5,
+        "optimizePictures": true,
+        "generateCodeDocumentation": true
+    },
+    "test": []
+}

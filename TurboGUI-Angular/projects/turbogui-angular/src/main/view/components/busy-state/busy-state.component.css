@@ -1,0 +1,46 @@
+:host {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999999999;
+}
+
+.darkBg{
+    position: absolute;
+    cursor: progress;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #0000008f;
+    animation-name: bgfadeinout;
+    animation-duration: 15s;
+    animation-timing-function: ease-in;
+}
+
+svg {
+    z-index: 5000;
+    width: 7%;
+    height: 7%;
+    min-width: 40px;
+    min-height: 40px;
+    animation-name: loadingfadeinout;
+    animation-duration: 3s;
+    animation-timing-function: ease-in;
+}
+
+@keyframes loadingfadeinout {
+  0% { opacity:0 }
+  100% { opacity:1 }
+}
+
+@keyframes bgfadeinout {
+  0% { opacity: 0 }
+  100% { opacity: 1 }
+}

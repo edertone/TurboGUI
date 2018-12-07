@@ -11,7 +11,7 @@ Run `ng generate library example-lib --prefix=lib`
 
 ## Build the library
 
-Run `ng build turbogui-angular`. This will create a turbogui-angular folder inside the target folder, containing the compiled library
+Run `ng build turbogui-angular`. This will create a turbogui-angular folder inside the target folder, containing the compiled library. (libraries are always built for production)
 
 ## Build the host application
 
