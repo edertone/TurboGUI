@@ -7,7 +7,7 @@
 
 - projects/turbogui-angular
     
-3 - Generate a release build (ng build turbogui-angular)
+3 - Generate a release build (ng build turbogui-angular or tb -cb)
 
 4 - Add the readme.md file if exists to target/turbogui-angular folder
 
