@@ -20,17 +20,17 @@ export class DialogService {
     /**
      * Tells if the main application is currently showing a busy state that blocks all user interaction
      */
-    private _isModalBusyState = false;
+    private _isShowingBusyState = false;
 
 
     /**
-     * TODO
+     * A reference to the modal busy state component that is initialized only the first time it is called
      */
     private _modalBusyStateComponent: ComponentPortal<BusyStateComponent> | null = null;
 
 
     /**
-     * TODO
+     * A reference to the modal busy state container where the component will be added
      */
     private _modalBusyStateHost: DomPortalHost | null = null;
 
@@ -82,10 +82,10 @@ export class DialogService {
         // Dynamically create the busy state component reference if this is the first time
         if (this._modalBusyStateComponent === null) {
 
-            // 4. Create a Portal based on the LoadingSpinnerComponent
+            // Create a Portal based on the LoadingSpinnerComponent
             this._modalBusyStateComponent = new ComponentPortal(BusyStateComponent);
 
-            // 5. Create a PortalHost with document.body as its anchor element
+            // Create a PortalHost with document.body as its anchor element
             this._modalBusyStateHost = new DomPortalHost(
                     document.body,
                     this.componentFactoryResolver,
@@ -95,16 +95,16 @@ export class DialogService {
 
         (this._modalBusyStateHost as DomPortalHost).attach(this._modalBusyStateComponent);
 
-        this._isModalBusyState = true;
+        this._isShowingBusyState = true;
     }
 
 
     /**
      * Tells if the application is currently locked in a busy state
      */
-    get isModalBusyState() {
+    get isShowingBusyState() {
 
-        return this._isModalBusyState;
+        return this._isShowingBusyState;
     }
 
 
@@ -123,7 +123,7 @@ export class DialogService {
             (this._modalBusyStateHost as DomPortalHost).detach();
         }
 
-        this._isModalBusyState = false;
+        this._isShowingBusyState = false;
     }
 
 
@@ -142,6 +142,11 @@ export class DialogService {
         if (!this._isEnabled) {
 
             return;
+        }
+
+        if (this._isShowingSnackBar) {
+
+            throw new Error('Trying to show a snackbar while another one is still visible');
         }
 
         this._isShowingSnackBar = true;
