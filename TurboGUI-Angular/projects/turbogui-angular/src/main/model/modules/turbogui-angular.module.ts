@@ -1,9 +1,10 @@
 import { NgModule } from '@angular/core';
-import { DialogService } from '../../controller/dialog.service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BusyStateComponent } from '../../view/components/busy-state/busy-state.component';
+import { DialogService } from '../../controller/dialog.service';
+import { LocalizationService } from '../../controller/localization.service';
 
 
 /**
@@ -28,7 +29,8 @@ import { BusyStateComponent } from '../../view/components/busy-state/busy-state.
 
     // Globally available singleton services are added here
     providers: [
-        DialogService
+        DialogService,
+        LocalizationService
     ],
 
     exports: [
