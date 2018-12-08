@@ -36,4 +36,4 @@ import { BusyStateComponent } from '../../view/components/busy-state/busy-state.
     ]
 })
 
-export class TurboguiAngularModule { }
+export class TurboGuiAngularModule { }

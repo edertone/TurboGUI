@@ -2,6 +2,7 @@ import { ComponentRef, Injectable, ComponentFactoryResolver, Injector, Applicati
 import { MatDialog, MatDialogRef, MatSnackBar, MatSnackBarConfig, MatDialogConfig } from '@angular/material';
 import { ArrayUtils, ObjectUtils, StringUtils } from 'turbocommons-ts';
 import { BusyStateComponent } from '../view/components/busy-state/busy-state.component';
+import { ComponentPortal, DomPortalHost } from '@angular/cdk/portal';
 
 
 /**
@@ -24,9 +25,15 @@ export class DialogService {
 
 
     /**
-     * Stores the generated instance for the busy state component if any
+     * TODO
      */
-    private _modalBusyStateComponentRef: ComponentRef<any> | null = null;
+    private _modalBusyStateComponent: ComponentPortal<BusyStateComponent> | null = null;
+
+
+    /**
+     * TODO
+     */
+    private _modalBusyStateHost: DomPortalHost | null = null;
 
 
     /**
@@ -76,26 +83,58 @@ export class DialogService {
      * keyboard, mouse or touch. Use this state when performing server requests or operations that
      * must block the user interaction with the application.
      */
-    showModalBusyState() {
+    addModalBusyState() {
 
         if (!this._isEnabled) {
 
             return;
         }
 
-        // Create component dynamically inside the ng-template
-        this._modalBusyStateComponentRef = this.componentFactoryResolver.resolveComponentFactory(BusyStateComponent).create(this.injector);
+        // Dynamically create the busy state component reference if this is the first time
+        if (this._modalBusyStateComponent === null) {
 
-        const component = this.applicationRef.attachView(this._modalBusyStateComponentRef.hostView);
+            // 4. Create a Portal based on the LoadingSpinnerComponent
+            this._modalBusyStateComponent = new ComponentPortal(BusyStateComponent);
 
-        const domElem = ((this._modalBusyStateComponentRef.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement);
+            // 5. Create a PortalHost with document.body as its anchor element
+            this._modalBusyStateHost = new DomPortalHost(
+                    document.body,
+                    this.componentFactoryResolver,
+                    this.applicationRef,
+                    this.injector);
+        }
 
-        document.body.appendChild(domElem);
-
-        // Push the component so that we can keep track of which components are created
-//        this.components.push(component);
+        (this._modalBusyStateHost as DomPortalHost).attach(this._modalBusyStateComponent);
 
         this._isModalBusyState = true;
+    }
+
+
+    /**
+     * Tells if the application is currently locked in a busy state
+     */
+    get isModalBusyState() {
+
+        return this._isModalBusyState;
+    }
+
+
+    /**
+     * Remove the application busy state and restore it back to normal user interaction
+     */
+    removeModalBusyState() {
+
+        if (!this._isEnabled) {
+
+            return;
+        }
+
+        if (this._modalBusyStateComponent !== null) {
+
+            (this._modalBusyStateHost as DomPortalHost).detach();
+        }
+
+        this._isModalBusyState = false;
     }
 
 
@@ -109,7 +148,7 @@ export class DialogService {
      *
      * @return void
      */
-    showSnackBar(config: MatSnackBarConfig, message: string, action = '', actionCallback: (() => void) | null = null) {
+    addSnackBar(config: MatSnackBarConfig, message: string, action = '', actionCallback: (() => void) | null = null) {
 
         if (!this._isEnabled) {
 
@@ -144,7 +183,7 @@ export class DialogService {
      *
      * If no snackbar is currently visible, this method will do nothing
      */
-    closeSnackBar() {
+    removeSnackBar() {
 
         if (!this._isEnabled || !this._isShowingSnackBar) {
 
