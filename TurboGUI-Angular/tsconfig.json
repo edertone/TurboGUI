@@ -27,6 +27,8 @@
     },
     "strict": true,
     "strictPropertyInitialization": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "plugins": [
       { "name": "@angular/language-service"},
       { "name": "tslint-language-service"}

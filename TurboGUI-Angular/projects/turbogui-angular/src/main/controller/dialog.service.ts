@@ -1,6 +1,5 @@
-import { ComponentRef, Injectable, ComponentFactoryResolver, Injector, ApplicationRef, EmbeddedViewRef } from '@angular/core';
-import { MatDialog, MatDialogRef, MatSnackBar, MatSnackBarConfig, MatDialogConfig } from '@angular/material';
-import { ArrayUtils, ObjectUtils, StringUtils } from 'turbocommons-ts';
+import { Injectable, ComponentFactoryResolver, Injector, ApplicationRef } from '@angular/core';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material';
 import { BusyStateComponent } from '../view/components/busy-state/busy-state.component';
 import { ComponentPortal, DomPortalHost } from '@angular/cdk/portal';
 
@@ -42,17 +41,7 @@ export class DialogService {
     private _isShowingSnackBar = false;
 
 
-    /**
-     * Contains a list of the dialogs that are currently visible to the user.
-     * Each item in this list is a hash that is computed when dialog is created to uniquely identify it.
-     *
-     * Empty list means no dialogs are currently visible
-     */
-    private readonly _activeDialogs: string[] = [];
-
-
-    constructor(private readonly matDialog: MatDialog,
-                private readonly matSnackBar: MatSnackBar,
+    constructor(private readonly matSnackBar: MatSnackBar,
                 private readonly injector: Injector,
                 private readonly applicationRef: ApplicationRef,
                 private readonly componentFactoryResolver: ComponentFactoryResolver) {
