@@ -1,11 +1,13 @@
 # How to make the library available to the public:
+  
+1 - Increase the library package.json version before increasing the GIT tag. This file is located at:
 
-1 - Make sure the git tag is updated with the new project version we want to publish
+- projects/turbogui-angular/package.json
+
+2 - Commit and push all changes to git
+
+2 - Make sure the git tag is updated with the new project version we want to publish
     (Either in git local and remote repos)
-    
-2 - Make sure the library package.json version is the same as the git tag. This file is located at:
-
-- projects/turbogui-angular
     
 3 - Generate a release build (ng build turbogui-angular or tb -cb)
 
