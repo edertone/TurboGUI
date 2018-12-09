@@ -5,6 +5,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BusyStateComponent } from '../../view/components/busy-state/busy-state.component';
 import { DialogService } from '../../controller/dialog.service';
 import { LocalizationService } from '../../controller/localization.service';
+import { HTTPService } from '../../controller/http.service';
+import { NotificationService } from '../../controller/notification.service';
 
 
 /**
@@ -30,7 +32,9 @@ import { LocalizationService } from '../../controller/localization.service';
     // Globally available singleton services are added here
     providers: [
         DialogService,
-        LocalizationService
+        LocalizationService,
+        HTTPService,
+        NotificationService
     ],
 
     exports: [

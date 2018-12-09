@@ -74,7 +74,7 @@ export class DialogService {
      */
     addModalBusyState() {
 
-        if (!this._isEnabled) {
+        if (!this._isEnabled || this._isShowingBusyState) {
 
             return;
         }
@@ -113,7 +113,7 @@ export class DialogService {
      */
     removeModalBusyState() {
 
-        if (!this._isEnabled) {
+        if (!this._isEnabled || !this._isShowingBusyState) {
 
             return;
         }

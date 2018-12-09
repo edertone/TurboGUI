@@ -9,7 +9,7 @@ import { FadeAnimationClass } from '../../animations/fade.animation';
 @Component({
   selector: 'tg-busy-state',
   templateUrl: './busy-state.component.html',
-  animations: [FadeAnimationClass.getTrigger('busyStateFade', '1s ease', '600ms ease')],
+  animations: [FadeAnimationClass.getTrigger('busyStateFade', '1s ease', '400ms ease')],
   styleUrls: ['./busy-state.component.css']
 })
 
