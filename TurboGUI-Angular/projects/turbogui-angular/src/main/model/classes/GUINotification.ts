@@ -4,9 +4,6 @@
 export class GUINotification {
 
 
-    /**
-     * Create a notification instance
-     */
     constructor(name: string, type = '', data: any = null) {
 
         this.name = name;
@@ -22,7 +19,7 @@ export class GUINotification {
 
 
     /**
-     * We can optionally define a type of notification in case the name is not enough
+     * An optional type to categorize this notification in case the name is not enough
      * to uniquely identify it
      */
     type = '';
