@@ -11,7 +11,7 @@ import { NgModule } from '@angular/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { BusyStateComponent } from '../../view/components/busy-state/busy-state.component';
+import { BusyStateBaseComponent } from '../../view/components/busy-state-base/busy-state-base.component';
 import { DialogService } from '../../controller/dialog.service';
 import { LocalizationService } from '../../controller/localization.service';
 import { HTTPService } from '../../controller/http.service';
@@ -32,13 +32,13 @@ import { ViewsContainerComponent } from '../../view/components/views-container/v
     ],
 
     declarations: [
-        BusyStateComponent,
+        BusyStateBaseComponent,
         ViewsContainerComponent
     ],
 
     // Add here components that must be dynamically created at runtime
     entryComponents: [
-        BusyStateComponent
+        BusyStateBaseComponent
     ],
 
     // Globally available singleton services are added here
@@ -51,7 +51,7 @@ import { ViewsContainerComponent } from '../../view/components/views-container/v
     ],
 
     exports: [
-        BusyStateComponent,
+        BusyStateBaseComponent,
         ViewsContainerComponent
     ]
 })

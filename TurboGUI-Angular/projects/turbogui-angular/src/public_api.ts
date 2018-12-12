@@ -19,7 +19,7 @@ export { ViewsService } from './main/controller/views.service';
 /**
  * Components
  */
-export { BusyStateComponent } from './main/view/components/busy-state/busy-state.component';
+export { BusyStateBaseComponent } from './main/view/components/busy-state-base/busy-state-base.component';
 export { ViewsContainerComponent } from './main/view/components/views-container/views-container.component';
 
 

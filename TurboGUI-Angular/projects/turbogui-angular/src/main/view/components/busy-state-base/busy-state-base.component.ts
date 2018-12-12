@@ -12,24 +12,29 @@ import { FadeAnimationClass } from '../../animations/fade.animation';
 
 
 /**
- * Component that blocks all the user input and progressively shows a busy cursor to notify the user
- * that the application is waiting for something
+ * This component is used by turboGUI angular library to show the busy state to the user.
+ * It is used to block all the user input and progressively shows a busy cursor to notify that the application
+ * is waiting for something.
+ *
+ * We can (should) override this component with our own one to adapt its visual appearance to our application.
+ * We can then set dialogService.busyStateComponentClass to our component class at the application start to to
+ * override the default one.
  */
 @Component({
-  selector: 'tg-busy-state',
-  templateUrl: './busy-state.component.html',
-  animations: [FadeAnimationClass.getTrigger('busyStateFade', '1s ease', '400ms ease')],
-  styleUrls: ['./busy-state.component.css']
+  selector: 'tg-busy-state-base',
+  templateUrl: './busy-state-base.component.html',
+  animations: [FadeAnimationClass.getTrigger('busyStateBaseFade', '1s ease', '400ms ease')],
+  styleUrls: ['./busy-state-base.component.css']
 })
 
 
-export class BusyStateComponent {
+export class BusyStateBaseComponent {
 
 
     /**
      * This is used to attach the fade animation directly to this component so it fades in and out when created and removed from the app
      */
-    @HostBinding('@busyStateFade') busyStateFade = true;
+    @HostBinding('@busyStateBaseFade') busyStateBaseFade = true;
 
 
     /**

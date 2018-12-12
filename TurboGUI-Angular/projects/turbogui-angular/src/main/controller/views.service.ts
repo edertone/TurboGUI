@@ -64,6 +64,8 @@ export class ViewsService {
     /**
      * Create a new view instance with the specified type and add it to the current application views container.
      *
+     * Make sure this method is called when all the visual components of the application have been created (ngAfterViewInit)
+     *
      * @param view The classname for the view that we want to create and add to the views container.
      */
     addView(view: Type<View>) {

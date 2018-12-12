@@ -7,9 +7,9 @@
  * CopyRight : -> Copyright 2018 Edertone Advanded Solutions. https://www.edertone.com
  */
 
-import { Injectable, ComponentFactoryResolver, Injector, ApplicationRef } from '@angular/core';
+import { Type, Injectable, ComponentFactoryResolver, Injector, ApplicationRef } from '@angular/core';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material';
-import { BusyStateComponent } from '../view/components/busy-state/busy-state.component';
+import { BusyStateBaseComponent } from '../view/components/busy-state-base/busy-state-base.component';
 import { ComponentPortal, DomPortalHost } from '@angular/cdk/portal';
 
 
@@ -18,6 +18,16 @@ import { ComponentPortal, DomPortalHost } from '@angular/cdk/portal';
  */
 @Injectable()
 export class DialogService {
+
+
+    /**
+     * If we want to modify the busy state component that is shown by default by this dialog service,
+     * we can do it here by simply setting our custom component class (We can do it at our main application
+     * component constructor for example).
+     *
+     * Our custom component must extend the BusyStateBaseComponent one to add its own visual appearance.
+     */
+    busyStateComponentClass: Type<BusyStateBaseComponent> = BusyStateBaseComponent;
 
 
     /**
@@ -33,9 +43,11 @@ export class DialogService {
 
 
     /**
-     * A reference to the modal busy state component that is initialized only the first time it is called
+     * A reference to the modal busy state component that is initialized only the first time it is called.
+     *
+     * (To append the busy state dynamically, we use the Portal concept from the angular material library)
      */
-    private _modalBusyStateComponent: ComponentPortal<BusyStateComponent> | null = null;
+    private _componentPortal: ComponentPortal<BusyStateBaseComponent> | null = null;
 
 
     /**
@@ -89,10 +101,10 @@ export class DialogService {
         }
 
         // Dynamically create the busy state component reference if this is the first time
-        if (this._modalBusyStateComponent === null) {
+        if (this._componentPortal === null) {
 
             // Create a Portal based on the LoadingSpinnerComponent
-            this._modalBusyStateComponent = new ComponentPortal(BusyStateComponent);
+            this._componentPortal = new ComponentPortal(this.busyStateComponentClass);
 
             // Create a PortalHost with document.body as its anchor element
             this._modalBusyStateHost = new DomPortalHost(
@@ -102,7 +114,7 @@ export class DialogService {
                     this.injector);
         }
 
-        (this._modalBusyStateHost as DomPortalHost).attach(this._modalBusyStateComponent);
+        (this._modalBusyStateHost as DomPortalHost).attach(this._componentPortal);
 
         this._isShowingBusyState = true;
     }
@@ -127,7 +139,7 @@ export class DialogService {
             return;
         }
 
-        if (this._modalBusyStateComponent !== null) {
+        if (this._componentPortal !== null) {
 
             (this._modalBusyStateHost as DomPortalHost).detach();
         }
