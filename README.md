@@ -1,7 +1,7 @@
 
 # General purpose Graphical User Interface library
 
-A library that tries to help with the most common user interface elements on several frameworks and platforms
+A library that helps with the most common and generic UI elements and functionalities on several frameworks and platforms
 
 ## What does it do?
 
