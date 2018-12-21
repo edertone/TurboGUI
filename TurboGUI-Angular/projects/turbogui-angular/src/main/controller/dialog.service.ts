@@ -7,7 +7,7 @@
  * CopyRight : -> Copyright 2018 Edertone Advanded Solutions. https://www.edertone.com
  */
 
-import { Type, Injectable, ComponentFactoryResolver, Injector, ApplicationRef } from '@angular/core';
+import { Type, Injectable, ComponentFactoryResolver, Injector, ApplicationRef, Renderer2, RendererFactory2 } from '@angular/core';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material';
 import { BusyStateBaseComponent } from '../view/components/busy-state-base/busy-state-base.component';
 import { ComponentPortal, DomPortalHost } from '@angular/cdk/portal';
@@ -62,11 +62,37 @@ export class DialogService {
     private _isShowingSnackBar = false;
 
 
-    constructor(private readonly matSnackBar: MatSnackBar,
+    /**
+     * Used to store the initialized Renderer 2 instance that is used by this class
+     */
+    private readonly _renderer: Renderer2;
+
+
+    /**
+     * Method that is used to delete the document keydown event listener once not used anymore
+     */
+    private _documentKeydownListener: (() => void) | null = null;
+
+
+    /**
+     * Method that is used to delete the document mousedown event listener once not used anymore
+     */
+    private _documentMousedownListener: (() => void) | null = null;
+
+
+    /**
+     * Method that is used to delete the document pointerdown event listener once not used anymore
+     */
+    private _documentPointerdownListener: (() => void) | null = null;
+
+
+    constructor(rendererFactory: RendererFactory2,
+                private readonly matSnackBar: MatSnackBar,
                 private readonly injector: Injector,
                 private readonly applicationRef: ApplicationRef,
                 private readonly componentFactoryResolver: ComponentFactoryResolver) {
 
+        this._renderer = rendererFactory.createRenderer(null, null);
     }
 
 
@@ -100,10 +126,11 @@ export class DialogService {
             return;
         }
 
+        this._disableUserInteraction();
+
         // Dynamically create the busy state component reference if this is the first time
         if (this._componentPortal === null) {
 
-            // Create a Portal based on the LoadingSpinnerComponent
             this._componentPortal = new ComponentPortal(this.busyStateComponentClass);
 
             // Create a PortalHost with document.body as its anchor element
@@ -143,6 +170,8 @@ export class DialogService {
 
             (this._modalBusyStateHost as DomPortalHost).detach();
         }
+
+        this._enableUserInteraction();
 
         this._isShowingBusyState = false;
     }
@@ -208,5 +237,40 @@ export class DialogService {
         this.matSnackBar.dismiss();
 
         this._isShowingSnackBar = false;
+    }
+
+
+    /**
+     * Block all the user interactions with the application (keyboard, touch, mouse, ...)
+     */
+    private _disableUserInteraction() {
+
+        this._documentKeydownListener = this._renderer.listen('document', 'keydown', (event) => event.preventDefault());
+
+        this._documentMousedownListener = this._renderer.listen('document', 'mousedown', (event) => event.preventDefault());
+
+        this._documentPointerdownListener = this._renderer.listen('document', 'pointerdown', (event) => event.preventDefault());
+    }
+
+
+    /**
+     * Restore the user interactions that where previously disabled with _disableUserInteraction method
+     */
+    private _enableUserInteraction() {
+
+        if (this._documentKeydownListener !== null) {
+
+            this._documentKeydownListener();
+        }
+
+        if (this._documentMousedownListener !== null) {
+
+            this._documentMousedownListener();
+        }
+
+        if (this._documentPointerdownListener !== null) {
+
+            this._documentPointerdownListener();
+        }
     }
 }

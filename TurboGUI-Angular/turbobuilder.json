@@ -16,6 +16,9 @@
             ],
             "extrasTodoExtension": true
         },
+        "styleSheets": {
+            "noCssHardcodedColors": false
+        },
         "copyrightHeaders": [
             {
                 "path": "extras/copyright headers/TsFiles-Header.txt",

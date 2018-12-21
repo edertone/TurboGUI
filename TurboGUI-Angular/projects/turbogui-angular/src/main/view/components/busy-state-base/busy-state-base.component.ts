@@ -7,7 +7,7 @@
  * CopyRight : -> Copyright 2018 Edertone Advanded Solutions. https://www.edertone.com
  */
 
-import { Component, HostListener, HostBinding } from '@angular/core';
+import { Component, HostBinding } from '@angular/core';
 import { FadeAnimationClass } from '../../animations/fade.animation';
 
 
@@ -35,34 +35,4 @@ export class BusyStateBaseComponent {
      * This is used to attach the fade animation directly to this component so it fades in and out when created and removed from the app
      */
     @HostBinding('@busyStateBaseFade') busyStateBaseFade = true;
-
-
-    /**
-     * Listen to the parent app root element keydown and prevent it from happening
-     */
-    @HostListener('window:keydown', ['$event'])
-    preventKeyboardEvents(event: UIEvent) {
-
-        event.preventDefault();
-    }
-
-
-    /**
-     * Listen to the parent app root element mousedown and prevent it from happening
-     */
-    @HostListener('document:mousedown', ['$event'])
-    preventClickEvents(event: UIEvent) {
-
-        event.preventDefault();
-    }
-
-
-    /**
-     * Listen to the parent app root element pointerdown and prevent it from happening
-     */
-    @HostListener('document:pointerdown', ['$event'])
-    preventPointerEvents(event: UIEvent) {
-
-        event.preventDefault();
-    }
 }
