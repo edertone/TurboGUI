@@ -254,7 +254,7 @@ export class DialogService {
 
 
     /**
-     * Restore the user interactions that where previously disabled with _disableUserInteraction method
+     * Restore the user interactions that were previously disabled with _disableUserInteraction method
      */
     private _enableUserInteraction() {
 

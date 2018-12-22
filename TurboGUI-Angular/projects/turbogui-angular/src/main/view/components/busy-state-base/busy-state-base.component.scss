@@ -18,29 +18,32 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #0000008f;
-    animation-name: bgfadeinout;
-    animation-duration: 15s;
-    animation-timing-function: ease-in;
+    background-color: #00000096;
+    animation-name: bgfadein;
+    animation-duration: 30s;
+    animation-timing-function: ease;
 }
 
 svg {
     z-index: 5000;
-    width: 7%;
-    height: 7%;
-    min-width: 40px;
-    min-height: 40px;
-    animation-name: loadingfadeinout;
+    width: 4%;
+    height: 4%;
+    min-width: 30px;
+    min-height: 30px;
+    animation-name: loadingfadein;
     animation-duration: 3s;
     animation-timing-function: ease-in;
 }
 
-@keyframes loadingfadeinout {
+@keyframes loadingfadein {
   0% { opacity:0 }
+  30% { opacity:0 }
   100% { opacity:1 }
 }
 
-@keyframes bgfadeinout {
+@keyframes bgfadein {
   0% { opacity: 0 }
+  10% { opacity: 0 }
+  35% { opacity:0.5 }
   100% { opacity: 1 }
 }

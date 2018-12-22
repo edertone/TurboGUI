@@ -21,7 +21,7 @@ import { ViewsService } from '../../../controller/views.service';
 @Component({
   selector: 'tg-views-container',
   templateUrl: './views-container.component.html',
-  styleUrls: ['./views-container.component.css']
+  styleUrls: ['./views-container.component.scss']
 })
 
 
