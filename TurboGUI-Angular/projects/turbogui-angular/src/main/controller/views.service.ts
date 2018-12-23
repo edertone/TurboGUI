@@ -12,7 +12,7 @@ import { View } from '../model/classes/View';
 
 
 /**
- * Manages adding, removing and manipulationg the application views
+ * Manages adding, removing and manipulating the application views
  */
 @Injectable()
 export class ViewsService {
@@ -69,6 +69,12 @@ export class ViewsService {
      * @param view The classname for the view that we want to create and add to the views container.
      */
     addView(view: Type<View>) {
+
+        // If a view is already loaded, we will unload it first
+        if (this._isViewLoaded) {
+
+            this.removeView();
+        }
 
         this.verifyViewsContainerExist();
 

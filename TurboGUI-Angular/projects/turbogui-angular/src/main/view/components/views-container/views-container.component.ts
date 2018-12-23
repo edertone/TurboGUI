@@ -7,7 +7,7 @@
  * CopyRight : -> Copyright 2018 Edertone Advanded Solutions. https://www.edertone.com
  */
 
-import { Component, ViewContainerRef, Input, OnInit } from '@angular/core';
+import { Component, ViewContainerRef, Input, ViewChild, OnInit } from '@angular/core';
 import { ViewsService } from '../../../controller/views.service';
 
 
@@ -30,13 +30,15 @@ export class ViewsContainerComponent implements OnInit {
 
     /**
      * A reference to the views service that is used to operate with this views container.
+     * This must be specified when this component is added to the application
      */
     @Input() viewsService: ViewsService | null = null;
 
 
-    constructor(private readonly viewContainerRef: ViewContainerRef) {
-
-    }
+    /**
+     * A reference to the ng-template inside this component that is used as the anchor point to load views
+     */
+    @ViewChild('viewContainerRef', {read: ViewContainerRef}) viewContainerRef: ViewContainerRef;
 
 
     /**
