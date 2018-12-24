@@ -7,8 +7,9 @@
  * CopyRight : -> Copyright 2018 Edertone Advanded Solutions. https://www.edertone.com
  */
 
-import { Component, ViewContainerRef, Input, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewContainerRef, Input, ViewChild, OnInit, Type } from '@angular/core';
 import { ViewsService } from '../../../controller/views.service';
+import { View } from '../../../model/classes/View';
 
 
 /**
@@ -16,7 +17,7 @@ import { ViewsService } from '../../../controller/views.service';
  * We must create only one views container in our application and pass to it a reference to our main
  * viewsService instance. For example:
  *
- * <tg-views-container [viewsService]="viewsService"></tg-views-container>
+ * <tg-views-container [viewsService]="viewsService" [initialView]="HomeViewComponent"></tg-views-container>
  */
 @Component({
   selector: 'tg-views-container',
@@ -26,6 +27,13 @@ import { ViewsService } from '../../../controller/views.service';
 
 
 export class ViewsContainerComponent implements OnInit {
+
+
+    /**
+     * If we want to load a view by default when this component is loaded for the first time, we can
+     * set here the respective class view and it will be automatically added.
+     */
+    @Input() initialView: Type<View> | null = null;
 
 
     /**
@@ -53,6 +61,11 @@ export class ViewsContainerComponent implements OnInit {
         } else {
 
             this.viewsService.viewContainerRef = this.viewContainerRef;
+        }
+
+        if (this.initialView !== null) {
+
+            this.viewsService.addView(this.initialView);
         }
     }
 }
