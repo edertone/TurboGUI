@@ -21,6 +21,7 @@ export { ViewsService } from './main/controller/views.service';
  */
 export { BusyStateBaseComponent } from './main/view/components/busy-state-base/busy-state-base.component';
 export { ViewsContainerComponent } from './main/view/components/views-container/views-container.component';
+export { ButtonImageComponent } from './main/view/components/button-image/button-image.component';
 
 
 /**
