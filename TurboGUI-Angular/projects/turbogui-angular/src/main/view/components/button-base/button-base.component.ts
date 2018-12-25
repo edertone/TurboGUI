@@ -29,6 +29,12 @@ export abstract class ButtonBaseComponent implements OnInit {
 
 
     /**
+     * Specifies if the button animations must rollback when the user releases the mouse or pointer after pressing it
+     */
+    @Input() releaseOnMouseUp = true;
+
+
+    /**
      * Defines the button opacity when it is not clicked
      */
     @Input() defaultOpacity = .7;
@@ -89,7 +95,6 @@ export abstract class ButtonBaseComponent implements OnInit {
      * Listens for the mouse out of the button component
      */
     @HostListener('mouseout')
-    @HostListener('pointerup')
     @HostListener('pointerout')
     @HostListener('pointerleave')
     onMouseOut() {
@@ -108,5 +113,20 @@ export abstract class ButtonBaseComponent implements OnInit {
 
         this.currentOpacity = this.clickOpacity;
         this.currentScale = 'scale(' + (this.clickScale as any as string) + ')';
+    }
+
+
+    /**
+     * Listens for the mouse up of the button component
+     */
+    @HostListener('mouseup')
+    @HostListener('pointerup')
+    onMouseUp() {
+
+        if (this.releaseOnMouseUp) {
+
+            this.currentOpacity = this.defaultOpacity;
+            this.currentScale = 'scale(' + (this.defaultScale as any as string) + ')';
+        }
     }
 }
