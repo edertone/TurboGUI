@@ -19,6 +19,7 @@ import { NotificationService } from '../../controller/notification.service';
 import { ViewsService } from '../../controller/views.service';
 import { ViewsContainerComponent } from '../../view/components/views-container/views-container.component';
 import { ButtonImageComponent } from '../../view/components/button-image/button-image.component';
+import { ButtonContainerComponent } from '../../view/components/button-container/button-container.component';
 
 
 /**
@@ -35,7 +36,8 @@ import { ButtonImageComponent } from '../../view/components/button-image/button-
     declarations: [
         BusyStateBaseComponent,
         ViewsContainerComponent,
-        ButtonImageComponent
+        ButtonImageComponent,
+        ButtonContainerComponent
     ],
 
     // Add here components that must be dynamically created at runtime
@@ -55,7 +57,8 @@ import { ButtonImageComponent } from '../../view/components/button-image/button-
     exports: [
         BusyStateBaseComponent,
         ViewsContainerComponent,
-        ButtonImageComponent
+        ButtonImageComponent,
+        ButtonContainerComponent
     ]
 })
 

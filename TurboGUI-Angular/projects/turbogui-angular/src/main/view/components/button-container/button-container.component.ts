@@ -7,33 +7,27 @@
  * CopyRight : -> Copyright 2018 Edertone Advanded Solutions. https://www.edertone.com
  */
 
-import { Component, HostBinding, Input, OnInit } from '@angular/core';
+import { Component, HostBinding } from '@angular/core';
 import { FadeAnimationClass } from '../../animations/fade.animation';
 import { ButtonBaseComponent } from '../../../view/components/button-base/button-base.component';
 
 
 /**
- * This component is a basic button that uses an image as its visual appearance
+ * This component is a basic button without visual appearance, that is used as a container to load any content.
  */
 @Component({
-  selector: 'tg-button-image',
-  templateUrl: './button-image.component.html',
+  selector: 'tg-button-container',
+  templateUrl: './button-container.component.html',
   animations: [FadeAnimationClass.getTrigger('buttonFade', '300ms ease', '300ms ease')],
-  styleUrls: ['./button-image.component.scss']
+  styleUrls: ['./button-container.component.scss']
 })
 
 
-export class ButtonImageComponent extends ButtonBaseComponent implements OnInit {
+export class ButtonContainerComponent extends ButtonBaseComponent {
 
 
     /**
      * This is used to attach the fade animation directly to this component so it fades in and out when created and removed from the app
      */
     @HostBinding('@buttonFade') buttonFade = true;
-
-
-    /**
-     * Defines the path to the image thatis shown by this button
-     */
-    @Input() src = '';
 }

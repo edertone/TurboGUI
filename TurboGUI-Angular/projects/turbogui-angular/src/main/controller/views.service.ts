@@ -21,7 +21,7 @@ export class ViewsService {
     /**
      * See getter method for docs
      */
-    private _isViewLoaded = false;
+    private _loadedViewClass: Type<View> | null = null;
 
 
     /**
@@ -40,7 +40,7 @@ export class ViewsService {
      */
     get isViewLoaded() {
 
-        return this._isViewLoaded;
+        return this._loadedViewClass !== null;
     }
 
 
@@ -68,10 +68,16 @@ export class ViewsService {
      *
      * @param view The classname for the view that we want to create and add to the views container.
      */
-    addView(view: Type<View>) {
+    setView(view: Type<View>) {
 
         // If a view is already loaded, we will unload it first
-        if (this._isViewLoaded) {
+        if (this._loadedViewClass !== null) {
+
+            // If the loaded view is the same as the specified one, we will do nothing
+            if (this._loadedViewClass === view) {
+
+                return;
+            }
 
             this.removeView();
         }
@@ -84,7 +90,7 @@ export class ViewsService {
 
         componentRef.changeDetectorRef.detectChanges();
 
-        this._isViewLoaded = true;
+        this._loadedViewClass = view;
 
         return componentRef;
     }
@@ -107,12 +113,12 @@ export class ViewsService {
 
         this.verifyViewsContainerExist();
 
-        if (this._isViewLoaded) {
+        if (this._loadedViewClass !== null) {
 
             (this._viewContainerRef as ViewContainerRef).clear();
         }
 
-        this._isViewLoaded = false;
+        this._loadedViewClass = null;
     }
 
 

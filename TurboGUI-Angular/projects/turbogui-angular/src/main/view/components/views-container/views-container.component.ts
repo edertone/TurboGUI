@@ -65,7 +65,7 @@ export class ViewsContainerComponent implements OnInit {
 
         if (this.initialView !== null) {
 
-            this.viewsService.addView(this.initialView);
+            this.viewsService.setView(this.initialView);
         }
     }
 }
