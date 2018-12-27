@@ -7,7 +7,7 @@
  * CopyRight : -> Copyright 2018 Edertone Advanded Solutions. https://www.edertone.com
  */
 
-import { Component, ViewContainerRef, Input, ViewChild, OnInit, Type } from '@angular/core';
+import { Component, ViewContainerRef, Input, ViewChild, OnInit, Type, OnDestroy } from '@angular/core';
 import { ViewsService } from '../../../controller/views.service';
 import { View } from '../../../model/classes/View';
 
@@ -26,7 +26,7 @@ import { View } from '../../../model/classes/View';
 })
 
 
-export class ViewsContainerComponent implements OnInit {
+export class ViewsContainerComponent implements OnInit, OnDestroy {
 
 
     /**
@@ -63,9 +63,23 @@ export class ViewsContainerComponent implements OnInit {
             this.viewsService.viewContainerRef = this.viewContainerRef;
         }
 
+        // Set the initial view if defined
         if (this.initialView !== null) {
 
             this.viewsService.setView(this.initialView);
+        }
+    }
+
+
+    /**
+     * Clear the current view from the service when this component is deleted
+     */
+    ngOnDestroy() {
+
+        if (this.viewsService instanceof ViewsService) {
+
+            this.viewsService.removeView();
+            this.viewsService.viewContainerRef = null;
         }
     }
 }

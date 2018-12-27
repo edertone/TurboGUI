@@ -50,9 +50,9 @@ export class ViewsService {
      *
      * @see ViewsContainerComponent for more information
      */
-    set viewContainerRef(ref: ViewContainerRef) {
+    set viewContainerRef(ref: ViewContainerRef | null) {
 
-        if (this._viewContainerRef !== null) {
+        if (ref !== null && this._viewContainerRef !== null) {
 
             throw new Error('Views container already defined. Only one views container element can exist on an application');
         }
