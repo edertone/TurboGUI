@@ -1,4 +1,4 @@
-/**
+/*
  * TurboGUI is A library that helps with the most common and generic UI elements and functionalities
  *
  * Website : -> http://www.turbogui.org
@@ -71,19 +71,19 @@ export class DialogService {
     /**
      * Method that is used to delete the document keydown event listener once not used anymore
      */
-    private _documentKeydownListener: (() => void) | null = null;
+    private _documentKeydownUnlisten: (() => void) | null = null;
 
 
     /**
      * Method that is used to delete the document mousedown event listener once not used anymore
      */
-    private _documentMousedownListener: (() => void) | null = null;
+    private _documentMousedownUnlisten: (() => void) | null = null;
 
 
     /**
      * Method that is used to delete the document pointerdown event listener once not used anymore
      */
-    private _documentPointerdownListener: (() => void) | null = null;
+    private _documentPointerdownUnlisten: (() => void) | null = null;
 
 
     constructor(rendererFactory: RendererFactory2,
@@ -245,11 +245,11 @@ export class DialogService {
      */
     private _disableUserInteraction() {
 
-        this._documentKeydownListener = this._renderer.listen('document', 'keydown', (event) => event.preventDefault());
+        this._documentKeydownUnlisten = this._renderer.listen('document', 'keydown', (event) => event.preventDefault());
 
-        this._documentMousedownListener = this._renderer.listen('document', 'mousedown', (event) => event.preventDefault());
+        this._documentMousedownUnlisten = this._renderer.listen('document', 'mousedown', (event) => event.preventDefault());
 
-        this._documentPointerdownListener = this._renderer.listen('document', 'pointerdown', (event) => event.preventDefault());
+        this._documentPointerdownUnlisten = this._renderer.listen('document', 'pointerdown', (event) => event.preventDefault());
     }
 
 
@@ -258,19 +258,22 @@ export class DialogService {
      */
     private _enableUserInteraction() {
 
-        if (this._documentKeydownListener !== null) {
+        if (this._documentKeydownUnlisten !== null) {
 
-            this._documentKeydownListener();
+            this._documentKeydownUnlisten();
+            this._documentKeydownUnlisten = null;
         }
 
-        if (this._documentMousedownListener !== null) {
+        if (this._documentMousedownUnlisten !== null) {
 
-            this._documentMousedownListener();
+            this._documentMousedownUnlisten();
+            this._documentMousedownUnlisten = null;
         }
 
-        if (this._documentPointerdownListener !== null) {
+        if (this._documentPointerdownUnlisten !== null) {
 
-            this._documentPointerdownListener();
+            this._documentPointerdownUnlisten();
+            this._documentMousedownUnlisten = null;
         }
     }
 }
