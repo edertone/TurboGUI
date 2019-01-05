@@ -23,7 +23,7 @@ export abstract class ButtonBaseComponent implements OnInit {
 
 
     /**
-     * Defines the actual opacity that is binded on the html part
+     * Defines the actual scale that is binded on the html part
      */
     @HostBinding('style.transform') currentScale = 'scale(1)';
 

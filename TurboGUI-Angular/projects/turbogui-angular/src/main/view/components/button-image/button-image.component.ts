@@ -33,7 +33,14 @@ export class ButtonImageComponent extends ButtonBaseComponent implements OnInit 
 
 
     /**
-     * Defines the path to the image thatis shown by this button
+     * Defines the path to the image that is shown by this button
      */
     @Input() src = '';
+
+
+    /**
+     * Defines the percentual size of the image based on the button size. 100 means the image will fill the whole button,
+     * 50 only half, etc..
+     */
+    @Input() percentSize = 100;
 }
