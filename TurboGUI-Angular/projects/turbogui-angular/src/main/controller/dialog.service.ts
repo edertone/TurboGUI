@@ -69,6 +69,12 @@ export class DialogService {
 
 
     /**
+     * Method that is used to delete the window beforeunload event listener once not used anymore
+     */
+    private _windowBeforeUnloadUnListen: (() => void) | null = null;
+
+
+    /**
      * Method that is used to delete the document keydown event listener once not used anymore
      */
     private _documentKeydownUnlisten: (() => void) | null = null;
@@ -114,6 +120,24 @@ export class DialogService {
 
 
     /**
+     * Enables a warning that will be shown to the user when he/she tries to close the application.
+     * This warning will prompt the user to continue with the exit process or cancel it.
+     * The specifi texts of this message are a generic ones and cannot be changed.
+     * 
+     * IMPORTANT: This method must be called after the main application has been initialized in order to work,
+     * otherwise it will do nothing.
+     */
+    addCloseApplicationWarning() {
+
+        if (this._windowBeforeUnloadUnListen === null) {
+
+            this._windowBeforeUnloadUnListen = this._renderer.listen('window', 'beforeunload',
+                (event) => event.returnValue = true);
+        }
+    }
+
+
+    /**
      * Change the application visual appearance so the user perceives that the application is
      * currently busy. While modal busy state is enabled, no user input is possible neither via
      * keyboard, mouse or touch. Use this state when performing server requests or operations that
@@ -153,6 +177,19 @@ export class DialogService {
     get isShowingBusyState() {
 
         return this._isShowingBusyState;
+    }
+
+
+    /**
+     * Remove the close application warning message if previously assigned
+     */
+    removeCloseApplicationWarning() {
+
+        if (this._windowBeforeUnloadUnListen !== null) {
+
+            this._windowBeforeUnloadUnListen();
+            this._windowBeforeUnloadUnListen = null;
+        }
     }
 
 
