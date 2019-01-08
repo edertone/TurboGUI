@@ -245,11 +245,20 @@ export class DialogService {
      */
     private _disableUserInteraction() {
 
-        this._documentKeydownUnlisten = this._renderer.listen('document', 'keydown', (event) => event.preventDefault());
+        if (this._documentKeydownUnlisten === null) {
 
-        this._documentMousedownUnlisten = this._renderer.listen('document', 'mousedown', (event) => event.preventDefault());
+            this._documentKeydownUnlisten = this._renderer.listen('document', 'keydown', (event) => event.preventDefault());
+        }
 
-        this._documentPointerdownUnlisten = this._renderer.listen('document', 'pointerdown', (event) => event.preventDefault());
+        if (this._documentMousedownUnlisten === null) {
+
+            this._documentMousedownUnlisten = this._renderer.listen('document', 'mousedown', (event) => event.preventDefault());
+        }
+
+        if (this._documentPointerdownUnlisten === null) {
+
+            this._documentPointerdownUnlisten = this._renderer.listen('document', 'pointerdown', (event) => event.preventDefault());
+        }
     }
 
 
