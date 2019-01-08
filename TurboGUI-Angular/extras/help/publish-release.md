@@ -1,6 +1,6 @@
 # How to make the library available to the public:
 
-1 - Review git changelog to decide the new version value based on the GIT changes: minor, major, ...
+1 - Review git log to decide the new version value based on the GIT changes: minor, major, ...
   
 2 - Increase the library package.json version before increasing the GIT tag. This file is located at:
 
