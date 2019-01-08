@@ -8,7 +8,7 @@
     "validate": {
         "runBeforeBuild": true,
         "projectStructure": {
-            "readmeFileMandatory": true,
+            "readmeFileMandatory": false,
             "extrasFolderMandatory": true,
             "extrasSubFoldersMandatory": [
                 "help",
