@@ -123,7 +123,7 @@ export class DialogService {
      * Enables a warning that will be shown to the user when he/she tries to close the application.
      * This warning will prompt the user to continue with the exit process or cancel it.
      * The specifi texts of this message are a generic ones and cannot be changed.
-     * 
+     *
      * IMPORTANT: This method must be called after the main application has been initialized in order to work,
      * otherwise it will do nothing.
      */
