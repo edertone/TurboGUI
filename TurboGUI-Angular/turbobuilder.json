@@ -16,17 +16,26 @@
             ],
             "extrasTodoExtension": true
         },
+        "filesContent" : {
+            "copyrightHeaders": [
+                {
+                    "path": "extras/copyright headers/TsFiles-Header.txt",
+                    "appliesTo": "projects/turbogui-angular/src/main",
+                    "includes": ["ts"],
+                    "excludes": []
+                }
+            ]
+        },
         "styleSheets": {
             "noCssHardcodedColors": false
         },
-        "copyrightHeaders": [
-            {
-                "path": "extras/copyright headers/TsFiles-Header.txt",
-                "appliesTo": "projects/turbogui-angular/src/main",
-                "includes": ["ts"],
-                "excludes": []
+        "javascript": {
+            "useStrict": {
+                "enabled": true,
+                "includes": [".js"],
+                "excludes": ["karma.conf.js"]
             }
-        ]
+        }
     },
     "build": {
         "printTodoFiles": false,
