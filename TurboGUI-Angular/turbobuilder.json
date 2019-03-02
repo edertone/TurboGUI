@@ -20,7 +20,7 @@
             "copyrightHeaders": [
                 {
                     "path": "extras/copyright headers/TsFiles-Header.txt",
-                    "appliesTo": "projects/turbogui-angular/src/main",
+                    "affectedPaths": "projects/turbogui-angular/src/main",
                     "includes": ["ts"],
                     "excludes": []
                 }
