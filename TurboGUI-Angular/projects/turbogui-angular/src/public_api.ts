@@ -12,6 +12,8 @@ export { NotificationService } from './main/controller/notification.service';
 export { GlobalErrorService } from './main/controller/globalerror.service';
 export { LocalizationService } from './main/controller/localization.service';
 export { HTTPService } from './main/controller/http.service';
+export { HTTPServiceGetRequest } from './main/controller/httpservice/HTTPServiceGetRequest';
+export { HTTPServicePostRequest } from './main/controller/httpservice/HTTPServicePostRequest';
 export { DialogService } from './main/controller/dialog.service';
 export { ViewsService } from './main/controller/views.service';
 

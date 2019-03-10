@@ -20,7 +20,7 @@
     },
     "homepage": "https://turbogui.org",
     "dependencies": {
-        "turbocommons-ts": "0.8.4"
+        "turbocommons-ts": "^1.0.0"
     },
     "peerDependencies": {
         "@angular/common": "~7.0.0",
