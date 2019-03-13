@@ -7,10 +7,13 @@
  * CopyRight : -> Copyright 2018 Edertone Advanded Solutions. https://www.edertone.com
  */
 
+import { ArrayUtils } from 'turbocommons-ts';
 import { Type, Injectable, ComponentFactoryResolver, Injector, ApplicationRef, Renderer2, RendererFactory2 } from '@angular/core';
-import { MatSnackBar, MatSnackBarConfig } from '@angular/material';
+import { MatSnackBar, MatDialog, MatSnackBarConfig, MatDialogRef } from '@angular/material';
 import { BusyStateBaseComponent } from '../view/components/busy-state-base/busy-state-base.component';
 import { ComponentPortal, DomPortalHost } from '@angular/cdk/portal';
+import { DialogOptionsBaseComponent } from '../view/components/dialog-options-base/dialog-options-base.component';
+import { DialogBaseComponent } from '../view/components/dialog-base/dialog-base.component';
 
 
 /**
@@ -21,13 +24,11 @@ export class DialogService {
 
 
     /**
-     * If we want to modify the busy state component that is shown by default by this dialog service,
-     * we can do it here by simply setting our custom component class (We can do it at our main application
-     * component constructor for example).
+     * Used to modify the busy state component that is shown by default by the addModalBusyState() method.
      *
-     * Our custom component must extend the BusyStateBaseComponent one to add its own visual appearance.
+     * @see this.addModalBusyState()
      */
-    busyStateComponentClass: Type<BusyStateBaseComponent> = BusyStateBaseComponent;
+    customBusyStateComponentClass: Type<BusyStateBaseComponent> = BusyStateBaseComponent;
 
 
     /**
@@ -63,6 +64,22 @@ export class DialogService {
 
 
     /**
+     * Contains a list of the dialogs that are currently visible to the user.
+     * Each item in this list is a hash that is computed when dialog is created to uniquely identify it.
+     *
+     * Empty list means no dialogs are currently visible
+     */
+    private _activeDialogs: string[] = [];
+
+
+    /**
+     * Contains a list with all the MatDialog instances that are currently visible to the user.
+     * The list uses the same order as the list of _activeDialogs hash values
+     */
+    private _activeDialogInstances: MatDialogRef<DialogBaseComponent>[] = [];
+
+
+    /**
      * Used to store the initialized Renderer 2 instance that is used by this class
      */
     private readonly _renderer: Renderer2;
@@ -94,6 +111,7 @@ export class DialogService {
 
     constructor(rendererFactory: RendererFactory2,
                 private readonly matSnackBar: MatSnackBar,
+                private readonly matDialog: MatDialog,
                 private readonly injector: Injector,
                 private readonly applicationRef: ApplicationRef,
                 private readonly componentFactoryResolver: ComponentFactoryResolver) {
@@ -138,10 +156,30 @@ export class DialogService {
 
 
     /**
+     * Remove the close application warning message if previously assigned
+     */
+    removeCloseApplicationWarning() {
+
+        if (this._windowBeforeUnloadUnListen !== null) {
+
+            this._windowBeforeUnloadUnListen();
+            this._windowBeforeUnloadUnListen = null;
+        }
+    }
+
+
+    /**
      * Change the application visual appearance so the user perceives that the application is
      * currently busy. While modal busy state is enabled, no user input is possible neither via
      * keyboard, mouse or touch. Use this state when performing server requests or operations that
      * must block the user interaction with the application.
+     *
+     * Note: We can modify the busy state component that is shown by this method. To do it, we must
+     * set this.customBusyStateComponentClass property with our own custom busy state component class. (We can do it at
+     * our main application component constructor for example). Our custom component must extend the
+     * BusyStateBaseComponent one to add its own visual appearance.
+     *
+     * @see this.customBusyStateComponentClass
      */
     addModalBusyState() {
 
@@ -155,7 +193,7 @@ export class DialogService {
         // Dynamically create the busy state component reference if this is the first time
         if (this._componentPortal === null) {
 
-            this._componentPortal = new ComponentPortal(this.busyStateComponentClass);
+            this._componentPortal = new ComponentPortal(this.customBusyStateComponentClass);
 
             // Create a PortalHost with document.body as its anchor element
             this._modalBusyStateHost = new DomPortalHost(
@@ -172,24 +210,11 @@ export class DialogService {
 
 
     /**
-     * Tells if the application is currently locked in a busy state
+     * Tells if the application is currently locked in a modal busy state (caused by an addModalBusyState() call)
      */
     get isShowingBusyState() {
 
         return this._isShowingBusyState;
-    }
-
-
-    /**
-     * Remove the close application warning message if previously assigned
-     */
-    removeCloseApplicationWarning() {
-
-        if (this._windowBeforeUnloadUnListen !== null) {
-
-            this._windowBeforeUnloadUnListen();
-            this._windowBeforeUnloadUnListen = null;
-        }
     }
 
 
@@ -274,6 +299,63 @@ export class DialogService {
         this.matSnackBar.dismiss();
 
         this._isShowingSnackBar = false;
+    }
+
+
+    /**
+     * Show a generic notification dialog with one or more options that can be used to close it.
+     *
+     * @param title The dialog title
+     * @param message The dialog message
+     * @param options A list of strings that will be used as button captions for each one of the dialog options
+     * @param dialogComponentClass A class for a component that extends DialogOptionsBaseComponent which will be the
+     *        dialog visual element that is shown to the user.
+     * @param callback A function that will be called after the dialog is closed and will receive the string caption for
+     *        the option that's been selected by the user.
+     * @param modal False if the dialog can be closed by the user by clicking outside it, false if selecting an option is mandatory
+     *        to close the dialog
+     */
+    addOptionsDialog(title: string,
+                     message: string,
+                     options: string[],
+                     dialogComponentClass: Type<DialogOptionsBaseComponent>,
+                     callback: null | ((selectedOption: string) => void) = null,
+                     modal = true) {
+
+        if (!this._isEnabled) {
+
+            return;
+        }
+
+        // Generate a string to uniquely identify this dialog on the list of active dialogs
+        const dialogHash = title + message + options.join('');
+
+        // identical dialogs won't be allowed at the same time
+        if (this._activeDialogs.includes(dialogHash)) {
+
+            return;
+        }
+
+        const dialogRef = this.matDialog.open(dialogComponentClass, {
+            width: '400px',
+            disableClose: modal,
+            autoFocus: false,
+            data: { title: title, message: message, options: options }
+          });
+
+        this._activeDialogs.push(dialogHash);
+        this._activeDialogInstances.push(dialogRef);
+
+        dialogRef.beforeClosed().subscribe(result => {
+
+            this._activeDialogs = ArrayUtils.removeElement(this._activeDialogs, dialogHash);
+            this._activeDialogInstances = ArrayUtils.removeElement(this._activeDialogInstances, dialogRef);
+
+            if (callback !== null) {
+
+                (callback as ((selectedOption: string) => void))(result);
+            }
+        });
     }
 
 

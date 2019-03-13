@@ -22,6 +22,8 @@ export { ViewsService } from './main/controller/views.service';
  * Components
  */
 export { BusyStateBaseComponent } from './main/view/components/busy-state-base/busy-state-base.component';
+export { DialogOptionsBaseComponent } from './main/view/components/dialog-options-base/dialog-options-base.component';
+export { DialogSingleOptionComponent } from './main/view/components/dialog-single-option/dialog-single-option.component';
 export { ViewsContainerComponent } from './main/view/components/views-container/views-container.component';
 export { ButtonImageComponent } from './main/view/components/button-image/button-image.component';
 export { ButtonContainerComponent } from './main/view/components/button-container/button-container.component';

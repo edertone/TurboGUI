@@ -10,6 +10,7 @@
 import { NgModule } from '@angular/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatButtonModule } from '@angular/material/button';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BusyStateBaseComponent } from '../../view/components/busy-state-base/busy-state-base.component';
 import { DialogService } from '../../controller/dialog.service';
@@ -20,6 +21,7 @@ import { ViewsService } from '../../controller/views.service';
 import { ViewsContainerComponent } from '../../view/components/views-container/views-container.component';
 import { ButtonImageComponent } from '../../view/components/button-image/button-image.component';
 import { ButtonContainerComponent } from '../../view/components/button-container/button-container.component';
+import { DialogSingleOptionComponent } from '../../view/components/dialog-single-option/dialog-single-option.component';
 
 
 /**
@@ -30,11 +32,13 @@ import { ButtonContainerComponent } from '../../view/components/button-container
     imports: [
         MatDialogModule,
         MatSnackBarModule,
+        MatButtonModule,
         BrowserAnimationsModule
     ],
 
     declarations: [
         BusyStateBaseComponent,
+        DialogSingleOptionComponent,
         ViewsContainerComponent,
         ButtonImageComponent,
         ButtonContainerComponent
@@ -42,7 +46,8 @@ import { ButtonContainerComponent } from '../../view/components/button-container
 
     // Add here components that must be dynamically created at runtime
     entryComponents: [
-        BusyStateBaseComponent
+        BusyStateBaseComponent,
+        DialogSingleOptionComponent
     ],
 
     // Globally available singleton services are added here
@@ -58,7 +63,8 @@ import { ButtonContainerComponent } from '../../view/components/button-container
         BusyStateBaseComponent,
         ViewsContainerComponent,
         ButtonImageComponent,
-        ButtonContainerComponent
+        ButtonContainerComponent,
+        DialogSingleOptionComponent
     ]
 })
 
