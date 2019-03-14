@@ -347,13 +347,13 @@ export class DialogService {
 
         dialogRef.beforeClosed().subscribe((selectedOptionIndex: any) => {
 
-            if (!NumericUtils.isInteger(selectedOptionIndex) || selectedOptionIndex < 0 || selectedOptionIndex >= options.length) {
-
-                throw new Error('addOptionsDialog expects int with selected option index for dialogRef.close()');
-            }
-
             this._activeDialogs = ArrayUtils.removeElement(this._activeDialogs, dialogHash);
             this._activeDialogInstances = ArrayUtils.removeElement(this._activeDialogInstances, dialogRef);
+
+            if (!NumericUtils.isInteger(selectedOptionIndex) || selectedOptionIndex < 0 || selectedOptionIndex >= options.length) {
+
+                throw new Error(`dialogRef.close() expects int with selected option index between ${0} and ${options.length}`);
+            }
 
             if (callback !== null) {
 
