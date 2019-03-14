@@ -7,7 +7,7 @@
  * CopyRight : -> Copyright 2018 Edertone Advanded Solutions. https://www.edertone.com
  */
 
-import { ArrayUtils } from 'turbocommons-ts';
+import { ArrayUtils, NumericUtils } from 'turbocommons-ts';
 import { Type, Injectable, ComponentFactoryResolver, Injector, ApplicationRef, Renderer2, RendererFactory2 } from '@angular/core';
 import { MatSnackBar, MatDialog, MatSnackBarConfig, MatDialogRef } from '@angular/material';
 import { BusyStateBaseComponent } from '../view/components/busy-state-base/busy-state-base.component';
@@ -305,21 +305,20 @@ export class DialogService {
     /**
      * Show a generic notification dialog with one or more options that can be used to close it.
      *
-     * @param title The dialog title
-     * @param message The dialog message
-     * @param options A list of strings that will be used as button captions for each one of the dialog options
-     * @param dialogComponentClass A class for a component that extends DialogOptionsBaseComponent which will be the
+     * @param texts A list with strings containing the dialog texts, sorted by importance. When dialog has a title, this should
+     *        be placed first, subtitle second and so (Each dialog may accept different kind of texts).
+     * @param options A list of strings that will be used as button captions for each one of the accepted dialog options
+     * @param dialogComponentClass A class for a component that extends DialogOptionsBaseComponent, which will be the
      *        dialog visual element that is shown to the user.
-     * @param callback A function that will be called after the dialog is closed and will receive the string caption for
+     * @param callback A function that will be called after the dialog is closed and will receive the numeric index for
      *        the option that's been selected by the user.
-     * @param modal False if the dialog can be closed by the user by clicking outside it, false if selecting an option is mandatory
+     * @param modal False if the dialog can be closed by the user by clicking outside it, true if selecting an option is mandatory
      *        to close the dialog
      */
-    addOptionsDialog(title: string,
-                     message: string,
+    addOptionsDialog(texts: string[],
                      options: string[],
                      dialogComponentClass: Type<DialogOptionsBaseComponent>,
-                     callback: null | ((selectedOption: string) => void) = null,
+                     callback: null | ((selectedOptionIndex: number) => void) = null,
                      modal = true) {
 
         if (!this._isEnabled) {
@@ -328,7 +327,7 @@ export class DialogService {
         }
 
         // Generate a string to uniquely identify this dialog on the list of active dialogs
-        const dialogHash = title + message + options.join('');
+        const dialogHash = texts.join('') + options.join('');
 
         // identical dialogs won't be allowed at the same time
         if (this._activeDialogs.includes(dialogHash)) {
@@ -340,20 +339,25 @@ export class DialogService {
             width: '400px',
             disableClose: modal,
             autoFocus: false,
-            data: { title: title, message: message, options: options }
+            data: { texts: texts, options: options }
           });
 
         this._activeDialogs.push(dialogHash);
         this._activeDialogInstances.push(dialogRef);
 
-        dialogRef.beforeClosed().subscribe(result => {
+        dialogRef.beforeClosed().subscribe((selectedOptionIndex: any) => {
+
+            if (!NumericUtils.isInteger(selectedOptionIndex) || selectedOptionIndex < 0 || selectedOptionIndex >= options.length) {
+
+                throw new Error('addOptionsDialog expects int with selected option index for dialogRef.close()');
+            }
 
             this._activeDialogs = ArrayUtils.removeElement(this._activeDialogs, dialogHash);
             this._activeDialogInstances = ArrayUtils.removeElement(this._activeDialogInstances, dialogRef);
 
             if (callback !== null) {
 
-                (callback as ((selectedOption: string) => void))(result);
+                (callback as ((selectedOptionIndex: number) => void))(selectedOptionIndex);
             }
         });
     }
