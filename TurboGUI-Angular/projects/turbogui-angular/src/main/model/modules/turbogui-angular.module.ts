@@ -17,6 +17,7 @@ import { DialogService } from '../../controller/dialog.service';
 import { LocalizationService } from '../../controller/localization.service';
 import { HTTPService } from '../../controller/http.service';
 import { NotificationService } from '../../controller/notification.service';
+import { UserService } from '../../controller/user.service';
 import { ViewsService } from '../../controller/views.service';
 import { ViewsContainerComponent } from '../../view/components/views-container/views-container.component';
 import { ButtonImageComponent } from '../../view/components/button-image/button-image.component';
@@ -56,6 +57,7 @@ import { DialogSingleOptionComponent } from '../../view/components/dialog-single
         LocalizationService,
         HTTPService,
         NotificationService,
+        UserService,
         ViewsService
     ],
 
