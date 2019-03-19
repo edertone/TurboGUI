@@ -26,10 +26,10 @@
 
 svg {
     z-index: 5000;
-    width: 4%;
-    height: 4%;
-    min-width: 30px;
-    min-height: 30px;
+    width: 40%;
+    height: 40%;
+    max-width: 130px;
+    max-height: 130px;
     animation-name: loadingfadein;
     animation-duration: 3s;
     animation-timing-function: ease-in;
@@ -43,7 +43,8 @@ svg {
 
 @keyframes bgfadein {
   0% { opacity: 0 }
-  10% { opacity: 0 }
+  5% { opacity: 0 }
+  10% { opacity: 0.2 }
   35% { opacity:0.5 }
   100% { opacity: 1 }
 }
