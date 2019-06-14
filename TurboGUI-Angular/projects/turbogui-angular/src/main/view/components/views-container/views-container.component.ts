@@ -46,7 +46,7 @@ export class ViewsContainerComponent implements OnInit, OnDestroy {
     /**
      * A reference to the ng-template inside this component that is used as the anchor point to load views
      */
-    @ViewChild('viewContainerRef', {read: ViewContainerRef}) viewContainerRef: ViewContainerRef;
+    @ViewChild('viewContainerRef', { read: ViewContainerRef, static: true }) viewContainerRef: ViewContainerRef;
 
 
     /**
