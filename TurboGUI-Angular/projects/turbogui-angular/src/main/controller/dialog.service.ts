@@ -9,7 +9,8 @@
 
 import { ArrayUtils, NumericUtils } from 'turbocommons-ts';
 import { Type, Injectable, ComponentFactoryResolver, Injector, ApplicationRef, Renderer2, RendererFactory2 } from '@angular/core';
-import { MatSnackBar, MatDialog, MatSnackBarConfig, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { BusyStateBaseComponent } from '../view/components/busy-state-base/busy-state-base.component';
 import { ComponentPortal, DomPortalHost } from '@angular/cdk/portal';
 import { DialogOptionsBaseComponent } from '../view/components/dialog-options-base/dialog-options-base.component';
