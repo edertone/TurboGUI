@@ -7,15 +7,22 @@
  * CopyRight : -> Copyright 2018 Edertone Advanded Solutions. https://www.edertone.com
  */
 
+import { Type } from '@angular/core';
+import { ViewModel } from '../../model/classes/ViewModel';
+
+
 /**
  * Defines an application view.
- * Our View components must extend this class and can be manipualted via ViewsService
+ * Our View components must extend this class so they can be manipulated via ViewsService
  */
+
 export abstract class View {
 
 
     /**
-     * The view title
+     * The class for the model that is associated to this view.
+     * A new model instance will be automatically created each time the view is
+     * added to the views container
      */
-    title = '';
+    static readonly modelClass: null | Type<ViewModel> = null;
 }

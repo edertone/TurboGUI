@@ -9,6 +9,7 @@
 
 import { Type, ViewContainerRef, Injectable, ComponentFactoryResolver } from '@angular/core';
 import { View } from '../model/classes/View';
+import { ViewModel } from '../model/classes/ViewModel';
 
 
 /**
@@ -22,6 +23,12 @@ export class ViewsService {
      * See getter method for docs
      */
     private _loadedViewClass: Type<View> | null = null;
+
+
+    /**
+     * An instance of the model that is assigned to the currently loaded view
+     */
+    private _loadedViewModel: ViewModel | null = null;
 
 
     /**
@@ -66,9 +73,9 @@ export class ViewsService {
      *
      * Make sure this method is called when all the visual components of the application have been created (ngAfterViewInit)
      *
-     * @param view The classname for the view that we want to create and add to the views container.
+     * @param view The classname for the view that we want to create and add to the views container (must extend View base class).
      */
-    setView(view: Type<View>) {
+    pushView(view: Type<View>) {
 
         // If a view is already loaded, we will unload it first
         if (this._loadedViewClass !== null) {
@@ -79,10 +86,14 @@ export class ViewsService {
                 return;
             }
 
-            this.removeView();
+            this.popView();
         }
 
         this.verifyViewsContainerExist();
+
+        this._loadedViewClass = view;
+
+        this._loadedViewModel = (view as any).modelClass !== null ? new ((view as any).modelClass)() : null;
 
         const factory = this.componentFactoryResolver.resolveComponentFactory(view);
 
@@ -90,18 +101,24 @@ export class ViewsService {
 
         componentRef.changeDetectorRef.detectChanges();
 
-        this._loadedViewClass = view;
-
         return componentRef;
     }
 
 
     /**
-     * TODO
+     * Get the model that is instantiated for the currently active view. (A view model only lives while its view is active)
+     * If no view model is assigned to the current view or no view is loaded, an exception will be thrown.
+     *
+     * @return The current view model instance, which must be casted to the appropiate ViewModel extended class
      */
-    getModel() {
+    get model() {
 
-        return null;
+        if (this._loadedViewModel === null) {
+
+            throw new Error('No active model available. Please load a view and make sure it has an assigned model class');
+        }
+
+        return this._loadedViewModel;
     }
 
 
@@ -109,7 +126,7 @@ export class ViewsService {
      * Delete the currently loaded view from the views container.
      * If no view is currently loaded, this method will do nothing
      */
-    removeView() {
+    popView() {
 
         this.verifyViewsContainerExist();
 
@@ -119,6 +136,7 @@ export class ViewsService {
         }
 
         this._loadedViewClass = null;
+        this._loadedViewModel = null;
     }
 
 

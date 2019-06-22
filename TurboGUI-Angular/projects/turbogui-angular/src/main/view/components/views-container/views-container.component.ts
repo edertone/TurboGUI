@@ -66,7 +66,7 @@ export class ViewsContainerComponent implements OnInit, OnDestroy {
         // Set the initial view if defined
         if (this.initialView !== null) {
 
-            this.viewsService.setView(this.initialView);
+            this.viewsService.pushView(this.initialView);
         }
     }
 
@@ -78,7 +78,7 @@ export class ViewsContainerComponent implements OnInit, OnDestroy {
 
         if (this.viewsService instanceof ViewsService) {
 
-            this.viewsService.removeView();
+            this.viewsService.popView();
             this.viewsService.viewContainerRef = null;
         }
     }
