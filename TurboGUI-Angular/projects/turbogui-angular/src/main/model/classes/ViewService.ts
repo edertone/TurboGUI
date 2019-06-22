@@ -17,8 +17,12 @@ import { ViewsService } from '../../controller/views.service';
 export abstract class ViewService<T extends ViewModel> {
 
 
+    /**
+     * Class requires a views service instance
+     */
     constructor(private readonly viewsService: ViewsService) {
     }
+
 
     /**
      * A reference to the view model
