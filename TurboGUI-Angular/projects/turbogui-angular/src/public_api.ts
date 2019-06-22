@@ -36,4 +36,5 @@ export { ButtonContainerComponent } from './main/view/components/button-containe
 export { GUINotification } from './main/model/classes/GUINotification';
 export { View } from './main/model/classes/View';
 export { ViewModel } from './main/model/classes/ViewModel';
+export { ViewService } from './main/model/classes/ViewService';
 export { FadeAnimationClass } from './main/view/animations/fade.animation';

@@ -8,7 +8,7 @@
  */
 
 /**
- * Defines the model for an application view
+ * Defines the model base class for an application view
  */
 export abstract class ViewModel {
 
