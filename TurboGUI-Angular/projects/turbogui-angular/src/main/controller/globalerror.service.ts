@@ -53,7 +53,9 @@ export class GlobalErrorService implements ErrorHandler {
 
 
     /**
-     * Show an alert with the received error detail and also log it to the js console
+     * Show an alert with the received error detail and also log it to the js console.
+     *
+     * Angular expects at least this method to be implemented on any class that is used as a global exception handler.
      *
      * @param error An error instance
      */
