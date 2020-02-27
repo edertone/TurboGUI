@@ -7,12 +7,13 @@
  * CopyRight : -> Copyright 2018 Edertone Advanded Solutions. https://www.edertone.com
  */
 
-import { HostBinding, HostListener, Input, OnInit } from '@angular/core';
+import { HostBinding, HostListener, Input, OnInit, Directive } from '@angular/core';
 
 
 /**
  * This is the base class for all button components
  */
+@Directive()
 export abstract class ButtonBaseComponent implements OnInit {
 
 
