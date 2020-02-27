@@ -45,12 +45,6 @@ import { DialogSingleOptionComponent } from '../../view/components/dialog-single
         ButtonContainerComponent
     ],
 
-    // Add here components that must be dynamically created at runtime
-    entryComponents: [
-        BusyStateBaseComponent,
-        DialogSingleOptionComponent
-    ],
-
     // Globally available singleton services are added here
     providers: [
         DialogService,
