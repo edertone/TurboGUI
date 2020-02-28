@@ -12,7 +12,7 @@ import { Type, Injectable, ComponentFactoryResolver, Injector, ApplicationRef, R
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { BusyStateBaseComponent } from '../view/components/busy-state-base/busy-state-base.component';
-import { ComponentPortal, DomPortalHost } from '@angular/cdk/portal';
+import { ComponentPortal, DomPortalOutlet } from '@angular/cdk/portal';
 import { DialogOptionsBaseComponent } from '../view/components/dialog-options-base/dialog-options-base.component';
 import { DialogBaseComponent } from '../view/components/dialog-base/dialog-base.component';
 
@@ -55,7 +55,7 @@ export class DialogService {
     /**
      * A reference to the modal busy state container where the component will be added
      */
-    private _modalBusyStateHost: DomPortalHost | null = null;
+    private _modalBusyStateHost: DomPortalOutlet | null = null;
 
 
     /**
@@ -197,14 +197,14 @@ export class DialogService {
             this._componentPortal = new ComponentPortal(this.customBusyStateComponentClass);
 
             // Create a PortalHost with document.body as its anchor element
-            this._modalBusyStateHost = new DomPortalHost(
+            this._modalBusyStateHost = new DomPortalOutlet(
                     document.body,
                     this.componentFactoryResolver,
                     this.applicationRef,
                     this.injector);
         }
 
-        (this._modalBusyStateHost as DomPortalHost).attach(this._componentPortal);
+        (this._modalBusyStateHost as DomPortalOutlet).attach(this._componentPortal);
 
         this._isShowingBusyState = true;
     }
@@ -231,7 +231,7 @@ export class DialogService {
 
         if (this._componentPortal !== null) {
 
-            (this._modalBusyStateHost as DomPortalHost).detach();
+            (this._modalBusyStateHost as DomPortalOutlet).detach();
         }
 
         this._enableUserInteraction();
