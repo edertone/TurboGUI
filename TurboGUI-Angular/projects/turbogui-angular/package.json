@@ -1,6 +1,6 @@
 {
     "name": "turbogui-angular",
-    "version": "2.1.0",
+    "version": "2.1.1",
     "description": "A library that tries to help with the most common user interface elements on several frameworks and platforms",
     "repository": {
         "type": "git",
@@ -20,7 +20,7 @@
     },
     "homepage": "https://turbogui.org",
     "dependencies": {
-        "turbocommons-ts": "^2.1.1"
+        "turbocommons-ts": "^3.1.0"
     },
     "peerDependencies": {
         "@angular/common": "~9.0.3",
