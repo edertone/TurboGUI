@@ -17,6 +17,7 @@ export { HTTPServicePostRequest } from './main/controller/httpservice/HTTPServic
 export { DialogService } from './main/controller/dialog.service';
 export { UserService } from './main/controller/user.service';
 export { ViewsService } from './main/controller/views.service';
+export { BrowserService } from './main/controller/browser.service';
 
 
 /**
