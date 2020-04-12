@@ -1,0 +1,30 @@
+<h3>
+    {{data.texts[0]}}
+</h3>
+
+<p *ngIf="data.texts.length > 1 &amp;&amp; !stringUtils.isEmpty(data.texts[1])">
+    {{data.texts[1]}}
+</p>
+
+<div class="listItemsContainer"
+    [style.max-height]="getListItemsContainerMaxheight()">
+
+    <div class="listItemContainer"
+        [style.background-color]="selectedItemIndex === i ? '#90d1ffad' : (i % 2 === 0 ? 'initial' : '#00000009')"
+        *ngFor="let item of data.options; let i = index"
+        (mousedown)="selectedItemIndex = i">
+    
+        <p>
+            {{item}}
+        </p>
+    
+    </div>
+
+</div>
+
+<button mat-raised-button color="primary"
+    [disabled]="selectedItemIndex < 0"
+    (click)="dialogRef.close(selectedItemIndex)">
+    {{data.texts[2]}}
+    
+</button>

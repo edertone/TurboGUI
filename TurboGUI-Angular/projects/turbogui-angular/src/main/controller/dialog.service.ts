@@ -141,7 +141,7 @@ export class DialogService {
     /**
      * Enables a warning that will be shown to the user when he/she tries to close the application.
      * This warning will prompt the user to continue with the exit process or cancel it.
-     * The specifi texts of this message are a generic ones and cannot be changed.
+     * The specific texts of this message are a generic ones and cannot be changed.
      *
      * IMPORTANT: This method must be called after the main application has been initialized in order to work,
      * otherwise it will do nothing.
@@ -306,6 +306,9 @@ export class DialogService {
     /**
      * Show a generic notification dialog with one or more options that can be used to close it.
      *
+     * @param width Specify the css value for the maximum width the dialog will have. As the dialog is responsive, the value will be automatically
+              reduced if the available screen is not enough, and will reach the desired value otherwise. Note that height will be adapted to the contents
+              of the dialog and cannot be specified here. We can set a pixels, % or any other css accepted value. For example: '400px', '50%', etc.
      * @param texts A list with strings containing the dialog texts, sorted by importance. When dialog has a title, this should
      *        be placed first, subtitle second and so (Each dialog may accept different kind of texts).
      * @param options A list of strings that will be used as button captions for each one of the accepted dialog options
@@ -316,7 +319,8 @@ export class DialogService {
      * @param modal False if the dialog can be closed by the user by clicking outside it, true if selecting an option is mandatory
      *        to close the dialog
      */
-    addOptionsDialog(texts: string[],
+    addOptionsDialog(width: string,
+                     texts: string[],
                      options: string[],
                      dialogComponentClass: Type<DialogOptionsBaseComponent>,
                      callback: null | ((selectedOptionIndex: number) => void) = null,
@@ -337,7 +341,7 @@ export class DialogService {
         }
 
         const dialogRef = this.matDialog.open(dialogComponentClass, {
-            width: '400px',
+            width: width,
             disableClose: modal,
             autoFocus: false,
             data: { texts: texts, options: options }
@@ -351,9 +355,16 @@ export class DialogService {
             this._activeDialogs = ArrayUtils.removeElement(this._activeDialogs, dialogHash);
             this._activeDialogInstances = ArrayUtils.removeElement(this._activeDialogInstances, dialogRef);
 
-            if (!NumericUtils.isInteger(selectedOptionIndex) || selectedOptionIndex < 0 || selectedOptionIndex >= options.length) {
+            if (!NumericUtils.isInteger(selectedOptionIndex)) {
 
-                throw new Error(`dialogRef.close() expects int with selected option index between ${0} and ${options.length}`);
+                if(modal){
+                    
+                    throw new Error(`dialogRef.close() expects int value`);
+
+                }else{
+                    
+                    selectedOptionIndex = -1;
+                }                
             }
 
             if (callback !== null) {

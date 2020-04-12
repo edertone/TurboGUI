@@ -74,6 +74,8 @@ export class ViewsService {
      * Make sure this method is called when all the visual components of the application have been created (ngAfterViewInit)
      *
      * @param view The classname for the view that we want to create and add to the views container (must extend View base class).
+     *
+     * @return The instance of the newly added and created view. 
      */
     pushView(view: Type<View>) {
 
@@ -90,16 +92,16 @@ export class ViewsService {
         }
 
         this.verifyViewsContainerExist();
-
-        this._loadedViewClass = view;
-
-        this._loadedViewModel = (view as any).modelClass !== null ? new ((view as any).modelClass)() : null;
-
+        
         const factory = this.componentFactoryResolver.resolveComponentFactory(view);
 
         const componentRef = (this._viewContainerRef as ViewContainerRef).createComponent(factory);
 
+        this._loadedViewModel = componentRef.instance.modelClass !== null ? new (componentRef.instance.modelClass as any)() : null;
+
         componentRef.changeDetectorRef.detectChanges();
+
+        this._loadedViewClass = view;
 
         return componentRef;
     }
@@ -115,7 +117,7 @@ export class ViewsService {
 
         if (this._loadedViewModel === null) {
 
-            throw new Error('No active model available. Please load a view and make sure it has an assigned model class');
+            throw new Error('No active model. Make sure a view is loaded with an assigned model. Do not access the model until view is initialized (for example on ngAfterViewInit)');
         }
 
         return this._loadedViewModel;

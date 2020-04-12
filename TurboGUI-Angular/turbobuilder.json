@@ -28,7 +28,7 @@
             ]
         },
         "styleSheets": {
-            "noCssHardcodedColors": false
+            "cssHardcodedColorForbid": false
         },
         "javascript": {
             "useStrict": {

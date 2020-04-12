@@ -27,6 +27,11 @@ export class DialogSingleOptionComponent extends DialogOptionsBaseComponent {
     constructor(public dialogRef: MatDialogRef<DialogOptionsBaseComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
 
         super();
+        
+        if (data.texts.length < 1) {
+
+            throw new Error('DialogSingleOptionComponent expects 2 texts: The title and optionally a description');
+        }
 
         if (data.options.length !== 1) {
 

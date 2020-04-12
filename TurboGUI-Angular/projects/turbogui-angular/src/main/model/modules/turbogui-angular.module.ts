@@ -23,6 +23,7 @@ import { ViewsContainerComponent } from '../../view/components/views-container/v
 import { ButtonImageComponent } from '../../view/components/button-image/button-image.component';
 import { ButtonContainerComponent } from '../../view/components/button-container/button-container.component';
 import { DialogSingleOptionComponent } from '../../view/components/dialog-single-option/dialog-single-option.component';
+import { DialogSingleSelectionListComponent } from '../../view/components/dialog-single-selection-list/dialog-single-selection-list.component';
 import { BrowserService } from '../../controller/browser.service';
 
 
@@ -41,6 +42,7 @@ import { BrowserService } from '../../controller/browser.service';
     declarations: [
         BusyStateBaseComponent,
         DialogSingleOptionComponent,
+        DialogSingleSelectionListComponent,
         ViewsContainerComponent,
         ButtonImageComponent,
         ButtonContainerComponent

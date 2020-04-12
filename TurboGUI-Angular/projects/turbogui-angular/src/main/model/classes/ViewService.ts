@@ -12,7 +12,7 @@ import { ViewsService } from '../../controller/views.service';
 
 
 /**
- * Defines the service base class for an application view
+ * Defines the service base class for a view service class. All services that are used by views must extend this.
  */
 export abstract class ViewService<T extends ViewModel> {
 
@@ -25,9 +25,9 @@ export abstract class ViewService<T extends ViewModel> {
 
 
     /**
-     * A reference to the view model
+     * A reference to the currently active view model
      */
-    protected get model(): T {
+    get model(): T {
 
         return this.viewsService.model as T;
     }
