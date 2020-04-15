@@ -27,6 +27,12 @@ export abstract class ButtonBaseComponent implements OnInit {
      * Defines the actual scale that is binded on the html part
      */
     @HostBinding('style.transform') currentScale = 'scale(1)';
+    
+    
+    /**
+     * Defines if the button can be clicked or not
+     */
+    @HostBinding('style.pointer-events') pointerEvents = 'initial';
 
 
     /**
@@ -69,6 +75,31 @@ export abstract class ButtonBaseComponent implements OnInit {
      * Defines the image scale when it is clicked
      */
     @Input() clickScale = 1;
+    
+    
+    /**
+     * Defines the button opacity when it is disabled
+     */
+    @Input() disabledOpacity = .2;
+
+
+    /**
+     * Stores the value that tells if the button is enabled or disabled
+     */
+    private _enabled = true;
+    
+
+    /**
+     * Specifies if the button is enabled or disabled
+     */
+    @Input() set enabled(v:boolean){
+        
+        this._enabled = v;
+        
+        this.currentOpacity = v ? this.defaultOpacity : this.disabledOpacity;
+        
+        this.pointerEvents = v ? 'initial' : 'none'; 
+    };
 
 
     /**
@@ -76,7 +107,7 @@ export abstract class ButtonBaseComponent implements OnInit {
      */
     ngOnInit() {
 
-        this.currentOpacity = this.defaultOpacity;
+        this.currentOpacity = this._enabled ? this.defaultOpacity : this.disabledOpacity;
         this.currentScale = 'scale(1)';
     }
 
@@ -87,8 +118,11 @@ export abstract class ButtonBaseComponent implements OnInit {
     @HostListener('mouseover')
     onMouseOver() {
 
-        this.currentOpacity = this.hoverOpacity;
-        this.currentScale = 'scale(' + (this.hoverScale as any as string) + ')';
+        if(this._enabled){
+            
+            this.currentOpacity = this.hoverOpacity;
+            this.currentScale = 'scale(' + (this.hoverScale as any as string) + ')';
+        }
     }
 
 
@@ -100,8 +134,11 @@ export abstract class ButtonBaseComponent implements OnInit {
     @HostListener('pointerleave')
     onMouseOut() {
 
-        this.currentOpacity = this.defaultOpacity;
-        this.currentScale = 'scale(' + (this.defaultScale as any as string) + ')';
+        if(this._enabled){
+            
+            this.currentOpacity = this.defaultOpacity;
+            this.currentScale = 'scale(' + (this.defaultScale as any as string) + ')';
+        }
     }
 
 
@@ -112,8 +149,11 @@ export abstract class ButtonBaseComponent implements OnInit {
     @HostListener('pointerdown')
     onMouseDown() {
 
-        this.currentOpacity = this.clickOpacity;
-        this.currentScale = 'scale(' + (this.clickScale as any as string) + ')';
+        if(this._enabled){
+            
+            this.currentOpacity = this.clickOpacity;
+            this.currentScale = 'scale(' + (this.clickScale as any as string) + ')';
+        }
     }
 
 
@@ -124,7 +164,7 @@ export abstract class ButtonBaseComponent implements OnInit {
     @HostListener('pointerup')
     onMouseUp() {
 
-        if (this.releaseOnMouseUp) {
+        if (this._enabled && this.releaseOnMouseUp) {
 
             this.currentOpacity = this.defaultOpacity;
             this.currentScale = 'scale(' + (this.defaultScale as any as string) + ')';

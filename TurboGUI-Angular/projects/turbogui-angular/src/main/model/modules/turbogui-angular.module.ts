@@ -25,6 +25,9 @@ import { ButtonContainerComponent } from '../../view/components/button-container
 import { DialogSingleOptionComponent } from '../../view/components/dialog-single-option/dialog-single-option.component';
 import { DialogSingleSelectionListComponent } from '../../view/components/dialog-single-selection-list/dialog-single-selection-list.component';
 import { BrowserService } from '../../controller/browser.service';
+import { ElementCreatedDirective } from '../../view/directives/ElementCreatedDirective';
+import { ElementDestroyedDirective } from '../../view/directives/ElementDestroyedDirective';
+import { AutoFocusOnDisplayDirective } from '../../view/directives/AutoFocusOnDisplayDirective';
 
 
 /**
@@ -45,7 +48,10 @@ import { BrowserService } from '../../controller/browser.service';
         DialogSingleSelectionListComponent,
         ViewsContainerComponent,
         ButtonImageComponent,
-        ButtonContainerComponent
+        ButtonContainerComponent,
+        ElementCreatedDirective,
+        ElementDestroyedDirective,
+        AutoFocusOnDisplayDirective
     ],
 
     // Globally available singleton services are added here
@@ -64,7 +70,11 @@ import { BrowserService } from '../../controller/browser.service';
         ViewsContainerComponent,
         ButtonImageComponent,
         ButtonContainerComponent,
-        DialogSingleOptionComponent
+        DialogSingleOptionComponent,
+        DialogSingleSelectionListComponent,
+        ElementCreatedDirective,
+        ElementDestroyedDirective,
+        AutoFocusOnDisplayDirective
     ]
 })
 
