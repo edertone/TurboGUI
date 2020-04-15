@@ -9,7 +9,10 @@
 
 /**
  * Sometimes it is necessary to apply some kind of buffer to the user input for certain operations that may be executed
- * several times but we need to capture only the latest of them into a certain period of time.
+ * several times but we need to capture only the latest of them into a certain period of time. This class does exactly this:
+ * we can queue as many times as we want a specific method call and only the last one will be executed under a defined window of time.
+ * So for example if a user types keys on an input, we can buffer it for x seconds and perform a request only with the last of its changes.
+ * Lots of other UI interaction usages may be interesting with this class.
  */
 export class DelayedMethodCallManager{
 
@@ -25,7 +28,10 @@ export class DelayedMethodCallManager{
 
     /**
      * Sometimes it is necessary to apply some kind of buffer to the user input for certain operations that may be executed
-     * several times but we need to capture only the latest of them into a certain period of time.
+     * several times but we need to capture only the latest of them into a certain period of time. This class does exactly this:
+     * we can queue as many times as we want a specific method call and only the last one will be executed under a defined window of time.
+     * So for example if a user types keys on an input, we can buffer it for x seconds and perform a request only with the last of its changes.
+     * Lots of other UI interaction usages may be interesting with this class.
      */
     constructor(private delay = 1000) {
        
