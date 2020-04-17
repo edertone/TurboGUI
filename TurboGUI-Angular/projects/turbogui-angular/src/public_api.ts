@@ -44,3 +44,4 @@ export { FadeAnimationClass } from './main/view/animations/fade.animation';
 export { ElementCreatedDirective } from './main/view/directives/ElementCreatedDirective';
 export { ElementDestroyedDirective } from './main/view/directives/ElementDestroyedDirective';
 export { AutoFocusOnDisplayDirective } from './main/view/directives/AutoFocusOnDisplayDirective';
+export { AutoSelectTextOnFocusDirective } from './main/view/directives/AutoSelectTextOnFocusDirective';

@@ -28,6 +28,7 @@ import { BrowserService } from '../../controller/browser.service';
 import { ElementCreatedDirective } from '../../view/directives/ElementCreatedDirective';
 import { ElementDestroyedDirective } from '../../view/directives/ElementDestroyedDirective';
 import { AutoFocusOnDisplayDirective } from '../../view/directives/AutoFocusOnDisplayDirective';
+import { AutoSelectTextOnFocusDirective } from '../../view/directives/AutoSelectTextOnFocusDirective';
 
 
 /**
@@ -51,7 +52,8 @@ import { AutoFocusOnDisplayDirective } from '../../view/directives/AutoFocusOnDi
         ButtonContainerComponent,
         ElementCreatedDirective,
         ElementDestroyedDirective,
-        AutoFocusOnDisplayDirective
+        AutoFocusOnDisplayDirective,
+        AutoSelectTextOnFocusDirective
     ],
 
     // Globally available singleton services are added here
@@ -74,7 +76,8 @@ import { AutoFocusOnDisplayDirective } from '../../view/directives/AutoFocusOnDi
         DialogSingleSelectionListComponent,
         ElementCreatedDirective,
         ElementDestroyedDirective,
-        AutoFocusOnDisplayDirective
+        AutoFocusOnDisplayDirective,
+        AutoSelectTextOnFocusDirective
     ]
 })
 
