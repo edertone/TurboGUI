@@ -22,7 +22,7 @@
                 {
                     "path": "extras/copyright headers/TsFiles-Header.txt",
                     "affectedPaths": ["projects/turbogui-angular/src/main"],
-                    "includes": ["ts"],
+                    "includes": [".ts"],
                     "excludes": []
                 }
             ]
@@ -34,21 +34,11 @@
             "useStrict": {
                 "enabled": true,
                 "includes": [".js"],
-                "excludes": ["karma.conf.js"]
+                "excludes": [".json", "karma.conf.js"]
             }
         }
     },
     "build": {
-        "printTodoFiles": false,
-        "replaceVersion": {
-            "enabled": false,
-            "wildCard": "@@--build-version--@@",
-            "extensions": [
-                "js",
-                "php",
-                "json"
-            ]
-        },
         "lib_angular": {}
     },
     "release": {
