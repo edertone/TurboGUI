@@ -38,6 +38,12 @@ export class UserService {
      * Check public getter for docs
      */
     private _isLogged = false;
+    
+    
+    /**
+     * @see token() getter for more info
+     */
+    private _token = '';
 
 
     constructor(public httpService: HTTPService,
@@ -62,6 +68,15 @@ export class UserService {
 
         return this._isLogged;
     }
+    
+    
+    /**
+     * Gives the value for the currently active user authentication token or an empty string if no user logged
+     */
+    get token() {
+
+        return this._token;
+    }
 
 
     /**
@@ -72,6 +87,8 @@ export class UserService {
         this.dialogService.addModalBusyState();
 
         const request = new HTTPServicePostRequest('users/login');
+        
+        request.ignoreGlobalPostParams = true;
 
         const encodedCredentials = ConversionUtils.stringToBase64(
                 ConversionUtils.stringToBase64(this.userName) + ',' + ConversionUtils.stringToBase64(this.password));
@@ -84,9 +101,13 @@ export class UserService {
 
             this.dialogService.removeModalBusyState();
 
-            if (results[0].response === 'ok') {
+            if (results[0].response !== '') {
+
+                let response = JSON.parse(results[0].response);            
 
                 this._isLogged = true;
+                this._token = response[0];
+                this.httpService.setGlobalPostParam('token', response[0]);
 
                 if (loginOkCallback !== null) {
 
@@ -98,6 +119,12 @@ export class UserService {
                 this.userName = '';
                 this.password = '';
                 this._isLogged = false;
+                this._token = '';
+                
+                if(this.httpService.isGlobalPostParam('token')){
+                    
+                    this.httpService.deleteGlobalPostParam('token');
+                }
 
                 if (loginFailCallback !== null) {
 
