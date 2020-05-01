@@ -8,7 +8,8 @@
  */
 
 import { Injectable } from '@angular/core';
-import { HTTPManager } from 'turbocommons-ts';
+import { HTTPManager, HTTPManagerBaseRequest } from 'turbocommons-ts';
+import { DialogService } from './dialog.service';
 
 
 /**
@@ -18,8 +19,39 @@ import { HTTPManager } from 'turbocommons-ts';
 export class HTTPService extends HTTPManager {
 
 
-    constructor() {
+    constructor(public dialogService: DialogService) {
 
         super(true);
+    }
+    
+    
+    /**
+     * The same method as HTTPManager.execute but with the ability to enable or disable the dialogService modal busy state while the requests are running
+     *
+     * @see HTTPManager.execute()
+     */
+    execute(requests: string|string[]|HTTPManagerBaseRequest|HTTPManagerBaseRequest[],
+            finishedCallback: ((results: {url:string, response:string, isError:boolean, errorMsg:string, code:number}[], anyError:boolean) => void) | null = null,
+            progressCallback: null | ((completedUrl: string, totalRequests: number) => void) = null,
+            showModalBusyState = true){
+    
+        if(showModalBusyState){
+           
+           this.dialogService.addModalBusyState(); 
+        }
+    
+        super.execute(requests, (results, anyError) => { 
+            
+            if(showModalBusyState){
+                
+                this.dialogService.removeModalBusyState();
+            }
+            
+            if(finishedCallback !== null){
+                
+                finishedCallback(results, anyError);
+            }
+            
+         }, progressCallback);
     }
 }

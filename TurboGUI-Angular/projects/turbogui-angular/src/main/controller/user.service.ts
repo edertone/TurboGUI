@@ -11,7 +11,6 @@ import { Injectable } from '@angular/core';
 import { ConversionUtils, StringUtils } from 'turbocommons-ts';
 import { HTTPService } from '../controller/http.service';
 import { LocalizationService } from '../controller/localization.service';
-import { DialogService } from '../controller/dialog.service';
 import { HTTPServicePostRequest } from '../controller/httpservice/HTTPServicePostRequest';
 
 
@@ -23,13 +22,19 @@ export class UserService {
 
 
     /**
-     * The username that is currently defined
+     * Path to the web service that performs the user login
+     */
+    loginWebService = 'users/login';
+    
+
+    /**
+     * The username that is currently defined and will be used by the login methods
      */
     userName = '';
 
 
     /**
-     * The password for the user that is currently defined
+     * The password for the user that is currently defined and will be used by the login methods
      */
     password = '';
 
@@ -47,7 +52,6 @@ export class UserService {
 
 
     constructor(public httpService: HTTPService,
-                public dialogService: DialogService,
                 public ls: LocalizationService) {
     }
 
@@ -80,13 +84,14 @@ export class UserService {
 
 
     /**
-     * Perform a user login
+     * Perform a user login against the configured login webservice
+     * 
+     * @param loginOkCallback Method to be executed once the login finishes chorrectly. An object with all the service response data will be passed to this method
+     * @param loginFailCallback Method to be executed once the login finishes incorrectly.
      */
-    login(loginOkCallback: null | (() => void), loginFailCallback: null | (() => void)) {
+    login(loginOkCallback: null | ((response: any) => void) = null, loginFailCallback: null | (() => void) = null) {
 
-        this.dialogService.addModalBusyState();
-
-        const request = new HTTPServicePostRequest('users/login');
+        const request = new HTTPServicePostRequest(this.loginWebService);
         
         request.ignoreGlobalPostParams = true;
 
@@ -99,32 +104,22 @@ export class UserService {
 
         this.httpService.execute(request, (results: any) => {
 
-            this.dialogService.removeModalBusyState();
-
             if (results[0].response !== '') {
 
                 let response = JSON.parse(results[0].response);            
 
                 this._isLogged = true;
-                this._token = response[0];
-                this.httpService.setGlobalPostParam('token', response[0]);
+                this._token = response.token;
+                this.httpService.setGlobalPostParam('token', response.token);
 
                 if (loginOkCallback !== null) {
 
-                    loginOkCallback();
+                    loginOkCallback(response);
                 }
 
             } else {
 
-                this.userName = '';
-                this.password = '';
-                this._isLogged = false;
-                this._token = '';
-                
-                if(this.httpService.isGlobalPostParam('token')){
-                    
-                    this.httpService.deleteGlobalPostParam('token');
-                }
+                this._clearUserAndToken();
 
                 if (loginFailCallback !== null) {
 
@@ -138,10 +133,36 @@ export class UserService {
     /**
      * Perform the logout for the currently logged user
      */
-    logout() {
+    logout(logoutOkCallback: null | (() => void) = null) {
+        
+        const request = new HTTPServicePostRequest('users/logout');
+        
+        request.parameters = {
+            token: this._token
+        };
 
+        this.httpService.execute(request, () => {
+
+            this._clearUserAndToken();
+            
+            if (logoutOkCallback !== null) {
+
+                logoutOkCallback();
+            }
+        });
+    }
+    
+    
+    private _clearUserAndToken(){
+    
         this.userName = '';
         this.password = '';
         this._isLogged = false;
+        this._token = '';
+        
+        if(this.httpService.isGlobalPostParam('token')){
+            
+            this.httpService.deleteGlobalPostParam('token');
+        }    
     }
 }
