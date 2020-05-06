@@ -31,7 +31,7 @@ export class HTTPService extends HTTPManager {
      * @see HTTPManager.execute()
      */
     execute(requests: string|string[]|HTTPManagerBaseRequest|HTTPManagerBaseRequest[],
-            finishedCallback: ((results: {url:string, response:string, isError:boolean, errorMsg:string, code:number}[], anyError:boolean) => void) | null = null,
+            finishedCallback: ((results: {url:string, response:any, isError:boolean, errorMsg:string, code:number}[], anyError:boolean) => void) | null = null,
             progressCallback: null | ((completedUrl: string, totalRequests: number) => void) = null,
             showModalBusyState = true){
     

@@ -29,6 +29,7 @@ import { ElementCreatedDirective } from '../../view/directives/ElementCreatedDir
 import { ElementDestroyedDirective } from '../../view/directives/ElementDestroyedDirective';
 import { AutoFocusOnDisplayDirective } from '../../view/directives/AutoFocusOnDisplayDirective';
 import { AutoSelectTextOnFocusDirective } from '../../view/directives/AutoSelectTextOnFocusDirective';
+import { DialogMultipleOptionComponent } from '../../view/components/dialog-multiple-option/dialog-multiple-option.component';
 
 
 /**
@@ -46,6 +47,7 @@ import { AutoSelectTextOnFocusDirective } from '../../view/directives/AutoSelect
     declarations: [
         BusyStateBaseComponent,
         DialogSingleOptionComponent,
+        DialogMultipleOptionComponent,
         DialogSingleSelectionListComponent,
         ViewsContainerComponent,
         ButtonImageComponent,
@@ -73,6 +75,7 @@ import { AutoSelectTextOnFocusDirective } from '../../view/directives/AutoSelect
         ButtonImageComponent,
         ButtonContainerComponent,
         DialogSingleOptionComponent,
+        DialogMultipleOptionComponent,
         DialogSingleSelectionListComponent,
         ElementCreatedDirective,
         ElementDestroyedDirective,
