@@ -23,13 +23,14 @@ import { ViewsContainerComponent } from '../../view/components/views-container/v
 import { ButtonImageComponent } from '../../view/components/button-image/button-image.component';
 import { ButtonContainerComponent } from '../../view/components/button-container/button-container.component';
 import { DialogSingleOptionComponent } from '../../view/components/dialog-single-option/dialog-single-option.component';
+import { DialogTwoOptionComponent } from '../../view/components/dialog-two-option/dialog-two-option.component';
 import { DialogSingleSelectionListComponent } from '../../view/components/dialog-single-selection-list/dialog-single-selection-list.component';
+import { DialogMultipleOptionComponent } from '../../view/components/dialog-multiple-option/dialog-multiple-option.component';
 import { BrowserService } from '../../controller/browser.service';
 import { ElementCreatedDirective } from '../../view/directives/ElementCreatedDirective';
 import { ElementDestroyedDirective } from '../../view/directives/ElementDestroyedDirective';
 import { AutoFocusOnDisplayDirective } from '../../view/directives/AutoFocusOnDisplayDirective';
 import { AutoSelectTextOnFocusDirective } from '../../view/directives/AutoSelectTextOnFocusDirective';
-import { DialogMultipleOptionComponent } from '../../view/components/dialog-multiple-option/dialog-multiple-option.component';
 
 
 /**
@@ -47,6 +48,7 @@ import { DialogMultipleOptionComponent } from '../../view/components/dialog-mult
     declarations: [
         BusyStateBaseComponent,
         DialogSingleOptionComponent,
+        DialogTwoOptionComponent,
         DialogMultipleOptionComponent,
         DialogSingleSelectionListComponent,
         ViewsContainerComponent,
@@ -75,6 +77,7 @@ import { DialogMultipleOptionComponent } from '../../view/components/dialog-mult
         ButtonImageComponent,
         ButtonContainerComponent,
         DialogSingleOptionComponent,
+        DialogTwoOptionComponent,
         DialogMultipleOptionComponent,
         DialogSingleSelectionListComponent,
         ElementCreatedDirective,

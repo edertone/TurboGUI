@@ -1,0 +1,25 @@
+<h3>
+    {{data.texts[0]}}
+</h3>
+
+<p *ngIf="data.texts.length > 1">
+    {{data.texts[1]}}
+</p>
+
+<div class="buttonsContainer">
+
+    <button mat-raised-button color="primary" class="primaryButton"
+        (click)="dialogRef.close(0)">
+        
+        {{data.options[0]}}
+        
+    </button>
+    
+    <button mat-button
+        (click)="dialogRef.close(1)">
+        
+        {{data.options[1]}}
+        
+    </button>
+    
+</div>

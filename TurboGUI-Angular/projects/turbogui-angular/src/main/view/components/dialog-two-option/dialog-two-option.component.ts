@@ -13,16 +13,17 @@ import { DialogOptionsBaseComponent } from '../dialog-options-base/dialog-option
 
 
 /**
- * A dialog component that is designed to show more than one option buttons (usually more than two), to be used with dialog service
+ * A dialog component with two option buttons, to be used with dialog service.
+ * The first of the options is considered to be the primary one and will therefore have more visual accent
  */
 @Component({
-  selector: 'tg-dialog-multiple-option',
-  templateUrl: './dialog-multiple-option.component.html',
-  styleUrls: ['./dialog-multiple-option.component.scss']
+  selector: 'tg-dialog-two-option',
+  templateUrl: './dialog-two-option.component.html',
+  styleUrls: ['./dialog-two-option.component.scss']
 })
 
 
-export class DialogMultipleOptionComponent extends DialogOptionsBaseComponent {
+export class DialogTwoOptionComponent extends DialogOptionsBaseComponent {
 
     constructor(public dialogRef: MatDialogRef<DialogOptionsBaseComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
 
@@ -30,7 +31,12 @@ export class DialogMultipleOptionComponent extends DialogOptionsBaseComponent {
         
         if (data.texts.length < 1) {
 
-            throw new Error('DialogMultipleOptionComponent expects 2 texts: The title and optionally a description');
+            throw new Error('DialogTwoOptionComponent expects 2 texts: The title and optionally a description');
+        }
+
+        if (data.options.length !== 2) {
+
+            throw new Error('DialogTwoOptionComponent expects only two options');
         }
     }
 }

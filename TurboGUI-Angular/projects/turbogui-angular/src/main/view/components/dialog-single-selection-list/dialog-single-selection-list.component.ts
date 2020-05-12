@@ -15,7 +15,14 @@ import { StringUtils } from 'turbocommons-ts';
 
 
 /**
- * A dialog component with a single option button, to be used with dialog service
+ * A dialog component which allows us to select one single item from a list. The elements on that list are displayed on a table
+ * which may show a scroll if necessary when there are many elements on the list.
+ *
+ * texts parameter must contain the title, and optionally the description and submit button caption. If that caption is not
+ * privoded, the selection will be automatically performed once user clicks on an element on the list. Otherwise, the element will
+ * be selected on the list and the selection will be performed once the user clicks on the submit button.
+ *
+ * options parameter must contain the list of elements that will be displayed to the user  
  */
 @Component({
   selector: 'tg-dialog-single-selection-list',
@@ -45,14 +52,14 @@ export class DialogSingleSelectionListComponent extends DialogOptionsBaseCompone
 
         super();
 
-        if (data.texts.length < 2) {
+        if (data.texts.length < 1) {
 
-            throw new Error('DialogSingleSelectionListComponent expects 3 texts: The title, description and optionally the submit button caption');
+            throw new Error('DialogSingleSelectionListComponent expects 3 texts: The title, and optionally the description and submit button caption');
         }
         
         if (data.options.length < 1) {
 
-            throw new Error('DialogSingleSelectionListComponent expects more than one options');
+            throw new Error('DialogSingleSelectionListComponent expects one or more options');
         }
     }
     

@@ -15,6 +15,6 @@ This project uses libraries and dependencies from a variety of sources. To make 
     
       npm install libraryname@latest
       
-    For each one of the outdated libraries we want to upgrade
+        For each one of the outdated libraries we want to upgrade
     
-    - Copy the same version of the libraries that are updated at the root package.json file by npm install to projects/turbogui-angular/package.json
+- Copy the same version of the libraries that are updated at the root package.json file by npm install to projects/turbogui-angular/package.json
