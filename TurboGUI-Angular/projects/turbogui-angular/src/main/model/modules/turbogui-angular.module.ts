@@ -22,6 +22,7 @@ import { ViewsService } from '../../controller/views.service';
 import { ViewsContainerComponent } from '../../view/components/views-container/views-container.component';
 import { ButtonImageComponent } from '../../view/components/button-image/button-image.component';
 import { ButtonContainerComponent } from '../../view/components/button-container/button-container.component';
+import { DialogErrorComponent } from '../../view/components/dialog-error/dialog-error.component';
 import { DialogSingleOptionComponent } from '../../view/components/dialog-single-option/dialog-single-option.component';
 import { DialogTwoOptionComponent } from '../../view/components/dialog-two-option/dialog-two-option.component';
 import { DialogSingleSelectionListComponent } from '../../view/components/dialog-single-selection-list/dialog-single-selection-list.component';
@@ -47,6 +48,7 @@ import { AutoSelectTextOnFocusDirective } from '../../view/directives/AutoSelect
 
     declarations: [
         BusyStateBaseComponent,
+        DialogErrorComponent,
         DialogSingleOptionComponent,
         DialogTwoOptionComponent,
         DialogMultipleOptionComponent,
@@ -76,6 +78,7 @@ import { AutoSelectTextOnFocusDirective } from '../../view/directives/AutoSelect
         ViewsContainerComponent,
         ButtonImageComponent,
         ButtonContainerComponent,
+        DialogErrorComponent,
         DialogSingleOptionComponent,
         DialogTwoOptionComponent,
         DialogMultipleOptionComponent,

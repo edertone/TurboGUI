@@ -316,8 +316,8 @@ export class DialogService {
      *        dialog visual element that is shown to the user.
      * @param callback A function that will be called after the dialog is closed and will receive the numeric index for
      *        the option that's been selected by the user.
-     * @param modal False if the dialog can be closed by the user by clicking outside it, true if selecting an option is mandatory
-     *        to close the dialog
+     * @param modal True (default) if selecting an option is mandatory to close the dialog, false if the dialog can be closed
+     *        by the user by clicking outside it 
      */
     addOptionsDialog(width: string,
                      texts: string[],
@@ -344,6 +344,7 @@ export class DialogService {
             width: width,
             disableClose: modal,
             autoFocus: false,
+            closeOnNavigation: !modal,
             data: { texts: texts, options: options }
           });
 

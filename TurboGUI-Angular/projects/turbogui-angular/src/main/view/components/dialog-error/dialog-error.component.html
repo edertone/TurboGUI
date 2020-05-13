@@ -1,0 +1,23 @@
+<div class="titleAndIconContainer">
+    <h3>
+        {{data.texts[0]}}
+    </h3>
+    
+    <!-- error icon -->
+    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+        <path d="M0 0h24v24H0z" fill="none"/>
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="#ff0000" />
+    </svg>
+    
+</div>
+
+<p *ngIf="data.texts.length > 1">
+    {{data.texts[1]}}
+</p>
+
+<button mat-raised-button color="primary"
+    (click)="dialogRef.close(0)">
+    
+    {{data.options[0]}}
+    
+</button>

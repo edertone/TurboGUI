@@ -101,12 +101,12 @@ export class UserService {
         request.parameters = {
             data: encodedCredentials
         };
+        
+        request.successCallback = (response) => {
+        
+            if (response !== '') {
 
-        this.httpService.execute(request, (results: any) => {
-
-            if (results[0].response !== '') {
-
-                let response = JSON.parse(results[0].response);            
+                response = JSON.parse(response);            
 
                 this._isLogged = true;
                 this._token = response.token;
@@ -126,7 +126,9 @@ export class UserService {
                     loginFailCallback();
                 }
             }
-        });
+        };
+
+        this.httpService.execute(request);
     }
 
 
@@ -140,16 +142,18 @@ export class UserService {
         request.parameters = {
             token: this._token
         };
-
-        this.httpService.execute(request, () => {
-
+        
+        request.successCallback = () => {
+        
             this._clearUserAndToken();
             
             if (logoutOkCallback !== null) {
 
                 logoutOkCallback();
             }
-        });
+        };
+
+        this.httpService.execute(request);
     }
     
     
