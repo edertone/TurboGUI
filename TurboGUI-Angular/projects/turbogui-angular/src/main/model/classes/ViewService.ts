@@ -13,6 +13,8 @@ import { ViewsService } from '../../controller/views.service';
 
 /**
  * Defines the service base class for a view service class. All services that are used by views must extend this.
+ * We must create the view services as an @Injectable() angular class which will be globally available at any time, but we must take
+ * into consideration that the view model will only be instantiated when the view is active.
  */
 export abstract class ViewService<T extends ViewModel> {
 
