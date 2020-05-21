@@ -39,6 +39,13 @@ export abstract class ButtonBaseComponent implements OnInit {
      * Specifies if the button animations must rollback when the user releases the mouse or pointer after pressing it
      */
     @Input() releaseOnMouseUp = true;
+    
+    
+    /**
+     * Specifies the amount of milliseconds that the button will vibrate when it gets clicked (only on compatible devices and browsers)
+     * Set it to 0 to disable click vibration
+     */
+    @Input() vibrateOnClick = 20;
 
 
     /**
@@ -145,7 +152,6 @@ export abstract class ButtonBaseComponent implements OnInit {
     /**
      * Listens for the mouse down on the button component
      */
-    @HostListener('mousedown')
     @HostListener('pointerdown')
     onMouseDown() {
 
@@ -153,6 +159,11 @@ export abstract class ButtonBaseComponent implements OnInit {
             
             this.currentOpacity = this.clickOpacity;
             this.currentScale = 'scale(' + (this.clickScale as any as string) + ')';
+            
+            if (this.vibrateOnClick > 0 && window.navigator && window.navigator.vibrate) {
+                
+                window.navigator.vibrate(this.vibrateOnClick);
+            }
         }
     }
 
@@ -160,7 +171,6 @@ export abstract class ButtonBaseComponent implements OnInit {
     /**
      * Listens for the mouse up of the button component
      */
-    @HostListener('mouseup')
     @HostListener('pointerup')
     onMouseUp() {
 

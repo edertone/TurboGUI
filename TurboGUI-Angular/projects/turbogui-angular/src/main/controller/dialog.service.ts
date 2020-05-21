@@ -332,7 +332,7 @@ export class DialogService {
         }
 
         // Generate a string to uniquely identify this dialog on the list of active dialogs
-        const dialogHash = texts.join('') + options.join('');
+        const dialogHash = texts.join('') + options.join('') + dialogComponentClass.name;
 
         // identical dialogs won't be allowed at the same time
         if (this._activeDialogs.includes(dialogHash)) {
