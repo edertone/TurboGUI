@@ -314,7 +314,7 @@ export class DialogService {
      * @param options A list of strings that will be used as button captions for each one of the accepted dialog options
      * @param dialogComponentClass A class for a component that extends DialogOptionsBaseComponent, which will be the
      *        dialog visual element that is shown to the user.
-     * @param callback A function that will be called after the dialog is closed and will receive the numeric index for
+     * @param callback A function that will be called after the dialog is closed and will receive an object with the numeric index and value for
      *        the option that's been selected by the user.
      * @param modal True (default) if selecting an option is mandatory to close the dialog, false if the dialog can be closed
      *        by the user by clicking outside it 
@@ -323,7 +323,7 @@ export class DialogService {
                      texts: string[],
                      options: string[],
                      dialogComponentClass: Type<DialogOptionsBaseComponent>,
-                     callback: null | ((selectedOptionIndex: number) => void) = null,
+                     callback: null | ((selectedOption: {index:number, value: string}) => void) = null,
                      modal = true) {
 
         if (!this._isEnabled) {
@@ -370,7 +370,14 @@ export class DialogService {
 
             if (callback !== null) {
 
-                (callback as ((selectedOptionIndex: number) => void))(selectedOptionIndex);
+                let selectedOption = {index: selectedOptionIndex, value: ''};
+                
+                if(selectedOptionIndex >= 0){
+                    
+                    selectedOption.value = options[selectedOptionIndex];
+                }
+
+                (callback as ((selectedOption: {index:number, value: string}) => void))(selectedOption);
             }
         });
     }
