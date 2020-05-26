@@ -69,7 +69,8 @@ export class ViewsService {
 
 
     /**
-     * Create a new view instance with the specified type and add it to the current application views container.
+     * Create a new view instance with the specified type and add it to the current application views container. Any currently loaded 
+     * view will be removed
      *
      * Make sure this method is called when all the visual components of the application have been created (ngAfterViewInit)
      *
@@ -125,7 +126,7 @@ export class ViewsService {
 
 
     /**
-     * Delete the currently loaded view from the views container.
+     * Delete the currently loaded view from the views container, and leave it empty.
      * If no view is currently loaded, this method will do nothing
      */
     popView() {

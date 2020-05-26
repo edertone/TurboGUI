@@ -22,7 +22,7 @@ export abstract class ViewService<T extends ViewModel> {
     /**
      * Class requires a views service instance
      */
-    constructor(private readonly viewsService: ViewsService) {
+    constructor(public readonly viewsService: ViewsService) {
     }
 
 
