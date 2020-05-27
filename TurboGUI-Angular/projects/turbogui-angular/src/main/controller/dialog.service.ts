@@ -304,7 +304,8 @@ export class DialogService {
 
 
     /**
-     * Show a generic notification dialog with one or more options that can be used to close it.
+     * Show a dialog with one or more options that can be used to close it. We can use any of the predefined dialog types that are bundled with
+     * this library or extend DialogOptionsBaseComponent to create our own custom ones.
      *
      * @param width Specify the css value for the maximum width the dialog will have. As the dialog is responsive, the value will be automatically
               reduced if the available screen is not enough, and will reach the desired value otherwise. Note that height will be adapted to the contents
@@ -319,12 +320,12 @@ export class DialogService {
      * @param modal True (default) if selecting an option is mandatory to close the dialog, false if the dialog can be closed
      *        by the user by clicking outside it 
      */
-    addOptionsDialog(width: string,
-                     texts: string[],
-                     options: string[],
-                     dialogComponentClass: Type<DialogOptionsBaseComponent>,
-                     callback: null | ((selectedOption: {index:number, value: string}) => void) = null,
-                     modal = true) {
+    addDialog(width: string,
+              texts: string[],
+              options: string[],
+              dialogComponentClass: Type<DialogOptionsBaseComponent>,
+              callback: null | ((selectedOption: {index:number, value: string}) => void) = null,
+              modal = true) {
 
         if (!this._isEnabled) {
 
@@ -380,6 +381,28 @@ export class DialogService {
                 (callback as ((selectedOption: {index:number, value: string}) => void))(selectedOption);
             }
         });
+    }
+    
+    
+    /**
+     * Force the removal of all the dialogs that are currently visible.
+     *
+     * If no dialogs are currently visible, this method will do nothing
+     */
+    removeAllDialogs() {
+
+        if (!this._isEnabled) {
+
+            return;
+        }
+
+        for (const dialogRef of this._activeDialogInstances) {
+
+            dialogRef.close(-1);
+        }
+        
+        this._activeDialogs = [];
+        this._activeDialogInstances = [];
     }
 
 
