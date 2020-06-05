@@ -45,7 +45,7 @@ export abstract class ButtonBaseComponent implements OnInit {
      * Specifies the amount of milliseconds that the button will vibrate when it gets clicked (only on compatible devices and browsers)
      * Set it to 0 to disable click vibration
      */
-    @Input() vibrateOnClick = 20;
+    @Input() vibrateOnClick = 25;
 
 
     /**
