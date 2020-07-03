@@ -20,12 +20,13 @@
     },
     "homepage": "https://turbogui.org",
     "dependencies": {
+        "tslib": "^2.0.0",
         "turbocommons-ts": "^3.5.0"
     },
     "peerDependencies": {
-        "@angular/common": "~9.0.3",
-        "@angular/core": "~9.0.3",
-        "@angular/animations": "^9.0.3",
+        "@angular/common": "~10.0.2",
+        "@angular/core": "~10.0.2",
+        "@angular/animations": "^10.0.2",
         "@angular/cdk": "^9.1.0",
         "@angular/material": "^9.1.0"
     }
