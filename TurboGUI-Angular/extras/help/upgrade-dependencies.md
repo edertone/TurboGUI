@@ -13,8 +13,6 @@ This project uses libraries and dependencies from a variety of sources. To make 
     
     Update the package.json versions based on the command result, by running:
     
-      npm install libraryname@latest
-      
-        For each one of the outdated libraries we want to upgrade
+      npm install libraryname1@latest libraryname2@latest libraryname3@latest
     
 - Copy the same version of the libraries that are updated at the root package.json file by npm install to projects/turbogui-angular/package.json
