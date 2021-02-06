@@ -43,8 +43,8 @@ export class HTTPService extends HTTPManager {
     /**
      * The same method as HTTPManager.execute but with the ability to enable several options which are specific to this service:
      *
-     * - HTTPService.NO_MODAL_BUSY_STATE To prevent the locking of UI while the request is running, which is the default behaviour
-     * - HTTPService.DISABLE_ERROR_HANDLING To prevent an error dialog from appearing when a request fails, which is the default behaviour
+     * - HTTPService.NO_MODAL_BUSY_STATE To prevent the default behaviour of locking the UI while the request is running
+     * - HTTPService.DISABLE_ERROR_HANDLING To prevent the default behaviour of showing a detailed error dialog when a request fails
      *
      * @see HTTPManager.execute()
      */
