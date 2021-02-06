@@ -32,6 +32,8 @@ export class DelayedMethodCallManager{
      * we can queue as many times as we want a specific method call and only the last one will be executed under a defined window of time.
      * So for example if a user types keys on an input, we can buffer it for x seconds and perform a request only with the last of its changes.
      * Lots of other UI interaction usages may be interesting with this class.
+     *
+     * @param delay Amount of time to wait before executing the operations . Defaults to 1000 miliseconds.
      */
     constructor(private delay = 1000) {
        
@@ -40,7 +42,7 @@ export class DelayedMethodCallManager{
     
     /**
      * Add a method to be called once the delay time is finished.
-     * Every time a new call is pushed, the delay timer is restarted. When the delay time finishes, only the
+     * Every time a new call to queue is performed, the delay timer is restarted. When the delay time finishes, only the
      * last of the methods that have been pushed by call() will be executed.
      *
      * Use it to queue several user input operations that should be called only once in a period of time, while waiting
@@ -81,8 +83,7 @@ export class DelayedMethodCallManager{
     
     
     /**
-     * Abort all methods that may have been pushed to this class and are waiting to be executed, so none of them
-     * is executed when the delay time finishes. Basically everything is cleared and stoped when this method is called.
+     * Auxiliary function that performs the call to the latest queued method
      */
     private run(){
         
