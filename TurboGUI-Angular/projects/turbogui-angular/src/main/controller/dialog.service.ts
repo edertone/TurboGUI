@@ -1,4 +1,4 @@
-/*
+/**
  * TurboGUI is A library that helps with the most common and generic UI elements and functionalities
  *
  * Website : -> http://www.turbogui.org
@@ -242,6 +242,9 @@ export class DialogService {
 
     /**
      * Show a non modal snackbar notification to the user (Only one snack-bar can ever be opened at the same time).
+     *
+     * Snackbars inform users of a process that an app has performed or will perform. They appear temporarily, towards the bottom or top of the screen.
+     * They shouldn’t interrupt the user experience, and they don’t require user input to disappear.
      *
      * @param config A MatSnackBarConfig instance with the customizations we want for this snackbar
      * @param message The message to show on the snackbar

@@ -1,4 +1,4 @@
-/*
+/**
  * TurboGUI is A library that helps with the most common and generic UI elements and functionalities
  *
  * Website : -> http://www.turbogui.org
