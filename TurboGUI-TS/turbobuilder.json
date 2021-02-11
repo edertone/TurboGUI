@@ -1,0 +1,65 @@
+{
+
+    "$schema": "https://raw.githubusercontent.com/edertone/TurboBuilder/master/TurboBuilder-Node/src/main/resources/json-schema/turbobuilder.schema.json",
+
+	"metadata": {
+		"name": "turbogui-ts",
+		"description": "A library that tries to help with the most common user interface elements on several frameworks and platforms",
+		"builderVersion": "5.0.0"
+	},
+	
+	"validate": {
+	    "projectStructure" : {                    
+            "readmeFileMandatory": false
+        },
+        "filesContent" : {
+            "copyPasteDetect":[
+                {
+                    "path": "src/main",
+                    "maxPercentErrorLevel": 1,
+                    "maxPercentErrorDifference": 1,
+                    "report": "html"
+                },
+                {
+                    "path": "src/test",
+                    "maxPercentErrorLevel": 0,
+                    "maxPercentErrorDifference": 5,
+                    "report": "html"
+                }
+            ],
+    	    "copyrightHeaders": [
+    	    	{
+    	    		"path": "extras/copyright headers/TsFiles-Header.txt",
+    	    		"affectedPaths": ["src"],
+    	    		"includes": [".ts"],
+    	    		"excludes": []
+    	    	},
+    	    	{
+    	    		"path": "extras/copyright headers/JsFiles-Header.txt",
+    	    		"affectedPaths": ["src"],
+    	    		"includes": [".js"],
+    	    		"excludes": [".json"]
+    	    	}
+    	    ]
+        }
+    },
+    
+    "build": {
+    
+	    "lib_ts" : {
+	        "declaration": true,
+	        "strict": true,
+	        "sourceMap": true,
+	        "targets": [
+	            {"folder": "ts", "jsTarget": "ES5"},
+	            {"folder": "es5", "jsTarget": "ES5", "mergedFile": "turbogui-es5", "globalVar": "org_turbogui"},
+	            {"folder": "es6", "jsTarget": "ES6", "mergedFile": "turbogui-es6", "globalVar": "org_turbogui"}
+	        ]
+	    }
+    },
+    
+    "release": {
+    },
+    
+    "test": []
+}
