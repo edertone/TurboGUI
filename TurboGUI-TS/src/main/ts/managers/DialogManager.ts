@@ -152,10 +152,24 @@ export class DialogManager{
     }
     
     
-    addSideNav(contents:any, options:{ side?: string, width?: string, modal?: boolean, dropShadow?: number, showCloseButton?: boolean,
-               class?: string, fullHeight?: boolean, showTime?: number} = {}){        
+    /**
+     * Show a sidenav layer with the specified contents.
+     *
+     * @param content html content that will be placed inside the sidenav layer to be shown
+     * @param options An optional object with all the customizations we want to apply to the generated sidenav layer:
+     *        - side ('LEFT' by default): To define from which side of the screen will the sidenav appear. Accepted values: 'LEFT', 'RIGHT'
+     *        - width ('50%' by default): A css value to specify the sidenav horizontal size (percentual values are also accepted).
+     *        - modal (true by default): Specifies if everything below the sidenav gets locked
+     *        - dropShadow (0.4 by default): Specifies the opacity for the shadow that will be shown below the sidenav. If set to 0, no shadow will be shown.
+     *        - closeOnClickOutside (true by default): Specifies if the sidenav will be closed when the user clicks outside it.
+     *        - class: Specifies the css class that will be applied to the sidenav element
+     *        - fullHeight: TODO - analyze this feature
+     *        - showTime (300 by default): The amount of miliseconds that will take the sidenav animation to complete
+     */
+    addSideNav(content:HTMLElement, options:{ side?: string, width?: string, modal?: boolean, dropShadow?: number,
+               closeOnClickOutside?:boolean, class?: string, fullHeight?: boolean, showTime?: number} = {}){        
         
-        // TODO - modal, showCloseButton, fullHeight
+        // TODO - modal, fullHeight
         
         if (!this._isEnabled) {
 
@@ -167,7 +181,9 @@ export class DialogManager{
             throw new Error('Trying to show a side nav while another one is still visible');
         }
         
+        options.modal = options.hasOwnProperty('modal') ? options.modal : true;
         options.dropShadow = options.dropShadow ? options.dropShadow : .4;
+        options.closeOnClickOutside = options.hasOwnProperty('closeOnClickOutside') ? options.closeOnClickOutside : true;
         options.showTime = options.showTime ? options.showTime : 300;
         
         if(options.modal){
@@ -175,7 +191,6 @@ export class DialogManager{
             // TODO - lock everything  below the dialog
         }
         
-        // Create the side nav container
         let sideNavContainer = document.createElement('div');      
         
         let classStyles:any = {}; 
@@ -192,12 +207,12 @@ export class DialogManager{
         sideNavContainer.style.position = 'fixed';
         sideNavContainer.style.overflowX = 'hidden'
         sideNavContainer.style.height = '100%';
-        sideNavContainer.style.transition = 'opacity ' + options.showTime + 'ms ease-out, width ' + (options.showTime * .67) + 'ms ease-out';
+        sideNavContainer.style.transition = 'opacity ' + (options.showTime * 0.7) + 'ms ease-out, width ' + options.showTime + 'ms ease-out';
         sideNavContainer.dataset.showTime = String(options.showTime);
         
-        // Add the shadow layer if requested
         if(options.dropShadow > 0){
             
+            sideNavContainer.style.boxShadow = '-4px 0px 14px 8px #00000061';
             sideNavContainer.dataset.dropShadow = String(options.dropShadow);
             this._addShadowLayer(options.dropShadow, options.showTime);  
         }
@@ -225,8 +240,7 @@ export class DialogManager{
         }
                 
         // Add the contents to the sidenav container
-//        let link1 = document.createElement('a');
-//        sideNavContainer.appendChild(link1);
+        sideNavContainer.appendChild(content.cloneNode(true));
 
         // Add the container to the body and trigger the element animation by changing the width and opacity      
         document.body.appendChild(sideNavContainer);
@@ -239,7 +253,10 @@ export class DialogManager{
         // Wait for the show time before adding the click outside detection
         setTimeout(() => {
             
-            document.addEventListener('mouseup', this.sideNavOutsideClickListener);
+            if(options.closeOnClickOutside){
+                
+                document.addEventListener('mouseup', this.sideNavOutsideClickListener);
+            }
         
             this._activeSideNav = sideNavContainer;
             
