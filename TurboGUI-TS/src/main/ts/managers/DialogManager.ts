@@ -202,11 +202,11 @@ export class DialogManager{
         }
           
         sideNavContainer.style.top = '0';
+        sideNavContainer.style.bottom = '0';
         sideNavContainer.style.width = '0';
         sideNavContainer.style.opacity = '0';
         sideNavContainer.style.position = 'fixed';
         sideNavContainer.style.overflowX = 'hidden'
-        sideNavContainer.style.height = '100%';
         sideNavContainer.style.transition = 'opacity ' + (options.showTime * 0.7) + 'ms ease-out, width ' + options.showTime + 'ms ease-out';
         sideNavContainer.dataset.showTime = String(options.showTime);
         
