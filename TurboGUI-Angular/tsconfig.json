@@ -1,23 +1,39 @@
-/*
-  This is a "Solution Style" tsconfig.json file, and is used by editors and TypeScript’s language server to improve development experience.
-  It is not intended to be used to perform a compilation.
-
-  To learn more about this file see: https://angular.io/config/solution-tsconfig.
-*/
 {
-  "files": [],
-  "references": [
-    {
-      "path": "./src/tsconfig.app.json"
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "downlevelIteration": true,
+    "importHelpers": true,
+    "outDir": "./target/out-tsc",
+    "sourceMap": true,
+    "declaration": false,
+    "module": "es2020",
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es2015",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2018",
+      "dom"
+    ],
+    "paths": {
+      "turbogui-angular": [
+        "target/turbogui-angular"
+      ],
+      "turbogui-angular/*": [
+        "target/turbogui-angular/*"
+      ]
     },
-    {
-      "path": "./src/tsconfig.spec.json"
-    },
-    {
-      "path": "./projects/turbogui-angular/tsconfig.lib.json"
-    },
-    {
-      "path": "./projects/turbogui-angular/tsconfig.spec.json"
-    }
-  ]
+    "strict": true,
+    "strictPropertyInitialization": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "plugins": [
+      { "name": "@angular/language-service"},
+      { "name": "tslint-language-service"}
+    ]
+  }
 }
