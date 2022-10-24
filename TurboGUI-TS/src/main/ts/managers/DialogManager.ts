@@ -9,6 +9,7 @@
  
    
 import { CSSUtils } from '../utils/CSSUtils';
+import { LayoutUtils } from '../utils/LayoutUtils';
 
 
 /**
@@ -104,6 +105,138 @@ export class DialogManager{
 
         // TODO - translate from angular version
     }
+    
+    
+    /**
+     * Show an animated tooltip
+     *
+     * @param text The text to show
+     * @param element The element to which the tooltip will be aligned
+     * @param options An optional object with all the customizations we want to apply to the generated tooltip:
+     *        - horizontalPos ('center' by default). The horizontal tooltip position relative to the element. Allowed values: center, left, right
+     *        - verticalPos ('top' by default). The vertical tooltip position relative to the element. Allowed values: top, bottom, center
+     *        - offsetX (0 by default). Used to displace the horizontal center by the specified amount
+     *        - offsetY (0 by default). Used to displace the vertical center by the specified amount
+     *        - class: The name of a css class to apply to the tooltip so we can customize it
+     *        - timeout: The miliseconds it will take for the tooltip to close automatically after being shown
+     *        - closeOnClick: (true by default). Set it to true if the tooltip has to be closed by a user click on it, false otherwise
+     *        - showTime: The duration of the fade show and hide animations in miliseconds
+     * 
+     * @return void
+     */
+    addToolTip(text:string, element:HTMLElement, options:{ horizontalPos?:string, verticalPos?:string, offsetX?:number, offsetY?:number,
+               class?:string, timeout?:number, closeOnClick?:boolean, showTime?:number } = {}) {
+
+        if (!this._isEnabled) {
+
+            return;
+        }
+        
+        options.horizontalPos = options.hasOwnProperty('horizontalPos') ? options.horizontalPos : "center";
+        options.verticalPos = options.hasOwnProperty('verticalPos') ? options.verticalPos : "top";
+        options.offsetX = options.hasOwnProperty('offsetX') ? options.offsetX : 0;
+        options.offsetY = options.hasOwnProperty('offsetY') ? options.offsetY : 0;
+        options.timeout = options.hasOwnProperty('timeout') ? options.timeout : 2500;
+        options.closeOnClick = options.hasOwnProperty('closeOnClick') ? options.closeOnClick : true;
+        options.showTime = options.showTime ? options.showTime : 400;
+        
+        // Create the tool tip body
+        let toolTipBody = document.createElement('div');
+        
+        let cssClass:any = {}; 
+        
+        if(options.class){
+            
+            toolTipBody.className = options.class;
+            cssClass = CSSUtils.getStylesFromClass(options.class);
+        }
+        
+        let cssBorderColor = cssClass.borderColor ? cssClass.borderColor : '#222';
+        let cssBorderWidth = cssClass.borderWidth ? parseInt(cssClass.borderWidth).toString() : '2';
+               
+        toolTipBody.style.border = cssClass.border ? cssClass.border : 'solid ' + cssBorderWidth + 'px ' + cssBorderColor;     
+        toolTipBody.style.borderColor = cssClass.borderColor ? cssClass.borderColor : toolTipBody.style.borderColor;     
+        toolTipBody.style.borderRadius = cssClass.borderRadius ? cssClass.borderRadius : '10px';     
+        toolTipBody.style.backgroundColor = cssClass.backgroundColor ? cssClass.backgroundColor : '#707070';
+        toolTipBody.style.boxShadow = cssClass.boxShadow ? cssClass.boxShadow : '#999999 0px 0px 6px 3px';
+        toolTipBody.style.padding = '0px 20px';
+        
+        // Create the tool tip text element
+        let toolTipText = document.createElement('p');
+        toolTipText.innerText = text;
+        toolTipText.style.color = cssClass.color ? cssClass.color : '#fff';
+        toolTipText.style.fontWeight = cssClass.fontWeight ? cssClass.fontWeight : 'normal';
+        toolTipText.style.fontSize = cssClass.fontSize ? cssClass.fontSize : toolTipText.style.fontSize;
+                
+        // Create the tool tip arrow
+        let toolTipArrow = document.createElement('div');
+        toolTipArrow.style.margin = 'auto';
+        toolTipArrow.style.width = toolTipArrow.style.height = '0';
+        toolTipArrow.style.borderLeft = toolTipArrow.style.borderRight = '8px solid transparent';
+        toolTipArrow.style.zIndex = cssClass.zIndex ? cssClass.zIndex : '40000001';
+        
+        // Create the tool tip container
+        let toolTipContainer = document.createElement('div');      
+        toolTipContainer.style.opacity = '0';
+        toolTipContainer.style.position = 'absolute';
+        toolTipContainer.style.display = 'flex';
+        toolTipContainer.style.transition = 'opacity ' + options.showTime + 'ms ease-out, top ease-out 500ms';
+        toolTipContainer.style.zIndex = cssClass.zIndex ? cssClass.zIndex : '40000000';
+        
+        switch(options.verticalPos){
+            
+            case 'bottom': case 'bottomIn':
+                toolTipContainer.style.flexDirection = 'column-reverse';
+                toolTipArrow.style.borderBottom = '8px solid ' + cssBorderColor;
+                break;
+                
+            default:
+                toolTipContainer.style.flexDirection = 'column';
+                toolTipArrow.style.borderTop = '8px solid ' + cssBorderColor;
+        }
+                
+        toolTipBody.appendChild(toolTipText);      
+        toolTipContainer.appendChild(toolTipBody);
+        toolTipContainer.appendChild(toolTipArrow);        
+        document.body.appendChild(toolTipContainer);
+        
+        function positionToolTip(){
+            
+            LayoutUtils.centerElementTo(toolTipContainer, element, { horizontalMode: options.horizontalPos,
+                verticalMode: options.verticalPos, offsetX: options.offsetX, offsetY: options.offsetY });
+        }
+        
+        positionToolTip();
+        
+        // Trigger the element animation by changing the animated styles     
+        toolTipContainer.style.top = (parseInt(toolTipContainer.style.top) + 10) + "px";
+        window.getComputedStyle(toolTipContainer).opacity;
+        window.getComputedStyle(toolTipContainer).top;
+        
+        toolTipContainer.style.opacity = "1";
+        toolTipContainer.style.top = (parseInt(toolTipContainer.style.top) - 10) + "px";
+                
+        window.addEventListener('resize', positionToolTip);
+        
+        function removeToolTip() {
+            
+            toolTipContainer.style.opacity = "0";
+             
+            setTimeout(() => {
+                
+                toolTipContainer.remove();            
+                window.removeEventListener('resize', positionToolTip);
+                
+            }, options.showTime);
+        }
+        
+        if(options.closeOnClick){
+            
+            toolTipBody.addEventListener('click', removeToolTip);
+        }
+        
+        setTimeout(removeToolTip, options.timeout);
+    }
 
 
     /**
@@ -193,21 +326,21 @@ export class DialogManager{
         
         let sideNavContainer = document.createElement('div');      
         
-        let classStyles:any = {}; 
+        let cssClass:any = {}; 
         
         if(options.class){
             
             sideNavContainer.className = options.class;
-            classStyles = CSSUtils.getStylesFromClass(options.class);
+            cssClass = CSSUtils.getStylesFromClass(options.class);
         }
           
-        sideNavContainer.style.top = '0';
-        sideNavContainer.style.bottom = '0';
-        sideNavContainer.style.width = '0';
         sideNavContainer.style.opacity = '0';
         sideNavContainer.style.position = 'fixed';
         sideNavContainer.style.overflowX = 'hidden'
+        sideNavContainer.style.top = sideNavContainer.style.bottom = sideNavContainer.style.width = '0';
         sideNavContainer.style.transition = 'opacity ' + (options.showTime * 0.7) + 'ms ease-out, width ' + options.showTime + 'ms ease-out';
+        sideNavContainer.style.backgroundColor = cssClass.backgroundColor ? sideNavContainer.style.backgroundColor : '#111';
+        sideNavContainer.style.zIndex = cssClass.zIndex ? sideNavContainer.style.zIndex : '500000000';
         sideNavContainer.dataset.showTime = String(options.showTime);
         
         if(options.dropShadow > 0){
@@ -215,18 +348,6 @@ export class DialogManager{
             sideNavContainer.style.boxShadow = '-4px 0px 14px 8px #00000061';
             sideNavContainer.dataset.dropShadow = String(options.dropShadow);
             this._addShadowLayer(options.dropShadow, options.showTime);  
-        }
-        
-        // Set a default background color if not specified by the provided css class
-        if(!classStyles.backgroundColor){
-        
-            sideNavContainer.style.backgroundColor = '#111';    
-        }
-        
-        // Set a default z index if not specified by the provided css class
-        if(!classStyles.zIndex){
-        
-            sideNavContainer.style.zIndex = '50000000';
         }
         
         // Place the side nav at the left or right as requested
@@ -326,14 +447,13 @@ export class DialogManager{
             
             this._activeShadowLayer = document.createElement('div');
                 
-            this._activeShadowLayer.style.position = 'fixed';
-            this._activeShadowLayer.style.left = '0';
-            this._activeShadowLayer.style.right = '0';
-            this._activeShadowLayer.style.top = '0';
-            this._activeShadowLayer.style.bottom = '0';
-            this._activeShadowLayer.style.backgroundColor = '#000';           
             this._activeShadowLayer.style.opacity = '0';
+            this._activeShadowLayer.style.position = 'fixed';
+            this._activeShadowLayer.style.left = this._activeShadowLayer.style.right = '0';
+            this._activeShadowLayer.style.top = this._activeShadowLayer.style.bottom = '0';
+            this._activeShadowLayer.style.backgroundColor = '#000';           
             this._activeShadowLayer.style.transition = 'opacity ' + time + 'ms ease-out';
+            this._activeShadowLayer.style.zIndex = '400000000';
             this._activeShadowLayer.dataset.time = String(time);
         
             document.body.appendChild(this._activeShadowLayer);

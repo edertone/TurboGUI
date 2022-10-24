@@ -5,7 +5,7 @@
 	"metadata": {
 		"name": "turbogui-ts",
 		"description": "A library that tries to help with the most common user interface elements on several frameworks and platforms",
-		"builderVersion": "5.0.0"
+		"builderVersion": "7.0.2"
 	},
 	
 	"validate": {
@@ -61,5 +61,7 @@
     "release": {
     },
     
-    "test": []
+    "test": {
+        "enabledTests": []
+    }
 }

@@ -16,3 +16,4 @@ export { DialogManager } from './managers/DialogManager';
 // Utils package
 export { CSSUtils } from './utils/CSSUtils';
 export { DOMUtils } from './utils/DOMUtils';
+export { LayoutUtils } from './utils/LayoutUtils';

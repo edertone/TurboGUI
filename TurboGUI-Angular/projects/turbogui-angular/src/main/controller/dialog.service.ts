@@ -238,6 +238,15 @@ export class DialogService {
 
         this._isShowingBusyState = false;
     }
+    
+    
+    /**
+     * TODO - adapt from TS version
+     */
+    addToolTip() {
+
+        // TODO - adapt from TS version
+    }
 
 
     /**
