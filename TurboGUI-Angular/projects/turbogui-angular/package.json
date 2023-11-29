@@ -21,7 +21,7 @@
     "homepage": "https://turbogui.org",
     "dependencies": {
         "tslib": "^2.0.0",
-        "turbocommons-ts": "^3.7.0"
+        "turbocommons-ts": "^3.9.0"
     },
     "peerDependencies": {
         "@angular/common": "~11.2.10",

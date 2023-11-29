@@ -158,12 +158,7 @@ export abstract class ButtonBaseComponent implements OnInit {
         if(this._enabled){
             
             this.currentOpacity = this.clickOpacity;
-            this.currentScale = 'scale(' + (this.clickScale as any as string) + ')';
-            
-            if (this.vibrateOnClick > 0 && window.navigator && window.navigator.vibrate) {
-                
-                window.navigator.vibrate(this.vibrateOnClick);
-            }
+            this.currentScale = 'scale(' + (this.clickScale as any as string) + ')'; 
         }
     }
 
@@ -174,10 +169,18 @@ export abstract class ButtonBaseComponent implements OnInit {
     @HostListener('pointerup')
     onMouseUp() {
 
-        if (this._enabled && this.releaseOnMouseUp) {
-
-            this.currentOpacity = this.defaultOpacity;
-            this.currentScale = 'scale(' + (this.defaultScale as any as string) + ')';
+        if (this._enabled) {
+            
+            if (this.vibrateOnClick > 0 && window.navigator && window.navigator.vibrate) {
+                
+                window.navigator.vibrate(this.vibrateOnClick);
+            }
+            
+            if(this.releaseOnMouseUp){
+                
+                this.currentOpacity = this.defaultOpacity;
+                this.currentScale = 'scale(' + (this.defaultScale as any as string) + ')';
+            }
         }
     }
 }
