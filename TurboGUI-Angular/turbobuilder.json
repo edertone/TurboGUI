@@ -3,7 +3,7 @@
     "metadata": {
         "name": "turbogui-angular",
         "description": "A library that tries to help with the most common user interface elements on several frameworks and platforms",
-        "builderVersion": "6.0.0"
+        "builderVersion": "7.0.2"
     },
     "validate": {
         "runBeforeBuild": true,

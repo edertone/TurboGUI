@@ -9,8 +9,10 @@
 
 import { NgModule } from '@angular/core';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BusyStateBaseComponent } from '../../view/components/busy-state-base/busy-state-base.component';
 import { DialogService } from '../../controller/dialog.service';
@@ -42,7 +44,9 @@ import { AutoSelectTextOnFocusDirective } from '../../view/directives/AutoSelect
     imports: [
         MatDialogModule,
         MatSnackBarModule,
+        MatInputModule,
         MatButtonModule,
+        MatFormFieldModule,
         BrowserAnimationsModule
     ],
 

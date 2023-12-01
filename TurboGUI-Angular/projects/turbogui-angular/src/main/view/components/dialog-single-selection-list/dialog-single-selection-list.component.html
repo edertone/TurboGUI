@@ -6,15 +6,24 @@
     {{data.texts[1]}}
 </p>
 
+<mat-form-field *ngIf="data.texts.length > 2 &amp;&amp; !stringUtils.isEmpty(data.texts[2])"
+    class="searchItemInputContainer">
+    
+    <input matInput autoFocusOnDisplay
+        placeholder="{{data.texts[2]}}"
+        (input)="onSearchChange($event.target)">
+        
+</mat-form-field>
+
 <div class="listItemsContainer"
     [style.max-height]="getListItemsContainerMaxheight()">
 
     <div class="listItemContainer"
         [style.background-color]="selectedItemIndex === i ? '#90d1ffad' : (i % 2 === 0 ? 'initial' : '#00000009')"
-        *ngFor="let item of data.options; let i = index"
-        (click)="data.texts.length < 3 ? dialogRef.close(i) : selectedItemIndex = i">
+        *ngFor="let item of filteredOptions; let i = index; trackBy: trackByFn"
+        (click)="data.texts.length < 4 ? dialogRef.close(i) : selectedItemIndex = i">
     
-        <p>
+        <p *ngIf="item !== ''">
             {{item}}
         </p>
     
@@ -25,8 +34,8 @@
 <button mat-raised-button color="primary"
     [disabled]="selectedItemIndex < 0"
     (click)="dialogRef.close(selectedItemIndex)"
-    *ngIf="data.texts.length > 2">
+    *ngIf="data.texts.length > 3">
 
-    {{data.texts[2]}}
+    {{data.texts[3]}}
     
 </button>

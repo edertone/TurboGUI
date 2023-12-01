@@ -17,10 +17,12 @@ import { StringUtils } from 'turbocommons-ts';
 /**
  * A dialog component which allows us to select one single item from a list. The elements on that list are displayed on a table
  * which may show a scroll if necessary when there are many elements on the list.
+ * 
+ * It also allows us to filter inside the list with a custom text that we can type into a search input, which is optional.
  *
- * texts parameter must contain the title, and optionally the description and submit button caption. If that caption is not
- * privoded, the selection will be automatically performed once user clicks on an element on the list. Otherwise, the element will
- * be selected on the list and the selection will be performed once the user clicks on the submit button.
+ * texts parameter must contain the title, the description (optional), the filter input title (optional), and the submit button caption.
+ * If that caption is not provided, the selection will be automatically performed once user clicks on an element on the list. Otherwise, 
+ * the element will be selected on the list and the selection will be performed once the user clicks on the submit button.
  *
  * options parameter must contain the list of elements that will be displayed to the user  
  */
@@ -39,6 +41,26 @@ export class DialogSingleSelectionListComponent extends DialogOptionsBaseCompone
      */
     stringUtils = StringUtils;
     
+    /** 
+     * Contains the list of elements that will be directly shown to the user at the component list.
+     * It may be filtered or not depending on this component setup and the user input
+     */
+    filteredOptions:string[] = [];
+    
+    
+    /**
+     * Contains the original list of elements that are provided to be listed on this component before
+     * being possibly filtered. It is only used as a backup, not shown to the user
+     */
+    private originalOptions:string[] = [];
+    
+    
+    /**
+     * The same list as the originally provided but processed for a better text search.
+     * It will be used to perform the search, but not shown to the user.
+     */
+    private originalOptionsFullTextSearch:string[] = [];
+       
     
     /**
      * Stores the index for the element that's been selected by the user
@@ -54,12 +76,20 @@ export class DialogSingleSelectionListComponent extends DialogOptionsBaseCompone
 
         if (data.texts.length < 1) {
 
-            throw new Error('DialogSingleSelectionListComponent expects 3 texts: The title, and optionally the description and submit button caption');
+            throw new Error('DialogSingleSelectionListComponent expects 4 texts: The title, the description (optional), the filter input title (optional), and the submit button caption');
         }
         
         if (data.options.length < 1) {
 
             throw new Error('DialogSingleSelectionListComponent expects one or more options');
+        }
+        
+        this.originalOptions = data.options;
+        
+        for(let option of this.originalOptions){
+            
+            this.filteredOptions.push(option);
+            this.originalOptionsFullTextSearch.push(StringUtils.formatForFullTextSearch(option));
         }
     }
     
@@ -71,4 +101,35 @@ export class DialogSingleSelectionListComponent extends DialogOptionsBaseCompone
         
         return (this.browserService.getWindowHeight() * 0.6) + 'px';
     }
+
+
+    /**
+     * When the user types a value on the input element to filter the list, this method will perform
+     * that filtering and refresh the list
+     */
+    onSearchChange(input:HTMLInputElement){
+
+        this.selectedItemIndex = -1;
+       
+        let inputValue = StringUtils.formatForFullTextSearch(input.value);
+
+        for (let i = 0; i < this.originalOptionsFullTextSearch.length; i++){
+
+            if(inputValue === '' ||
+               this.originalOptionsFullTextSearch[i].indexOf(inputValue) >= 0){
+
+                this.filteredOptions[i] = this.originalOptions[i];
+
+            }else{
+
+                this.filteredOptions[i] = '';
+            }
+        }
+    }
+    
+    /**
+     * This method is used to greatly improve ngFor performance with arrays of primitive values. It tells the refresh
+     * function to work by index instead of by value. The change in performance when refreshing the list is massive. 
+     */
+    trackByFn = (index: number, _value: string) => index;
 }
