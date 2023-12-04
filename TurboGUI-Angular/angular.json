@@ -147,18 +147,6 @@
             "tsConfig": "projects/turbogui-angular/tsconfig.spec.json",
             "karmaConfig": "projects/turbogui-angular/karma.conf.js"
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/turbogui-angular/tsconfig.lib.json",
-              "projects/turbogui-angular/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     }

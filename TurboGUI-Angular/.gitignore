@@ -44,6 +44,7 @@ thumbs.db
 
 
 # misc
+/.angular/cache
 /.sass-cache
 /connect.lock
 /coverage
