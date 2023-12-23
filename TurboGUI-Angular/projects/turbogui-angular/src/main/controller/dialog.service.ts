@@ -9,8 +9,8 @@
 
 import { ArrayUtils, NumericUtils } from 'turbocommons-ts';
 import { Type, Injectable, ComponentFactoryResolver, Injector, ApplicationRef, Renderer2, RendererFactory2 } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatLegacySnackBar as MatSnackBar, MatLegacySnackBarConfig as MatSnackBarConfig } from '@angular/material/legacy-snack-bar';
 import { BusyStateBaseComponent } from '../view/components/busy-state-base/busy-state-base.component';
 import { ComponentPortal, DomPortalOutlet } from '@angular/cdk/portal';
 import { DialogOptionsBaseComponent } from '../view/components/dialog-options-base/dialog-options-base.component';
