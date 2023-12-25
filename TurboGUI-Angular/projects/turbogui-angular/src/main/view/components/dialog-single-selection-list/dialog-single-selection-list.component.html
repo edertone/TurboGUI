@@ -9,8 +9,8 @@
 <mat-form-field *ngIf="data.texts.length > 2 &amp;&amp; !stringUtils.isEmpty(data.texts[2])"
     class="searchItemInputContainer">
     
+    <mat-label>{{data.texts[2]}}</mat-label>
     <input matInput autoFocusOnDisplay
-        placeholder="{{data.texts[2]}}"
         (input)="onSearchChange($event.target)">
         
 </mat-form-field>
