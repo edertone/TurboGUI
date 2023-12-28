@@ -331,13 +331,16 @@ export class DialogService {
      *        the option that's been selected by the user.
      * @param modal True (default) if selecting an option is mandatory to close the dialog, false if the dialog can be closed
      *        by the user by clicking outside it 
+     * @param maxWidth Defines the maximum width that the dialog will have regarding the viewport. We can specify it in % or vw, just like is done in
+     *        css. By default it is defined as 96vw, which will fit 96% of the viewport on small devices
      */
     addDialog(width: string,
               texts: string[],
               options: string[],
               dialogComponentClass: Type<DialogOptionsBaseComponent>,
               callback: null | ((selectedOption: {index:number, value: string}) => void) = null,
-              modal = true) {
+              modal = true,
+              maxWidth = '96vw') {
 
         if (!this._isEnabled) {
 
@@ -355,6 +358,7 @@ export class DialogService {
 
         const dialogRef = this.matDialog.open(dialogComponentClass, {
             width: width,
+            maxWidth: maxWidth,
             disableClose: modal,
             autoFocus: false,
             closeOnNavigation: !modal,
