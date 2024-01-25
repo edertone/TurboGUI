@@ -13,6 +13,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BusyStateBaseComponent } from '../../view/components/busy-state-base/busy-state-base.component';
 import { DialogService } from '../../controller/dialog.service';
@@ -24,6 +26,7 @@ import { ViewsService } from '../../controller/views.service';
 import { ViewsContainerComponent } from '../../view/components/views-container/views-container.component';
 import { ButtonImageComponent } from '../../view/components/button-image/button-image.component';
 import { ButtonContainerComponent } from '../../view/components/button-container/button-container.component';
+import { DialogDateSelectionComponent } from '../../view/components/dialog-date-selection/dialog-date-selection.component';
 import { DialogErrorComponent } from '../../view/components/dialog-error/dialog-error.component';
 import { DialogSingleOptionComponent } from '../../view/components/dialog-single-option/dialog-single-option.component';
 import { DialogTwoOptionComponent } from '../../view/components/dialog-two-option/dialog-two-option.component';
@@ -47,11 +50,14 @@ import { AutoSelectTextOnFocusDirective } from '../../view/directives/AutoSelect
         MatInputModule,
         MatButtonModule,
         MatFormFieldModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
         BrowserAnimationsModule
     ],
 
     declarations: [
         BusyStateBaseComponent,
+        DialogDateSelectionComponent,
         DialogErrorComponent,
         DialogSingleOptionComponent,
         DialogTwoOptionComponent,
@@ -82,6 +88,7 @@ import { AutoSelectTextOnFocusDirective } from '../../view/directives/AutoSelect
         ViewsContainerComponent,
         ButtonImageComponent,
         ButtonContainerComponent,
+        DialogDateSelectionComponent,
         DialogErrorComponent,
         DialogSingleOptionComponent,
         DialogTwoOptionComponent,

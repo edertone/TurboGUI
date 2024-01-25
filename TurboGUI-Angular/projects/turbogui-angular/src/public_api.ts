@@ -25,6 +25,7 @@ export { BrowserService } from './main/controller/browser.service';
  */
 export { BusyStateBaseComponent } from './main/view/components/busy-state-base/busy-state-base.component';
 export { DialogOptionsBaseComponent } from './main/view/components/dialog-options-base/dialog-options-base.component';
+export { DialogDateSelectionComponent } from './main/view/components/dialog-date-selection/dialog-date-selection.component';
 export { DialogErrorComponent } from './main/view/components/dialog-error/dialog-error.component';
 export { DialogSingleOptionComponent } from './main/view/components/dialog-single-option/dialog-single-option.component';
 export { DialogTwoOptionComponent } from './main/view/components/dialog-two-option/dialog-two-option.component';

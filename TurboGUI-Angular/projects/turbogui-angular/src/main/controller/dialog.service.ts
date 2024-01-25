@@ -15,6 +15,7 @@ import { BusyStateBaseComponent } from '../view/components/busy-state-base/busy-
 import { ComponentPortal, DomPortalOutlet } from '@angular/cdk/portal';
 import { DialogOptionsBaseComponent } from '../view/components/dialog-options-base/dialog-options-base.component';
 import { DialogBaseComponent } from '../view/components/dialog-base/dialog-base.component';
+import { DialogDateSelectionComponent } from '../view/components/dialog-date-selection/dialog-date-selection.component';
 
 
 /**
@@ -323,32 +324,43 @@ export class DialogService {
               reduced if the available screen is not enough, and will reach the desired value otherwise. Note that height will be adapted to the contents
               of the dialog and cannot be specified here. We can set a pixels, % or any other css accepted value. For example: '400px', '50%', etc.
      * @param texts A list with strings containing the dialog texts, sorted by importance. When dialog has a title, this should
-     *        be placed first, subtitle second and so (Each dialog may accept different kind of texts).
+     *        be placed first, subtitle second and so (Each dialog may accept different number of texts).
      * @param options A list of strings that will be used as button captions for each one of the accepted dialog options
      * @param dialogComponentClass A class for a component that extends DialogOptionsBaseComponent, which will be the
      *        dialog visual element that is shown to the user.
      * @param callback A function that will be called after the dialog is closed and will receive an object with the numeric index and value for
-     *        the option that's been selected by the user.
+     *        the option that's been selected by the user. if no option was selected, the value will be -1
      * @param modal True (default) if selecting an option is mandatory to close the dialog, false if the dialog can be closed
      *        by the user by clicking outside it 
      * @param maxWidth Defines the maximum width that the dialog will have regarding the viewport. We can specify it in % or vw, just like is done in
      *        css. By default it is defined as 96vw, which will fit 96% of the viewport on small devices
      */
-    addDialog(width: string,
-              texts: string[],
-              options: string[],
-              dialogComponentClass: Type<DialogOptionsBaseComponent>,
-              callback: null | ((selectedOption: {index:number, value: string}) => void) = null,
-              modal = true,
-              maxWidth = '96vw') {
+    addDialog(dialogComponentClass: Type<DialogOptionsBaseComponent>,
+              options: {width?: string,
+                        maxWidth?: string,
+                        height?: string,
+                        maxHeight?: string,
+                        modal?: boolean,
+                        texts?: string[],
+                        captions?: string[]}, 
+              callback: null | ((selectedOption: {index:number, value: any}) => void) = null) {
 
         if (!this._isEnabled) {
 
             return;
         }
+        
+        // Set the default values for all non specified visual options
+        options.width = options.hasOwnProperty('width') ? options.width : "50%";
+        options.maxWidth = options.hasOwnProperty('maxWidth') ? options.maxWidth : "96vw";
+        options.height = options.hasOwnProperty('height') ? options.height : "50%";
+        options.maxHeight = options.hasOwnProperty('maxHeight') ? options.maxHeight : "92vw";
+        options.modal = options.hasOwnProperty('modal') ? options.modal : true;
+        options.texts = options.hasOwnProperty('texts') ? options.texts : [];
+        options.captions = options.hasOwnProperty('captions') ? options.captions : [];
 
         // Generate a string to uniquely identify this dialog on the list of active dialogs
-        const dialogHash = texts.join('') + options.join('') + dialogComponentClass.name;
+        const dialogHash = options.texts!.join('') + options.captions!.join('') + dialogComponentClass.name;
 
         // identical dialogs won't be allowed at the same time
         if (this._activeDialogs.includes(dialogHash)) {
@@ -357,12 +369,12 @@ export class DialogService {
         }
 
         const dialogRef = this.matDialog.open(dialogComponentClass, {
-            width: width,
-            maxWidth: maxWidth,
-            disableClose: modal,
+            width: options.width,
+            maxWidth: options.maxWidth,
+            disableClose: options.modal,
             autoFocus: false,
-            closeOnNavigation: !modal,
-            data: { texts: texts, options: options }
+            closeOnNavigation: !options.modal,
+            data: { texts: options.texts, options: options.captions }
           });
 
         this._activeDialogs.push(dialogHash);
@@ -375,7 +387,7 @@ export class DialogService {
 
             if (!NumericUtils.isInteger(selectedOptionIndex)) {
 
-                if(modal){
+                if(options.modal){
                     
                     throw new Error(`dialogRef.close() expects int value`);
 
@@ -391,7 +403,7 @@ export class DialogService {
                 
                 if(selectedOptionIndex >= 0){
                     
-                    selectedOption.value = options[selectedOptionIndex];
+                    selectedOption.value = options.captions![selectedOptionIndex];
                 }
 
                 (callback as ((selectedOption: {index:number, value: string}) => void))(selectedOption);
@@ -419,6 +431,41 @@ export class DialogService {
         
         this._activeDialogs = [];
         this._activeDialogInstances = [];
+    }
+    
+    
+    addDateSelectionDialog(options: {width?: string,
+                                     maxWidth?: string,
+                                     height?: string,
+                                     maxHeight?: string,
+                                     modal?: boolean},
+                           title: string,
+                           callback: ((selectedDate: null | Date) => void)) {
+
+        if (!this._isEnabled) {
+
+            return;
+        }
+        
+        this.addDialog(DialogDateSelectionComponent,
+            {
+                width: options.width,
+                maxWidth: options.maxWidth,
+                height: options.height,
+                maxHeight: options.maxHeight,
+                modal: options.modal,
+                texts: [title]   
+            },(selectedOption) => {
+            
+                if(selectedOption.index < 0){
+                    
+                    callback(null);
+                
+                }else{
+                    
+                    callback(selectedOption.value);
+                }  
+            });
     }
 
 

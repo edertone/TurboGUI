@@ -78,7 +78,12 @@ export class HTTPService extends HTTPManager {
                             errorMsg = 'Unknown error. Make sure Internet connection is available';    
                         }
                 
-                        this.dialogService.addDialog('600px', ['Error: ' + result.code, errorMsg], ['Ok'], DialogErrorComponent);        
+                        this.dialogService.addDialog(DialogErrorComponent,
+                            {
+                                width:'600px',
+                                texts: ['Error: ' + result.code, errorMsg],
+                                captions: ['Ok']
+                            });        
                     }
                 }
             }
