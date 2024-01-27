@@ -336,13 +336,13 @@ export class DialogService {
      *        css. By default it is defined as 96vw, which will fit 96% of the viewport on small devices
      */
     addDialog(dialogComponentClass: Type<DialogOptionsBaseComponent>,
-              options: {width?: string,
-                        maxWidth?: string,
-                        height?: string,
-                        maxHeight?: string,
-                        modal?: boolean,
-                        texts?: string[],
-                        captions?: string[]}, 
+              properties: {width?: string,
+                           maxWidth?: string,
+                           height?: string,
+                           maxHeight?: string,
+                           modal?: boolean,
+                           texts?: string[],
+                           options?: string[]}, 
               callback: null | ((selectedOption: {index:number, value: any}) => void) = null) {
 
         if (!this._isEnabled) {
@@ -350,17 +350,17 @@ export class DialogService {
             return;
         }
         
-        // Set the default values for all non specified visual options
-        options.width = options.hasOwnProperty('width') ? options.width : "50%";
-        options.maxWidth = options.hasOwnProperty('maxWidth') ? options.maxWidth : "96vw";
-        options.height = options.hasOwnProperty('height') ? options.height : "50%";
-        options.maxHeight = options.hasOwnProperty('maxHeight') ? options.maxHeight : "92vw";
-        options.modal = options.hasOwnProperty('modal') ? options.modal : true;
-        options.texts = options.hasOwnProperty('texts') ? options.texts : [];
-        options.captions = options.hasOwnProperty('captions') ? options.captions : [];
+        // Set the default values for all non specified properties
+        properties.width = properties.hasOwnProperty('width') ? properties.width : "50%";
+        properties.maxWidth = properties.hasOwnProperty('maxWidth') ? properties.maxWidth : "96vw";
+        properties.height = properties.hasOwnProperty('height') ? properties.height : "50%";
+        properties.maxHeight = properties.hasOwnProperty('maxHeight') ? properties.maxHeight : "92vw";
+        properties.modal = properties.hasOwnProperty('modal') ? properties.modal : true;
+        properties.texts = properties.hasOwnProperty('texts') ? properties.texts : [];
+        properties.options = properties.hasOwnProperty('options') ? properties.options : [];
 
         // Generate a string to uniquely identify this dialog on the list of active dialogs
-        const dialogHash = options.texts!.join('') + options.captions!.join('') + dialogComponentClass.name;
+        const dialogHash = properties.texts!.join('') + properties.options!.join('') + dialogComponentClass.name;
 
         // identical dialogs won't be allowed at the same time
         if (this._activeDialogs.includes(dialogHash)) {
@@ -369,44 +369,42 @@ export class DialogService {
         }
 
         const dialogRef = this.matDialog.open(dialogComponentClass, {
-            width: options.width,
-            maxWidth: options.maxWidth,
-            disableClose: options.modal,
+            width: properties.width,
+            maxWidth: properties.maxWidth,
+            disableClose: properties.modal,
             autoFocus: false,
-            closeOnNavigation: !options.modal,
-            data: { texts: options.texts, options: options.captions }
+            closeOnNavigation: !properties.modal,
+            data: { texts: properties.texts, options: properties.options }
           });
 
         this._activeDialogs.push(dialogHash);
         this._activeDialogInstances.push(dialogRef);
 
-        dialogRef.beforeClosed().subscribe((selectedOptionIndex: any) => {
+        dialogRef.beforeClosed().subscribe((selectedOption:{index:number, value:any}) => {
 
             this._activeDialogs = ArrayUtils.removeElement(this._activeDialogs, dialogHash);
             this._activeDialogInstances = ArrayUtils.removeElement(this._activeDialogInstances, dialogRef);
 
-            if (!NumericUtils.isInteger(selectedOptionIndex)) {
+            if (!NumericUtils.isInteger(selectedOption.index)) {
 
-                if(options.modal){
+                if(properties.modal){
                     
                     throw new Error(`dialogRef.close() expects int value`);
 
                 }else{
                     
-                    selectedOptionIndex = -1;
+                    selectedOption.index = -1;
                 }                
             }
 
             if (callback !== null) {
 
-                let selectedOption = {index: selectedOptionIndex, value: ''};
-                
-                if(selectedOptionIndex >= 0){
+                if(selectedOption.index >= 0){
                     
-                    selectedOption.value = options.captions![selectedOptionIndex];
+                    selectedOption.value = properties.options![selectedOption.index];
                 }
 
-                (callback as ((selectedOption: {index:number, value: string}) => void))(selectedOption);
+                (callback as ((selectedOption:{index:number, value:any}) => void))(selectedOption);
             }
         });
     }
@@ -434,11 +432,11 @@ export class DialogService {
     }
     
     
-    addDateSelectionDialog(options: {width?: string,
-                                     maxWidth?: string,
-                                     height?: string,
-                                     maxHeight?: string,
-                                     modal?: boolean},
+    addDateSelectionDialog(properties: {width?: string,
+                                        maxWidth?: string,
+                                        height?: string,
+                                        maxHeight?: string,
+                                        modal?: boolean},
                            title: string,
                            callback: ((selectedDate: null | Date) => void)) {
 
@@ -449,22 +447,15 @@ export class DialogService {
         
         this.addDialog(DialogDateSelectionComponent,
             {
-                width: options.width,
-                maxWidth: options.maxWidth,
-                height: options.height,
-                maxHeight: options.maxHeight,
-                modal: options.modal,
+                width: properties.width,
+                maxWidth: properties.maxWidth,
+                height: properties.height,
+                maxHeight: properties.maxHeight,
+                modal: properties.modal,
                 texts: [title]   
             },(selectedOption) => {
             
-                if(selectedOption.index < 0){
-                    
-                    callback(null);
-                
-                }else{
-                    
-                    callback(selectedOption.value);
-                }  
+                callback(selectedOption.value as Date);  
             });
     }
 

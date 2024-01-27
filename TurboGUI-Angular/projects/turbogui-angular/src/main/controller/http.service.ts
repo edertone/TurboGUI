@@ -82,7 +82,7 @@ export class HTTPService extends HTTPManager {
                             {
                                 width:'600px',
                                 texts: ['Error: ' + result.code, errorMsg],
-                                captions: ['Ok']
+                                options: ['Ok']
                             });        
                     }
                 }

@@ -42,9 +42,9 @@ export class DialogDateSelectionComponent extends DialogOptionsBaseComponent {
 //            throw new Error('DialogErrorComponent expects only one option');
 //        }
     }
-    
-    
-    onDateSelected(event:any){
-        alert(`Selected: ${event}`);
-    }
+//    
+//    
+//    onDateSelected(event:any){
+//        alert(`Selected: ${event}`);
+//    }
 }
