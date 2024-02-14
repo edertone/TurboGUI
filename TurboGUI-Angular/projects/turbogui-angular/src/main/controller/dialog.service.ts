@@ -13,7 +13,6 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { BusyStateBaseComponent } from '../view/components/busy-state-base/busy-state-base.component';
 import { ComponentPortal, DomPortalOutlet } from '@angular/cdk/portal';
-import { DialogOptionsBaseComponent } from '../view/components/dialog-options-base/dialog-options-base.component';
 import { DialogBaseComponent } from '../view/components/dialog-base/dialog-base.component';
 import { DialogDateSelectionComponent } from '../view/components/dialog-date-selection/dialog-date-selection.component';
 
@@ -318,24 +317,27 @@ export class DialogService {
 
     /**
      * Show a dialog with one or more options that can be used to close it. We can use any of the predefined dialog types that are bundled with
-     * this library or extend DialogOptionsBaseComponent to create our own custom ones.
+     * this library or extend DialogBaseComponent to create our own custom ones.
      *
-     * @param width Specify the css value for the maximum width the dialog will have. As the dialog is responsive, the value will be automatically
-              reduced if the available screen is not enough, and will reach the desired value otherwise. Note that height will be adapted to the contents
-              of the dialog and cannot be specified here. We can set a pixels, % or any other css accepted value. For example: '400px', '50%', etc.
-     * @param texts A list with strings containing the dialog texts, sorted by importance. When dialog has a title, this should
-     *        be placed first, subtitle second and so (Each dialog may accept different number of texts).
-     * @param options A list of strings that will be used as button captions for each one of the accepted dialog options
-     * @param dialogComponentClass A class for a component that extends DialogOptionsBaseComponent, which will be the
-     *        dialog visual element that is shown to the user.
-     * @param callback A function that will be called after the dialog is closed and will receive an object with the numeric index and value for
-     *        the option that's been selected by the user. if no option was selected, the value will be -1
-     * @param modal True (default) if selecting an option is mandatory to close the dialog, false if the dialog can be closed
-     *        by the user by clicking outside it 
-     * @param maxWidth Defines the maximum width that the dialog will have regarding the viewport. We can specify it in % or vw, just like is done in
-     *        css. By default it is defined as 96vw, which will fit 96% of the viewport on small devices
+     * @param dialogComponentClass A class for a component that extends DialogBaseComponent, which will be the dialog that is shown to the user.
+     * @param properties An object containing the different visual and textual options that this dialog allows:
+     *            - width: Specify the css value for the default dialog width. As the dialog is responsive, the value will be automatically
+     *              reduced if the available screen is not enough, and will reach the desired value otherwise. We can set any css unit like pixels, 
+     *              %, vh, vw, or any other. For example: '400px', '50%', etc.
+     *            - maxWidth: Defines the maximum width that the dialog will have regarding the viewport. We can specify it in % or vw, just like is done in
+     *              css. By default it is defined as 96vw, which will fit 96% of the viewport on small devices
+     *            - height: TODO docs
+     *            - maxHeight: TODO docs
+     *            - modal: True (default) if selecting an option is mandatory to close the dialog, false if the dialog can be closed
+     *              by the user clicking outside it 
+     *            - texts: A list with strings containing the dialog texts, sorted by importance. When dialog has a title, this should
+     *              be placed first, subtitle second and so (Each dialog may accept different number of texts).
+     *            - options: A list of strings that will be used as button captions for each one of the accepted dialog options
+     * 
+     * @param callback A function that will be called after the dialog is closed and will receive a selection object with the numeric index and value for
+     *        the option that's been selected by the user. if no option was selected, index will be -1 and value null
      */
-    addDialog(dialogComponentClass: Type<DialogOptionsBaseComponent>,
+    addDialog(dialogComponentClass: Type<DialogBaseComponent>,
               properties: {width?: string,
                            maxWidth?: string,
                            height?: string,
@@ -343,24 +345,20 @@ export class DialogService {
                            modal?: boolean,
                            texts?: string[],
                            options?: string[]}, 
-              callback: null | ((selectedOption: {index:number, value: any}) => void) = null) {
+              callback: null | ((selection: {index:number, value?: any}) => void) = null) {
 
         if (!this._isEnabled) {
 
             return;
         }
         
-        // Set the default values for all non specified properties
-        properties.width = properties.hasOwnProperty('width') ? properties.width : "50%";
-        properties.maxWidth = properties.hasOwnProperty('maxWidth') ? properties.maxWidth : "96vw";
-        properties.height = properties.hasOwnProperty('height') ? properties.height : "50%";
-        properties.maxHeight = properties.hasOwnProperty('maxHeight') ? properties.maxHeight : "92vw";
-        properties.modal = properties.hasOwnProperty('modal') ? properties.modal : true;
-        properties.texts = properties.hasOwnProperty('texts') ? properties.texts : [];
-        properties.options = properties.hasOwnProperty('options') ? properties.options : [];
+        // Set the default values for non specified properties
+        properties.modal = properties.modal ?? true;
+        properties.texts = properties.texts ?? [];
+        properties.options = properties.options ?? [];
 
         // Generate a string to uniquely identify this dialog on the list of active dialogs
-        const dialogHash = properties.texts!.join('') + properties.options!.join('') + dialogComponentClass.name;
+        const dialogHash = properties.texts.join('') + properties.options.join('') + dialogComponentClass.name;
 
         // identical dialogs won't be allowed at the same time
         if (this._activeDialogs.includes(dialogHash)) {
@@ -369,8 +367,8 @@ export class DialogService {
         }
 
         const dialogRef = this.matDialog.open(dialogComponentClass, {
-            width: properties.width,
-            maxWidth: properties.maxWidth,
+            width: properties.width ?? "50%",
+            maxWidth: properties.maxWidth ?? "96vw",
             disableClose: properties.modal,
             autoFocus: false,
             closeOnNavigation: !properties.modal,
@@ -380,31 +378,28 @@ export class DialogService {
         this._activeDialogs.push(dialogHash);
         this._activeDialogInstances.push(dialogRef);
 
-        dialogRef.beforeClosed().subscribe((selectedOption:{index:number, value:any}) => {
+        dialogRef.beforeClosed().subscribe((selection:{index:number, value?:any}) => {
 
             this._activeDialogs = ArrayUtils.removeElement(this._activeDialogs, dialogHash);
             this._activeDialogInstances = ArrayUtils.removeElement(this._activeDialogInstances, dialogRef);
 
-            if (!NumericUtils.isInteger(selectedOption.index)) {
+            if(!properties.modal && selection === undefined){
+            
+                selection = { index: -1 };
+            
+            }else if (!NumericUtils.isInteger(selection.index)) {
 
-                if(properties.modal){
-                    
-                    throw new Error(`dialogRef.close() expects int value`);
-
-                }else{
-                    
-                    selectedOption.index = -1;
-                }                
+                throw new Error(`closeDialog() expects index to be an integer`);               
             }
 
             if (callback !== null) {
 
-                if(selectedOption.index >= 0){
+                if(selection.index >= 0 && selection.value === null){
                     
-                    selectedOption.value = properties.options![selectedOption.index];
+                    selection.value = properties.options![selection.index];
                 }
 
-                (callback as ((selectedOption:{index:number, value:any}) => void))(selectedOption);
+                (callback as ((selection:{index:number, value?:any}) => void))(selection);
             }
         });
     }
@@ -424,7 +419,7 @@ export class DialogService {
 
         for (const dialogRef of this._activeDialogInstances) {
 
-            dialogRef.close(-1);
+            dialogRef.close({index:-1});
         }
         
         this._activeDialogs = [];
@@ -432,12 +427,28 @@ export class DialogService {
     }
     
     
+    /**
+     * Show a dialog with a calendar to let the user pick a date.
+     *
+     * @param properties An object containing the different visual and textual options that this dialog allows:
+     *            - width: Specify the css value for the default dialog width. As the dialog is responsive, the value will be automatically
+     *              reduced if the available screen is not enough, and will reach the desired value otherwise. We can set any css unit like pixels, 
+     *              %, vh, vw, or any other. For example: '400px', '50%', etc.
+     *            - maxWidth: Defines the maximum width that the dialog will have regarding the viewport. We can specify it in % or vw, just like is done in
+     *              css. By default it is defined as 96vw, which will fit 96% of the viewport on small devices
+     *            - height: TODO docs
+     *            - maxHeight: TODO docs
+     *            - modal: True (default) if selecting an option is mandatory to close the dialog, false if the dialog can be closed
+     *              by the user clicking outside it 
+     *            - title: An optional dialog title
+     * @param callback A function to be called after the dialog is closed. It will receive a Date() object selected by the user or null if no selection happened
+     */
     addDateSelectionDialog(properties: {width?: string,
                                         maxWidth?: string,
                                         height?: string,
                                         maxHeight?: string,
-                                        modal?: boolean},
-                           title: string,
+                                        modal?: boolean
+                                        title?: string},
                            callback: ((selectedDate: null | Date) => void)) {
 
         if (!this._isEnabled) {
@@ -447,15 +458,15 @@ export class DialogService {
         
         this.addDialog(DialogDateSelectionComponent,
             {
-                width: properties.width,
-                maxWidth: properties.maxWidth,
-                height: properties.height,
-                maxHeight: properties.maxHeight,
-                modal: properties.modal,
-                texts: [title]   
-            },(selectedOption) => {
-            
-                callback(selectedOption.value as Date);  
+                width: properties.width ?? "50%",
+                maxWidth: properties.maxWidth ?? "96vw",
+                height: properties.height ?? "50%",
+                maxHeight: properties.maxHeight ?? "92vw",
+                modal: properties.modal ?? false,
+                texts: [properties.title ?? '']   
+            },(selection) => {
+                
+                callback(selection.index === -1 ? null : (selection.value as Date));  
             });
     }
 

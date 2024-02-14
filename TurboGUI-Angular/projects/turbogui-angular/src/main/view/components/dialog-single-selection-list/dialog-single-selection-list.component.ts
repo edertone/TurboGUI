@@ -9,7 +9,7 @@
 
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { DialogOptionsBaseComponent } from '../dialog-options-base/dialog-options-base.component';
+import { DialogBaseComponent } from '../dialog-base/dialog-base.component';
 import { BrowserService } from '../../../controller/browser.service';
 import { StringUtils } from 'turbocommons-ts';
 
@@ -33,7 +33,7 @@ import { StringUtils } from 'turbocommons-ts';
 })
 
 
-export class DialogSingleSelectionListComponent extends DialogOptionsBaseComponent {
+export class DialogSingleSelectionListComponent extends DialogBaseComponent {
     
     
     /**
@@ -68,7 +68,7 @@ export class DialogSingleSelectionListComponent extends DialogOptionsBaseCompone
     selectedItemIndex = -1;
     
 
-    constructor(public dialogRef: MatDialogRef<DialogOptionsBaseComponent>,
+    constructor(public dialogRef: MatDialogRef<DialogBaseComponent>,
                 public browserService: BrowserService,
                 @Inject(MAT_DIALOG_DATA) public data: any) {
 

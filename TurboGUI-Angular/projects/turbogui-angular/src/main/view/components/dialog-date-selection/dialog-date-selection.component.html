@@ -1,5 +1,5 @@
 <h2>{{data.texts[0]}}</h2>
 
 <mat-calendar #calendar
-    (selectedChange)="dialogRef.close({index: 0, value: $event})">
+    (selectedChange)="closeDialog(dialogRef, 0, $event)">
 </mat-calendar>

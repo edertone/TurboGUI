@@ -21,7 +21,7 @@
     <div class="listItemContainer"
         [style.background-color]="selectedItemIndex === i ? '#90d1ffad' : (i % 2 === 0 ? 'initial' : '#00000009')"
         *ngFor="let item of filteredOptions; let i = index; trackBy: trackByFn"
-        (click)="data.texts.length < 4 ? dialogRef.close(i) : selectedItemIndex = i">
+        (click)="data.texts.length < 4 ? closeDialog(dialogRef, i) : selectedItemIndex = i">
     
         <p *ngIf="item !== ''">
             {{item}}
@@ -33,7 +33,7 @@
 
 <button mat-raised-button color="primary"
     [disabled]="selectedItemIndex < 0"
-    (click)="dialogRef.close(selectedItemIndex)"
+    (click)="closeDialog(dialogRef, selectedItemIndex)"
     *ngIf="data.texts.length > 3">
 
     {{data.texts[3]}}

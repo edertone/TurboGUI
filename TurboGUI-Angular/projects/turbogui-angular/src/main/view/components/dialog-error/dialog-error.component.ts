@@ -9,7 +9,7 @@
 
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { DialogOptionsBaseComponent } from '../dialog-options-base/dialog-options-base.component';
+import { DialogBaseComponent } from '../dialog-base/dialog-base.component';
 
 
 /**
@@ -22,9 +22,9 @@ import { DialogOptionsBaseComponent } from '../dialog-options-base/dialog-option
 })
 
 
-export class DialogErrorComponent extends DialogOptionsBaseComponent {
+export class DialogErrorComponent extends DialogBaseComponent {
 
-    constructor(public dialogRef: MatDialogRef<DialogOptionsBaseComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
+    constructor(public dialogRef: MatDialogRef<DialogBaseComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
 
         super();
         

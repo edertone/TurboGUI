@@ -9,7 +9,7 @@
 
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { DialogOptionsBaseComponent } from '../dialog-options-base/dialog-options-base.component';
+import { DialogBaseComponent } from '../dialog-base/dialog-base.component';
 
 /**
  * A dialog component with a calendar that allows us to select a single date value
@@ -21,30 +21,15 @@ import { DialogOptionsBaseComponent } from '../dialog-options-base/dialog-option
 })
 
 
-export class DialogDateSelectionComponent extends DialogOptionsBaseComponent {
+export class DialogDateSelectionComponent extends DialogBaseComponent {
 
     
     selectedDate:Date;
 
 
-    constructor(public dialogRef: MatDialogRef<DialogOptionsBaseComponent>,
+    constructor(public dialogRef: MatDialogRef<DialogBaseComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: any) {
         
         super();
-        
-//        if (data.texts.length < 1) {
-//
-//            throw new Error('DialogErrorComponent expects 2 texts: The title and optionally a description');
-//        }
-//
-//        if (data.options.length !== 1) {
-//
-//            throw new Error('DialogErrorComponent expects only one option');
-//        }
     }
-//    
-//    
-//    onDateSelected(event:any){
-//        alert(`Selected: ${event}`);
-//    }
 }
