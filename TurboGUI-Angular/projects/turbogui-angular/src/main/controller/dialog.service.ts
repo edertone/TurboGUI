@@ -472,6 +472,29 @@ export class DialogService {
 
 
     /**
+     * TODO - translate from TS version
+     */
+//    addSideNav(){
+//
+//    }
+
+
+    /**
+     * TODO - translate from TS version
+     */
+//    get isShowingSideNav(){
+//
+//    }
+
+
+    /**
+     * TODO - translate from TS version
+     */
+//    removeSideNav(){
+//
+//    }
+
+    /**
      * Block all the user interactions with the application (keyboard, touch, mouse, ...)
      */
     private _disableUserInteraction() {

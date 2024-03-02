@@ -286,6 +286,15 @@ export class DialogManager{
     
     
     /**
+     * TODO - translate from angular version
+     */
+    addDateSelectionDialog() {
+
+        // TODO - translate from angular version
+    }
+    
+    
+    /**
      * Show a sidenav layer with the specified contents.
      *
      * @param content html content that will be placed inside the sidenav layer to be shown

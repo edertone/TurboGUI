@@ -80,7 +80,7 @@ export class HTTPService extends HTTPManager {
                 
                         this.dialogService.addDialog(DialogErrorComponent,
                             {
-                                width:'600px',
+                                width:'50vw',
                                 texts: ['Error: ' + result.code, errorMsg],
                                 options: ['Ok']
                             });        

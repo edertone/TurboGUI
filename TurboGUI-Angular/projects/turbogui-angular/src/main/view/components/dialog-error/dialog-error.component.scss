@@ -7,6 +7,22 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
+}
+
+svg{
+    height: 10vh;
+    width: auto;
+}
+
+.textContainer{
+    margin-top: 5px;
+    max-height: 70vh;
+    overflow: auto;
+}
+
+p{
+    user-select: text;
 }
 
 h3{
@@ -15,17 +31,7 @@ h3{
     width: 82%;
 }
 
-svg{
-    width: 18%;
-    height: auto;
-}
-
-p{
-    margin-bottom: 52px;
-}
-
 button{
-    float: right;
-    width: 50%;
-    min-width: 50px;
+    width: 100%;
+    margin-top: 5px;
 }
