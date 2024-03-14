@@ -2,6 +2,7 @@
     {{data.texts[0]}}
 </h3>
 
+<!-- Here goes the dialog subtitle. Leave it blank if you don't need it -->
 <p *ngIf="data.texts.length > 1 &amp;&amp; !stringUtils.isEmpty(data.texts[1])">
     {{data.texts[1]}}
 </p>
@@ -15,6 +16,7 @@
         
 </mat-form-field>
 
+<!-- here goes the list of elements that will be shown to the user -->
 <div class="listItemsContainer"
     [style.max-height]="getListItemsContainerMaxheight()">
 

@@ -36,6 +36,9 @@ import { StringUtils } from 'turbocommons-ts';
 export class DialogSingleSelectionListComponent extends DialogBaseComponent {
     
     
+    static readonly DIALOG_CLASS_NAME = 'DialogSingleSelectionListComponent';
+    
+    
     /**
      * Declare a reference to the string utils class so it can be used on the html part
      */

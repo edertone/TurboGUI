@@ -358,7 +358,16 @@ export class DialogService {
         properties.options = properties.options ?? [];
 
         // Generate a string to uniquely identify this dialog on the list of active dialogs
-        const dialogHash = properties.texts.join('') + properties.options.join('') + dialogComponentClass.name;
+        // A dialog is considered as unique if the dialog id and texts are exactly the same. We do not take options into consideration
+        // as there may be dialogs with a big amount of options available.
+        let className = (dialogComponentClass as any).DIALOG_CLASS_NAME;
+        
+        if(className === ''){
+        
+            throw new Error(`The static property DIALOG_CLASS_NAME is not defined or is empty for this dialog component (${dialogComponentClass})`);     
+        }
+        
+        const dialogHash = className + properties.texts.join('');
 
         // identical dialogs won't be allowed at the same time
         if (this._activeDialogs.includes(dialogHash)) {

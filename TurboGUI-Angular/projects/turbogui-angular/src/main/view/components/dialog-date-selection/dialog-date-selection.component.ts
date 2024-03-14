@@ -23,6 +23,9 @@ import { DialogBaseComponent } from '../dialog-base/dialog-base.component';
 
 export class DialogDateSelectionComponent extends DialogBaseComponent {
 
+
+    static readonly DIALOG_CLASS_NAME = 'DialogDateSelectionComponent';
+    
     
     selectedDate:Date;
 

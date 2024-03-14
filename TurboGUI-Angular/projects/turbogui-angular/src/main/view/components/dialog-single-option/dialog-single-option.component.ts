@@ -24,6 +24,10 @@ import { DialogBaseComponent } from '../dialog-base/dialog-base.component';
 
 export class DialogSingleOptionComponent extends DialogBaseComponent {
 
+    
+    static readonly DIALOG_CLASS_NAME = 'DialogSingleOptionComponent';
+    
+
     constructor(public dialogRef: MatDialogRef<DialogBaseComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
 
         super();

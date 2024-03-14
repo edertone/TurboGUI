@@ -16,6 +16,18 @@ import { MatDialogRef } from '@angular/material/dialog';
  */
 export abstract class DialogBaseComponent {
 
+
+    /*
+     * The name of the superclass must be set into this constant as it is required by the dialog service to identify dialogs as different.
+     * 
+     * When you extend the dialog base class, simply declare this static constant with the exact same name as your class and you're done.
+     * If this value is not set on the extended dialog component, a runtime exception will happen when trying to show the dialog.
+     * 
+     * The root cause of this requirement is that when apps are compiled for production, class names are minified and this causes problems 
+     * when creating a dialog hash to uniquely identify a dialog instance. Therefore, a hardcoded class name is necesary.
+     */        
+    static readonly DIALOG_CLASS_NAME:string = '';
+
     
     /**
      * Method to be called by the dialogs that extend this base component when they want to close themselves.

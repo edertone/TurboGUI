@@ -24,6 +24,10 @@ import { DialogBaseComponent } from '../dialog-base/dialog-base.component';
 
 export class DialogMultipleOptionComponent extends DialogBaseComponent {
 
+
+    static readonly DIALOG_CLASS_NAME = 'DialogMultipleOptionComponent';
+    
+
     constructor(public dialogRef: MatDialogRef<DialogBaseComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
 
         super();
