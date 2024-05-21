@@ -432,6 +432,57 @@ export class DialogService extends SingletoneStrictClass {
     
     
     /**
+     * Show a dialog with a calendar to let the user pick a date.
+     *
+     * @param properties An object containing the different visual and textual options that this dialog allows:
+     *            - id: The html unique identifier that the dialog will have once created. If not specified, no id will be explicitly set
+     *            - width: Specify the css value for the default dialog width. As the dialog is responsive, the value will be automatically
+     *              reduced if the available screen is not enough, and will reach the desired value otherwise. We can set any css unit like pixels, 
+     *              %, vh, vw, or any other. For example: '400px', '50%', etc.
+     *            - maxWidth: Defines the maximum width that the dialog will have regarding the viewport. We can specify it in % or vw, just like is done in
+     *              css. By default it is defined as 96vw, which will fit 96% of the viewport on small devices
+     *            - height: TODO docs
+     *            - maxHeight: TODO docs
+     *            - modal: True (default) if selecting an option is mandatory to close the dialog, false if the dialog can be closed
+     *              by the user clicking outside it 
+     *            - title: An optional dialog title
+     *            - viewContainerRef: This is important to propagate providers from a parent component to this dialog. We must specify 
+	 *              this reference to make sure the same services injected on the parent are available too at the child dialog 
+     * @param callback A function to be called after the dialog is closed. It will receive a Date() object selected by the user or null if no selection happened
+     */
+    addDateSelectionDialog(properties: {id?: string,
+                                        width?: string,
+                                        maxWidth?: string,
+                                        height?: string,
+                                        maxHeight?: string,
+                                        modal?: boolean,
+                                        title?: string,
+                           				viewContainerRef: ViewContainerRef},
+                           callback: ((selectedDate: null | Date) => void)) {
+
+        if (!this._isEnabled) {
+
+            return;
+        }
+        
+        this.addDialog(DialogDateSelectionComponent,
+            {
+                id: properties.id ?? undefined,
+                width: properties.width ?? "50%",
+                maxWidth: properties.maxWidth ?? "96vw",
+                height: properties.height ?? "50%",
+                maxHeight: properties.maxHeight ?? "92vw",
+                modal: properties.modal ?? false,
+                texts: [properties.title ?? ''],
+                viewContainerRef: properties.viewContainerRef
+            },(selection) => {
+                
+                callback(selection.index === -1 ? null : (selection.value as Date));  
+            });
+    }
+    
+    
+    /**
      * Force the removal of all the dialogs that are currently visible.
      *
      * If no dialogs are currently visible, this method will do nothing
@@ -450,53 +501,6 @@ export class DialogService extends SingletoneStrictClass {
         
         this._activeDialogs = [];
         this._activeDialogInstances = [];
-    }
-    
-    
-    /**
-     * Show a dialog with a calendar to let the user pick a date.
-     *
-     * @param properties An object containing the different visual and textual options that this dialog allows:
-     *            - id: The html unique identifier that the dialog will have once created. If not specified, no id will be explicitly set
-     *            - width: Specify the css value for the default dialog width. As the dialog is responsive, the value will be automatically
-     *              reduced if the available screen is not enough, and will reach the desired value otherwise. We can set any css unit like pixels, 
-     *              %, vh, vw, or any other. For example: '400px', '50%', etc.
-     *            - maxWidth: Defines the maximum width that the dialog will have regarding the viewport. We can specify it in % or vw, just like is done in
-     *              css. By default it is defined as 96vw, which will fit 96% of the viewport on small devices
-     *            - height: TODO docs
-     *            - maxHeight: TODO docs
-     *            - modal: True (default) if selecting an option is mandatory to close the dialog, false if the dialog can be closed
-     *              by the user clicking outside it 
-     *            - title: An optional dialog title
-     * @param callback A function to be called after the dialog is closed. It will receive a Date() object selected by the user or null if no selection happened
-     */
-    addDateSelectionDialog(properties: {id?: string,
-                                        width?: string,
-                                        maxWidth?: string,
-                                        height?: string,
-                                        maxHeight?: string,
-                                        modal?: boolean
-                                        title?: string},
-                           callback: ((selectedDate: null | Date) => void)) {
-
-        if (!this._isEnabled) {
-
-            return;
-        }
-        
-        this.addDialog(DialogDateSelectionComponent,
-            {
-                id: properties.id ?? undefined,
-                width: properties.width ?? "50%",
-                maxWidth: properties.maxWidth ?? "96vw",
-                height: properties.height ?? "50%",
-                maxHeight: properties.maxHeight ?? "92vw",
-                modal: properties.modal ?? false,
-                texts: [properties.title ?? '']   
-            },(selection) => {
-                
-                callback(selection.index === -1 ? null : (selection.value as Date));  
-            });
     }
 
 

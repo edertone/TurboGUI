@@ -15,6 +15,7 @@ import { StringUtils } from 'turbocommons-ts';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { TurboGuiAngularModule } from '../../../model/modules/turbogui-angular.module';
 
 
 /**
@@ -32,7 +33,7 @@ import { MatInputModule } from '@angular/material/input';
 @Component({
   	selector: 'tg-dialog-single-selection-list',
   	standalone: true,
-	imports: [CommonModule, MatInputModule, MatFormFieldModule],
+	imports: [CommonModule, MatInputModule, MatFormFieldModule, TurboGuiAngularModule],
 	providers: [],
   	templateUrl: './dialog-single-selection-list.component.html',
   	styleUrls: ['./dialog-single-selection-list.component.scss']
