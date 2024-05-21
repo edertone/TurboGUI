@@ -40,8 +40,8 @@ export { ButtonContainerComponent } from './main/view/components/button-containe
  * Classes
  */
 export { GUINotification } from './main/model/classes/GUINotification';
+export { SingletoneStrictClass } from './main/model/classes/SingletoneStrictClass';
 export { View } from './main/model/classes/View';
-export { ViewModel } from './main/model/classes/ViewModel';
 export { ViewService } from './main/model/classes/ViewService';
 export { DelayedMethodCallManager } from './main/managers/DelayedMethodCallManager';
 export { FadeAnimationClass } from './main/view/animations/fade.animation';

@@ -15,7 +15,9 @@ import { Location, PopStateEvent } from '@angular/common';
 /**
  * An abstraction of the browser entity an all its related operations and properties
  */
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class BrowserService extends BrowserManager {
 
 

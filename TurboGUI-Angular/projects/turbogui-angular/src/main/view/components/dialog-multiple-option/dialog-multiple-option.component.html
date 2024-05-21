@@ -8,7 +8,7 @@
 
 <button mat-raised-button color="primary"
     *ngFor="let option of data.options; let i = index"
-    (click)="closeDialog(dialogRef, i)">
+    (click)="closeDialog(i)">
     
     {{option}}
     

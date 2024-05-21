@@ -7,18 +7,23 @@
  * CopyRight : -> Copyright 2018 Edertone Advanded Solutions. https://www.edertone.com
  */
 
-import { Component, Inject } from '@angular/core';
+import { Component, ElementRef, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DialogBaseComponent } from '../dialog-base/dialog-base.component';
+import { MatButtonModule } from '@angular/material/button';
+import { CommonModule } from '@angular/common';
 
 
 /**
  * A dialog component that is designed to show more than one option buttons (usually more than two), to be used with dialog service
  */
 @Component({
-  selector: 'tg-dialog-multiple-option',
-  templateUrl: './dialog-multiple-option.component.html',
-  styleUrls: ['./dialog-multiple-option.component.scss']
+  	selector: 'tg-dialog-multiple-option',
+  	standalone: true,
+	imports: [CommonModule, MatButtonModule],
+	providers: [],
+  	templateUrl: './dialog-multiple-option.component.html',
+  	styleUrls: ['./dialog-multiple-option.component.scss']
 })
 
 
@@ -28,9 +33,9 @@ export class DialogMultipleOptionComponent extends DialogBaseComponent {
     static readonly DIALOG_CLASS_NAME = 'DialogMultipleOptionComponent';
     
 
-    constructor(public dialogRef: MatDialogRef<DialogBaseComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
+    constructor(public elementRef: ElementRef, public dialogRef: MatDialogRef<DialogBaseComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
 
-        super();
+        super(elementRef, dialogRef);
         
         if (data.texts.length < 1) {
 

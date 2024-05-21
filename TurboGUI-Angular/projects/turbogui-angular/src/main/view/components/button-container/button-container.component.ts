@@ -16,10 +16,13 @@ import { ButtonBaseComponent } from '../../../view/components/button-base/button
  * This component is a basic button without visual appearance, that is used as a container to load any content.
  */
 @Component({
-  selector: 'tg-button-container',
-  templateUrl: './button-container.component.html',
-  animations: [FadeAnimationClass.getTrigger('buttonFade', '300ms ease', '300ms ease')],
-  styleUrls: ['./button-container.component.scss']
+  	selector: 'tg-button-container',
+  	standalone: true,
+	imports: [],
+	providers: [],
+  	templateUrl: './button-container.component.html',
+  	animations: [FadeAnimationClass.getTrigger('buttonFade', '300ms ease', '300ms ease')],
+  	styleUrls: ['./button-container.component.scss']
 })
 
 

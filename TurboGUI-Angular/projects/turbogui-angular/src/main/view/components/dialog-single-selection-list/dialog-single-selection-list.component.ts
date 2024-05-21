@@ -7,11 +7,14 @@
  * CopyRight : -> Copyright 2018 Edertone Advanded Solutions. https://www.edertone.com
  */
 
-import { Component, Inject } from '@angular/core';
+import { Component, ElementRef, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DialogBaseComponent } from '../dialog-base/dialog-base.component';
 import { BrowserService } from '../../../controller/browser.service';
 import { StringUtils } from 'turbocommons-ts';
+import { CommonModule } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 
 /**
@@ -27,9 +30,12 @@ import { StringUtils } from 'turbocommons-ts';
  * options parameter must contain the list of elements that will be displayed to the user  
  */
 @Component({
-  selector: 'tg-dialog-single-selection-list',
-  templateUrl: './dialog-single-selection-list.component.html',
-  styleUrls: ['./dialog-single-selection-list.component.scss']
+  	selector: 'tg-dialog-single-selection-list',
+  	standalone: true,
+	imports: [CommonModule, MatInputModule, MatFormFieldModule],
+	providers: [],
+  	templateUrl: './dialog-single-selection-list.component.html',
+  	styleUrls: ['./dialog-single-selection-list.component.scss']
 })
 
 
@@ -71,11 +77,12 @@ export class DialogSingleSelectionListComponent extends DialogBaseComponent {
     selectedItemIndex = -1;
     
 
-    constructor(public dialogRef: MatDialogRef<DialogBaseComponent>,
+    constructor(public elementRef: ElementRef,
+    			public dialogRef: MatDialogRef<DialogBaseComponent>,
                 public browserService: BrowserService,
                 @Inject(MAT_DIALOG_DATA) public data: any) {
 
-        super();
+        super(elementRef, dialogRef);
 
         if (data.texts.length < 1) {
 

@@ -7,30 +7,18 @@
  * CopyRight : -> Copyright 2018 Edertone Advanded Solutions. https://www.edertone.com
  */
 
-import { ViewModel } from '../../model/classes/ViewModel';
-import { ViewsService } from '../../controller/views.service';
+import { ViewContainerRef } from "@angular/core";
 
 
 /**
- * Defines the service base class for a view service class. All services that are used by views must extend this.
- * We must create the view services as an @Injectable() angular class which will be globally available at any time, but we must take
- * into consideration that the view model will only be instantiated when the view is active.
+ * Defines a service that is attached to an application view.
+ * All our service components that are linked to a view must extend this class so they can be correctly initialized at the view constructor.
  */
-export abstract class ViewService<T extends ViewModel> {
+export abstract class ViewService {
 
 
-    /**
-     * Class requires a views service instance
-     */
-    constructor(public readonly viewsService: ViewsService) {
-    }
-
-
-    /**
-     * A reference to the currently active view model
-     */
-    get model(): T {
-
-        return this.viewsService.model as T;
-    }
+	/**
+	 * A reference to the view container ref which is necessary to propagate the view providers and services to related dialogs
+	 */
+    viewContainerRef: ViewContainerRef;	
 }

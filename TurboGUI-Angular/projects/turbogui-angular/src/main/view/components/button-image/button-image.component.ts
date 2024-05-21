@@ -16,10 +16,13 @@ import { ButtonBaseComponent } from '../../../view/components/button-base/button
  * This component is a basic button that uses an image as its visual appearance
  */
 @Component({
-  selector: 'tg-button-image',
-  templateUrl: './button-image.component.html',
-  animations: [FadeAnimationClass.getTrigger('buttonFade', '300ms ease', '300ms ease')],
-  styleUrls: ['./button-image.component.scss']
+  	selector: 'tg-button-image',
+  	standalone: true,
+	imports: [],
+	providers: [],
+  	templateUrl: './button-image.component.html',
+  	animations: [FadeAnimationClass.getTrigger('buttonFade', '300ms ease', '300ms ease')],
+  	styleUrls: ['./button-image.component.scss']
 })
 
 

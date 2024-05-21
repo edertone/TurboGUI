@@ -8,20 +8,23 @@
  */
 
 import { ArrayUtils, NumericUtils } from 'turbocommons-ts';
-import { Type, Injectable, ComponentFactoryResolver, Injector, ApplicationRef, Renderer2, RendererFactory2 } from '@angular/core';
+import { Type, Injectable, ComponentFactoryResolver, Injector, ApplicationRef, Renderer2, RendererFactory2, ViewContainerRef } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { BusyStateBaseComponent } from '../view/components/busy-state-base/busy-state-base.component';
 import { ComponentPortal, DomPortalOutlet } from '@angular/cdk/portal';
 import { DialogBaseComponent } from '../view/components/dialog-base/dialog-base.component';
 import { DialogDateSelectionComponent } from '../view/components/dialog-date-selection/dialog-date-selection.component';
+import { SingletoneStrictClass } from '../model/classes/SingletoneStrictClass';
 
 
 /**
  * Manages the application modal and non modal floating elements
  */
-@Injectable()
-export class DialogService {
+@Injectable({
+  providedIn: 'root',
+})
+export class DialogService extends SingletoneStrictClass {
 
 
     /**
@@ -116,6 +119,8 @@ export class DialogService {
                 private readonly injector: Injector,
                 private readonly applicationRef: ApplicationRef,
                 private readonly componentFactoryResolver: ComponentFactoryResolver) {
+
+		super(DialogService);
 
         this._renderer = rendererFactory.createRenderer(null, null);
     }
@@ -321,6 +326,7 @@ export class DialogService {
      *
      * @param dialogComponentClass A class for a component that extends DialogBaseComponent, which will be the dialog that is shown to the user.
      * @param properties An object containing the different visual and textual options that this dialog allows:
+     *            - id: The html unique identifier that the dialog will have once created. If not specified, no id will be explicitly set
      *            - width: Specify the css value for the default dialog width. As the dialog is responsive, the value will be automatically
      *              reduced if the available screen is not enough, and will reach the desired value otherwise. We can set any css unit like pixels, 
      *              %, vh, vw, or any other. For example: '400px', '50%', etc.
@@ -333,18 +339,22 @@ export class DialogService {
      *            - texts: A list with strings containing the dialog texts, sorted by importance. When dialog has a title, this should
      *              be placed first, subtitle second and so (Each dialog may accept different number of texts).
      *            - options: A list of strings that will be used as button captions for each one of the accepted dialog options
+     *            - viewContainerRef: This is important if we want to propagate providers from a parent component to this dialog. We must specify 
+	 *              this reference to make sure the same services injected on the parent are available too at the child dialog 
      * 
      * @param callback A function that will be called after the dialog is closed and will receive a selection object with the numeric index and value for
      *        the option that's been selected by the user. if no option was selected, index will be -1 and value null
      */
     addDialog(dialogComponentClass: Type<DialogBaseComponent>,
-              properties: {width?: string,
+              properties: {id?: string,
+						   width?: string,
                            maxWidth?: string,
                            height?: string,
                            maxHeight?: string,
                            modal?: boolean,
                            texts?: string[],
-                           options?: string[]}, 
+                           options?: string[],
+                           viewContainerRef?: ViewContainerRef}, 
               callback: null | ((selection: {index:number, value?: any}) => void) = null) {
 
         if (!this._isEnabled) {
@@ -381,9 +391,16 @@ export class DialogService {
             disableClose: properties.modal,
             autoFocus: false,
             closeOnNavigation: !properties.modal,
+            viewContainerRef: properties.viewContainerRef,
             data: { texts: properties.texts, options: properties.options }
-          });
-
+          });      
+		
+		// Assign the dialog ID only if specifically set on properties
+		if(properties.id && properties.id !== undefined){
+			
+			dialogRef.id = properties.id;
+		}
+		
         this._activeDialogs.push(dialogHash);
         this._activeDialogInstances.push(dialogRef);
 
@@ -440,6 +457,7 @@ export class DialogService {
      * Show a dialog with a calendar to let the user pick a date.
      *
      * @param properties An object containing the different visual and textual options that this dialog allows:
+     *            - id: The html unique identifier that the dialog will have once created. If not specified, no id will be explicitly set
      *            - width: Specify the css value for the default dialog width. As the dialog is responsive, the value will be automatically
      *              reduced if the available screen is not enough, and will reach the desired value otherwise. We can set any css unit like pixels, 
      *              %, vh, vw, or any other. For example: '400px', '50%', etc.
@@ -452,7 +470,8 @@ export class DialogService {
      *            - title: An optional dialog title
      * @param callback A function to be called after the dialog is closed. It will receive a Date() object selected by the user or null if no selection happened
      */
-    addDateSelectionDialog(properties: {width?: string,
+    addDateSelectionDialog(properties: {id?: string,
+                                        width?: string,
                                         maxWidth?: string,
                                         height?: string,
                                         maxHeight?: string,
@@ -467,6 +486,7 @@ export class DialogService {
         
         this.addDialog(DialogDateSelectionComponent,
             {
+                id: properties.id ?? undefined,
                 width: properties.width ?? "50%",
                 maxWidth: properties.maxWidth ?? "96vw",
                 height: properties.height ?? "50%",

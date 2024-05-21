@@ -12,13 +12,12 @@
 </div>
 
 <div class="textContainer">
-    <p *ngIf="data.texts.length > 1">
-        {{data.texts[1]}}
+    <p *ngIf="data.texts.length > 1" [innerHTML]="data.texts[1]">
     </p>
 </div>
 
 <button mat-raised-button color="warn"
-    (click)="closeDialog(dialogRef, 0)">
+    (click)="closeDialog(0)">
     
     {{data.options[0]}}
     

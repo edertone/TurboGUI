@@ -21,10 +21,13 @@ import { FadeAnimationClass } from '../../animations/fade.animation';
  * override the default one.
  */
 @Component({
-  selector: 'tg-busy-state-base',
-  templateUrl: './busy-state-base.component.html',
-  animations: [FadeAnimationClass.getTrigger('busyStateBaseFade', '1s ease', '400ms ease')],
-  styleUrls: ['./busy-state-base.component.scss']
+  	selector: 'tg-busy-state-base',
+  	standalone: true,
+	imports: [],
+	providers: [],
+  	templateUrl: './busy-state-base.component.html',
+  	animations: [FadeAnimationClass.getTrigger('busyStateBaseFade', '1s ease', '400ms ease')],
+  	styleUrls: ['./busy-state-base.component.scss']
 })
 
 

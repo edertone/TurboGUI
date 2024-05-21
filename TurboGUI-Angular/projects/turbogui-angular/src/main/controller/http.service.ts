@@ -16,7 +16,9 @@ import { DialogErrorComponent } from '../view/components/dialog-error/dialog-err
 /**
  * Manages application http communications
  */
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class HTTPService extends HTTPManager {
     
     

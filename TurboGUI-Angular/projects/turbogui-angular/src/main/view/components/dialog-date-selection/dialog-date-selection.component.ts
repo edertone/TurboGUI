@@ -7,17 +7,24 @@
  * CopyRight : -> Copyright 2018 Edertone Advanded Solutions. https://www.edertone.com
  */
 
-import { Component, Inject } from '@angular/core';
+import { Component, ElementRef, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DialogBaseComponent } from '../dialog-base/dialog-base.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { CommonModule } from '@angular/common';
+
 
 /**
  * A dialog component with a calendar that allows us to select a single date value
  */
 @Component({
-  selector: 'tg-dialog-date-selection',
-  templateUrl: './dialog-date-selection.component.html',
-  styleUrls: ['./dialog-date-selection.component.scss']
+  	selector: 'tg-dialog-date-selection',
+  	standalone: true,
+	imports: [CommonModule, MatDatepickerModule, MatNativeDateModule],
+	providers: [],
+  	templateUrl: './dialog-date-selection.component.html',
+  	styleUrls: ['./dialog-date-selection.component.scss']
 })
 
 
@@ -30,9 +37,9 @@ export class DialogDateSelectionComponent extends DialogBaseComponent {
     selectedDate:Date;
 
 
-    constructor(public dialogRef: MatDialogRef<DialogBaseComponent>,
+    constructor(public elementRef: ElementRef, public dialogRef: MatDialogRef<DialogBaseComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: any) {
         
-        super();
+        super(elementRef, dialogRef);
     }
 }

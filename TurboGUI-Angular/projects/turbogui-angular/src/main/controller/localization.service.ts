@@ -14,7 +14,9 @@ import { LocalizationManager } from 'turbocommons-ts';
 /**
  * Manages application text translations and languages
  */
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class LocalizationService extends LocalizationManager {
 
 }

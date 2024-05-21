@@ -20,9 +20,12 @@ import { View } from '../../../model/classes/View';
  * <tg-views-container [viewsService]="viewsService" [initialView]="HomeViewComponent"></tg-views-container>
  */
 @Component({
-  selector: 'tg-views-container',
-  templateUrl: './views-container.component.html',
-  styleUrls: ['./views-container.component.scss']
+  	selector: 'tg-views-container',
+  	standalone: true,
+	imports: [],
+	providers: [],
+  	templateUrl: './views-container.component.html',
+  	styleUrls: ['./views-container.component.scss']
 })
 
 

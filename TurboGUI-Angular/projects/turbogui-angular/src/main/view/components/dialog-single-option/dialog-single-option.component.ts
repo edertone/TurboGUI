@@ -7,18 +7,23 @@
  * CopyRight : -> Copyright 2018 Edertone Advanded Solutions. https://www.edertone.com
  */
 
-import { Component, Inject } from '@angular/core';
+import { Component, ElementRef, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DialogBaseComponent } from '../dialog-base/dialog-base.component';
+import { MatButtonModule } from '@angular/material/button';
+import { CommonModule } from '@angular/common';
 
 
 /**
  * A dialog component with a single option button, to be used with dialog service
  */
 @Component({
-  selector: 'tg-dialog-single-option',
-  templateUrl: './dialog-single-option.component.html',
-  styleUrls: ['./dialog-single-option.component.scss']
+  	selector: 'tg-dialog-single-option',
+  	standalone: true,
+	imports: [CommonModule, MatButtonModule],
+	providers: [],
+  	templateUrl: './dialog-single-option.component.html',
+  	styleUrls: ['./dialog-single-option.component.scss']
 })
 
 
@@ -28,9 +33,9 @@ export class DialogSingleOptionComponent extends DialogBaseComponent {
     static readonly DIALOG_CLASS_NAME = 'DialogSingleOptionComponent';
     
 
-    constructor(public dialogRef: MatDialogRef<DialogBaseComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
+    constructor(public elementRef: ElementRef, public dialogRef: MatDialogRef<DialogBaseComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
 
-        super();
+        super(elementRef, dialogRef);
         
         if (data.texts.length < 1) {
 

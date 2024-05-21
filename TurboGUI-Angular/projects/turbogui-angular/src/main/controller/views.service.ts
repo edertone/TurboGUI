@@ -9,26 +9,22 @@
 
 import { Type, ViewContainerRef, Injectable, ComponentFactoryResolver } from '@angular/core';
 import { View } from '../model/classes/View';
-import { ViewModel } from '../model/classes/ViewModel';
+import { SingletoneStrictClass } from '../model/classes/SingletoneStrictClass';
 
 
 /**
  * Manages adding, removing and manipulating the application views
  */
-@Injectable()
-export class ViewsService {
+@Injectable({
+  providedIn: 'root',
+})
+export class ViewsService extends SingletoneStrictClass {
 
 
     /**
      * See getter method for docs
      */
     private _loadedViewClass: Type<View> | null = null;
-
-
-    /**
-     * An instance of the model that is assigned to the currently loaded view
-     */
-    private _loadedViewModel: ViewModel | null = null;
 
 
     /**
@@ -39,6 +35,7 @@ export class ViewsService {
 
     constructor(private readonly componentFactoryResolver: ComponentFactoryResolver) {
 
+		super(ViewsService);
     }
 
 
@@ -98,30 +95,11 @@ export class ViewsService {
 
         const componentRef = (this._viewContainerRef as ViewContainerRef).createComponent(factory);
 
-        this._loadedViewModel = componentRef.instance.modelClass !== null ? new (componentRef.instance.modelClass as any)() : null;
-
         componentRef.changeDetectorRef.detectChanges();
 
         this._loadedViewClass = view;
 
         return componentRef;
-    }
-
-
-    /**
-     * Get the model that is instantiated for the currently active view. (A view model only lives while its view is active)
-     * If no view model is assigned to the current view or no view is loaded, an exception will be thrown.
-     *
-     * @return The current view model instance, which must be casted to the appropiate ViewModel extended class
-     */
-    get model() {
-
-        if (this._loadedViewModel === null) {
-
-            throw new Error('No active model. Make sure a view is loaded with an assigned model. Do not access the model until view is initialized (for example on ngAfterViewInit)');
-        }
-
-        return this._loadedViewModel;
     }
 
 
@@ -139,7 +117,6 @@ export class ViewsService {
         }
 
         this._loadedViewClass = null;
-        this._loadedViewModel = null;
     }
 
 

@@ -12,13 +12,15 @@ import { ConversionUtils, StringUtils } from 'turbocommons-ts';
 import { HTTPService } from '../controller/http.service';
 import { LocalizationService } from '../controller/localization.service';
 import { HTTPServicePostRequest } from '../controller/httpservice/HTTPServicePostRequest';
-
+import { SingletoneStrictClass } from '../model/classes/SingletoneStrictClass';
 
 /**
  * Manages the users model and commands
  */
-@Injectable()
-export class UserService {
+@Injectable({
+  providedIn: 'root',
+})
+export class UserService extends SingletoneStrictClass {
 
 
     /**
@@ -53,6 +55,8 @@ export class UserService {
 
     constructor(public httpService: HTTPService,
                 public ls: LocalizationService) {
+					
+		super(UserService);
     }
 
 

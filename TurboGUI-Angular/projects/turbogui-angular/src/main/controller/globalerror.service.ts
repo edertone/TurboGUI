@@ -8,6 +8,7 @@
  */
 
 import { Injectable, ErrorHandler } from '@angular/core';
+import { SingletoneStrictClass } from '../model/classes/SingletoneStrictClass';
 
 
 /**
@@ -26,8 +27,10 @@ import { Injectable, ErrorHandler } from '@angular/core';
  * or implement your custom ones, you must extend this class and set your new one as the error
  * handler provider.
  */
-@Injectable()
-export class GlobalErrorService implements ErrorHandler {
+@Injectable({
+  providedIn: 'root',
+})
+export class GlobalErrorService extends SingletoneStrictClass implements ErrorHandler {
 
 
     /**
@@ -51,6 +54,11 @@ export class GlobalErrorService implements ErrorHandler {
      */
     private readonly errorAlertMessage = 'Application exception:\n\n';
 
+
+	constructor(){
+		
+		super(GlobalErrorService);
+	}
 
     /**
      * Show an alert with the received error detail and also log it to the js console.
