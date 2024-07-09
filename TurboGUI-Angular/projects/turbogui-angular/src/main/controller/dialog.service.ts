@@ -327,7 +327,7 @@ export class DialogService extends SingletoneStrictClass {
      * @param dialogComponentClass A class for a component that extends DialogBaseComponent, which will be the dialog that is shown to the user.
      * @param properties An object containing the different visual and textual options that this dialog allows:
      *            - id: The html unique identifier that the dialog will have once created. If not specified, no id will be explicitly set
-     *            - width: Specify the css value for the default dialog width. As the dialog is responsive, the value will be automatically
+     *            - width: 50% by default. Specify the css value for the default dialog width. As the dialog is responsive, the value will be automatically
      *              reduced if the available screen is not enough, and will reach the desired value otherwise. We can set any css unit like pixels, 
      *              %, vh, vw, or any other. For example: '400px', '50%', etc.
      *            - maxWidth: Defines the maximum width that the dialog will have regarding the viewport. We can specify it in % or vw, just like is done in

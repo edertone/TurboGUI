@@ -22,20 +22,6 @@ import { DialogErrorComponent } from '../view/components/dialog-error/dialog-err
 export class HTTPService extends HTTPManager {
     
     
-    /**
-     * execute() method option that tells the service to avoid blocking the user interface with a modal busy state while the requests that are
-     * launched by the execute method are running.
-     */
-    static readonly NO_MODAL_BUSY_STATE = 'NO_MODAL_BUSY_STATE';
-
-
-    /**
-     * execute() method option that tells the service to skip showing an error dialog when a request fails. We normally use this to handle the
-     * errors by ourselves or if we want to hide the error dialog for a specific request.
-     */
-    static readonly DISABLE_ERROR_HANDLING = 'DISABLE_ERROR_HANDLING';
-
-
     constructor(public dialogService: DialogService) {
 
         super(true);
@@ -45,29 +31,34 @@ export class HTTPService extends HTTPManager {
     /**
      * The same method as HTTPManager.execute but with the ability to enable several options which are specific to this service:
      *
-     * - HTTPService.NO_MODAL_BUSY_STATE To prevent the default behaviour of locking the UI while the request is running
-     * - HTTPService.DISABLE_ERROR_HANDLING To prevent the default behaviour of showing a detailed error dialog when a request fails
+     * - options:
+     *     busyState: Set it to false to prevent the default behaviour of locking the UI while the request is running
+     *     handleErrors: Set it to false to prevent the default behaviour of showing a detailed error dialog when a request fails
      *
      * @see HTTPManager.execute()
      */
     execute(requests: string|string[]|HTTPManagerBaseRequest|HTTPManagerBaseRequest[],
             finishedCallback: ((results: {url:string, response:any, isError:boolean, errorMsg:string, code:number}[], anyError:boolean) => void) | null = null,
             progressCallback: null | ((completedUrl: string, totalRequests: number) => void) = null,
-            options: (typeof HTTPService.NO_MODAL_BUSY_STATE|typeof HTTPService.DISABLE_ERROR_HANDLING)[] = []){
+            options: {busyState?:boolean, handleErrors?:boolean} = {}){
     
-        if(options.indexOf(HTTPService.NO_MODAL_BUSY_STATE) < 0){
+        // Set the default values for non specified properties
+        options.busyState = options.busyState ?? true;
+        options.handleErrors = options.handleErrors ?? true;
+        
+        if(options.busyState){
            
            this.dialogService.addModalBusyState(); 
         }
     
         super.execute(requests, (results, anyError) => { 
             
-            if(options.indexOf(HTTPService.NO_MODAL_BUSY_STATE) < 0){
+            if(options.busyState){
                 
                 this.dialogService.removeModalBusyState();
             }
             
-            if((options.indexOf(HTTPService.DISABLE_ERROR_HANDLING) < 0) && anyError){
+            if(options.handleErrors && anyError){
                 
                 for(let result of results){
                     

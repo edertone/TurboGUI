@@ -1,0 +1,24 @@
+<h3>
+    {{data.texts[0]}}
+</h3>
+
+<p *ngIf="data.texts.length > 2">
+    {{data.texts[2]}}
+</p>
+
+<mat-form-field>
+
+    <mat-label>{{data.texts[1]}}</mat-label>
+    <input matInput autoFocusOnDisplay
+        (keyup.enter)="closeDialog()"
+        [(ngModel)]="inputText">
+        
+</mat-form-field>
+
+<button mat-raised-button color="primary"
+    [disabled]="isInputEmpty()"
+    (click)="closeDialog()">
+    
+    {{data.options[0]}}
+    
+</button>

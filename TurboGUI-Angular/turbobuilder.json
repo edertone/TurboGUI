@@ -3,7 +3,10 @@
     "metadata": {
         "name": "turbogui-angular",
         "description": "A library that tries to help with the most common user interface elements on several frameworks and platforms",
-        "builderVersion": "7.0.2"
+        "builderVersion": "8.0.0"
+    },
+    "containers": {
+        "docker": []
     },
     "validate": {
         "runBeforeBuild": true,

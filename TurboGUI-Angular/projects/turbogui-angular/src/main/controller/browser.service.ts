@@ -35,7 +35,7 @@ export class BrowserService extends BrowserManager {
      *
      * @returns void
      */
-    setURI(path: string, query?: string | undefined){
+    setCurrentUrlURI(path: string, query?: string | undefined){
 
         this.location.go(path, query);
     }

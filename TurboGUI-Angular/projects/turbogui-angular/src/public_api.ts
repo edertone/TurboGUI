@@ -14,8 +14,8 @@ export { LocalizationService } from './main/controller/localization.service';
 export { HTTPService } from './main/controller/http.service';
 export { HTTPServiceGetRequest } from './main/controller/httpservice/HTTPServiceGetRequest';
 export { HTTPServicePostRequest } from './main/controller/httpservice/HTTPServicePostRequest';
+export { TurboApiCallerService } from './main/controller/turbo-api-caller.service';
 export { DialogService } from './main/controller/dialog.service';
-export { UserService } from './main/controller/user.service';
 export { ViewsService } from './main/controller/views.service';
 export { BrowserService } from './main/controller/browser.service';
 
@@ -31,6 +31,7 @@ export { DialogSingleOptionComponent } from './main/view/components/dialog-singl
 export { DialogTwoOptionComponent } from './main/view/components/dialog-two-option/dialog-two-option.component';
 export { DialogMultipleOptionComponent } from './main/view/components/dialog-multiple-option/dialog-multiple-option.component';
 export { DialogSingleSelectionListComponent } from './main/view/components/dialog-single-selection-list/dialog-single-selection-list.component';
+export { DialogSingleInputComponent } from './main/view/components/dialog-single-input/dialog-single-input.component';
 export { ViewsContainerComponent } from './main/view/components/views-container/views-container.component';
 export { ButtonImageComponent } from './main/view/components/button-image/button-image.component';
 export { ButtonContainerComponent } from './main/view/components/button-container/button-container.component';
@@ -49,3 +50,4 @@ export { ElementCreatedDirective } from './main/view/directives/ElementCreatedDi
 export { ElementDestroyedDirective } from './main/view/directives/ElementDestroyedDirective';
 export { AutoFocusOnDisplayDirective } from './main/view/directives/AutoFocusOnDisplayDirective';
 export { AutoSelectTextOnFocusDirective } from './main/view/directives/AutoSelectTextOnFocusDirective';
+export { ValidatorsPlus } from './main/view/forms/ValidatorsPlus';
