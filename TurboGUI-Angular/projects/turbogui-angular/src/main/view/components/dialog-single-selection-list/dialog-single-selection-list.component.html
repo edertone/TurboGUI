@@ -12,6 +12,7 @@
     
     <mat-label>{{data.texts[2]}}</mat-label>
     <input matInput autoFocusOnDisplay
+        (keyup.enter)="onIntroKeyPress()"
         (input)="onSearchChange($event.target)">
         
 </mat-form-field>

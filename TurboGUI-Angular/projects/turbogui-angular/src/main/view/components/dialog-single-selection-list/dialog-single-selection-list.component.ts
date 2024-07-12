@@ -59,6 +59,12 @@ export class DialogSingleSelectionListComponent extends DialogBaseComponent {
     
     
     /**
+     * Stores the number of options that are currently visible to the user
+     */
+    filteredOptionsCount = 0;
+    
+    
+    /**
      * Contains the original list of elements that are provided to be listed on this component before
      * being possibly filtered. It is only used as a backup, not shown to the user
      */
@@ -77,7 +83,7 @@ export class DialogSingleSelectionListComponent extends DialogBaseComponent {
      */
     selectedItemIndex = -1;
     
-
+    
     constructor(public elementRef: ElementRef,
     			public dialogRef: MatDialogRef<DialogBaseComponent>,
                 public browserService: BrowserService,
@@ -96,6 +102,7 @@ export class DialogSingleSelectionListComponent extends DialogBaseComponent {
         }
         
         this.originalOptions = data.options;
+        this.filteredOptionsCount = this.originalOptions.length;
         
         for(let option of this.originalOptions){
             
@@ -112,6 +119,27 @@ export class DialogSingleSelectionListComponent extends DialogBaseComponent {
         
         return (this.browserService.getWindowHeight() * 0.6) + 'px';
     }
+    
+    
+    /**
+     * If the user presses enter key and there's only one element filtered in the list, we will close this dialog
+     * setting that element as the selected.
+     */
+    onIntroKeyPress(){
+
+        if(this.filteredOptionsCount === 1){
+            
+            for (let i = 0; i < this.originalOptionsFullTextSearch.length; i++){
+                
+                if(this.filteredOptions[i] !== ''){
+                    
+                    this.closeDialog(i);
+                    
+                    return;
+                }
+            }
+        }
+    }
 
 
     /**
@@ -121,6 +149,7 @@ export class DialogSingleSelectionListComponent extends DialogBaseComponent {
     onSearchChange(input:HTMLInputElement){
 
         this.selectedItemIndex = -1;
+        this.filteredOptionsCount = 0;
        
         let inputValue = StringUtils.formatForFullTextSearch(input.value);
 
@@ -130,6 +159,7 @@ export class DialogSingleSelectionListComponent extends DialogBaseComponent {
                this.originalOptionsFullTextSearch[i].indexOf(inputValue) >= 0){
 
                 this.filteredOptions[i] = this.originalOptions[i];
+                this.filteredOptionsCount ++;
 
             }else{
 
