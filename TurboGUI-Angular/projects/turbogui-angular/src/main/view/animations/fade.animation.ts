@@ -24,11 +24,11 @@ export class FadeAnimationClass {
      * @param enter The time and easing that we want to use for the enter state
      * @param leave The time and easing that we want to use for the leave state
      */
-    static getTrigger(triggerName: string, enter = '1s ease', leave = '0s ease') {
+    static getTrigger(triggerName: string, enter = '1s ease', leave = '300ms ease') {
 
         return trigger(triggerName, [
-                                     transition(':enter', [style({opacity: 0}), animate(enter)]),
-                                     transition(':leave', [style({opacity: 1}), animate(leave, style({opacity: 0}))])
+                                     transition('void => *', [style({opacity: 0}), animate(enter, style({ opacity: 1 }))]),
+                                     transition('* => void', [animate(leave, style({opacity: 0}))])
                                     ]);
     }
 }

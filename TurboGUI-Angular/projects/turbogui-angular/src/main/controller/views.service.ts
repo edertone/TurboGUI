@@ -7,9 +7,10 @@
  * CopyRight : -> Copyright 2018 Edertone Advanded Solutions. https://www.edertone.com
  */
 
-import { Type, ViewContainerRef, Injectable, ComponentFactoryResolver } from '@angular/core';
+import { Type, ViewContainerRef, Injectable, ComponentRef } from '@angular/core';
 import { View } from '../model/classes/View';
 import { SingletoneStrictClass } from '../model/classes/SingletoneStrictClass';
+import { AnimationBuilder, animate, style } from '@angular/animations';
 
 
 /**
@@ -31,9 +32,15 @@ export class ViewsService extends SingletoneStrictClass {
      * See setter method for docs
      */
     private _viewContainerRef: ViewContainerRef | null = null;
+    
 
+    /**
+     * Contains the reference to the currently loaded view component
+     */
+    private _currentComponentRef: ComponentRef<View> | null = null;
+    
 
-    constructor(private readonly componentFactoryResolver: ComponentFactoryResolver) {
+    constructor(private animationBuilder: AnimationBuilder) {
 
 		super(ViewsService);
     }
@@ -75,31 +82,45 @@ export class ViewsService extends SingletoneStrictClass {
      *
      * @return The instance of the newly added and created view. 
      */
-    pushView(view: Type<View>) {
+    async pushView(view: Type<View>) {
+        
+        this.verifyViewsContainerExist();
+                
+        // If the loaded view is the same as the specified one, we will do nothing
+        if (this._loadedViewClass === view) {
 
+            return this._currentComponentRef;
+        }
+                    
         // If a view is already loaded, we will unload it first
         if (this._loadedViewClass !== null) {
 
-            // If the loaded view is the same as the specified one, we will do nothing
-            if (this._loadedViewClass === view) {
-
-                return;
-            }
-
-            this.popView();
+            await this.removeCurrentView();
         }
 
-        this.verifyViewsContainerExist();
-        
-        const factory = this.componentFactoryResolver.resolveComponentFactory(view);
+        // Create the new view
+        const newComponentRef = (this._viewContainerRef as ViewContainerRef).createComponent(view);
+        newComponentRef.changeDetectorRef.detectChanges();
 
-        const componentRef = (this._viewContainerRef as ViewContainerRef).createComponent(factory);
+        // Set initial opacity to 0
+        newComponentRef.location.nativeElement.style.opacity = '0';
 
-        componentRef.changeDetectorRef.detectChanges();
+        // Fade in the new view
+        const fadeInPlayer = this.animationBuilder.build([
+            style({ opacity: 0 }),
+            animate('300ms ease', style({ opacity: 1 }))
+        ]).create(newComponentRef.location.nativeElement);
 
-        this._loadedViewClass = view;
+        await new Promise<void>((resolve) => {
+            fadeInPlayer.onDone(() => {
+                this._currentComponentRef = newComponentRef;
+                this._loadedViewClass = view;
+                resolve();
+            });
+            fadeInPlayer.play();
+        });
 
-        return componentRef;
+        return this._currentComponentRef;
     }
 
 
@@ -107,16 +128,52 @@ export class ViewsService extends SingletoneStrictClass {
      * Delete the currently loaded view from the views container, and leave it empty.
      * If no view is currently loaded, this method will do nothing
      */
-    popView() {
+    async popView() {
 
         this.verifyViewsContainerExist();
 
-        if (this._loadedViewClass !== null) {
-
-            (this._viewContainerRef as ViewContainerRef).clear();
+        if (this._loadedViewClass !== null && this._currentComponentRef) {
+            
+            await this.removeCurrentView();
         }
+    }
+    
+    
+    /**
+     * Aux method to remove the currently loaded view from the views container using a promise
+     */
+    private removeCurrentView(): Promise<void> {
+        
+        return new Promise<void>((resolve) => {
+            
+            if (this._currentComponentRef) {
+                
+                const element = this._currentComponentRef.location.nativeElement;
+                
+                const fadeOutPlayer = this.animationBuilder.build([
+                    style({ opacity: 1 }),
+                    animate('300ms ease', style({ opacity: 0 }))
+                ]).create(element);
 
-        this._loadedViewClass = null;
+                fadeOutPlayer.onDone(() => {
+                    
+                    if(this._viewContainerRef !== null){
+                        
+                        this._viewContainerRef.clear();
+                    }
+                    
+                    this._currentComponentRef = null;
+                    this._loadedViewClass = null;
+                    resolve();
+                });
+
+                fadeOutPlayer.play();
+                
+            } else {
+                
+                resolve();
+            }
+        });
     }
 
 

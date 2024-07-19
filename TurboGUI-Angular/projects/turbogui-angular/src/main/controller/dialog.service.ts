@@ -178,9 +178,10 @@ export class DialogService extends SingletoneStrictClass {
      * Change the application visual appearance so the user perceives that the application is
      * currently busy. While modal busy state is enabled, no user input is possible neither via
      * keyboard, mouse or touch. Use this state when performing server requests or operations that
-     * must block the user interaction with the application.
+     * must block the user interaction with the application. To allow user interaction again, you must
+     * call removeModalBusyState()
      *
-     * Note: We can modify the busy state component that is shown by this method. To do it, we must
+     * Notice: We can modify the busy state visual component that is shown by this method. To do it, we must
      * set this.customBusyStateComponentClass property with our own custom busy state component class. (We can do it at
      * our main application component constructor for example). Our custom component must extend the
      * BusyStateBaseComponent one to add its own visual appearance.
@@ -225,7 +226,7 @@ export class DialogService extends SingletoneStrictClass {
 
 
     /**
-     * Remove the application busy state and restore it back to normal user interaction
+     * Cancel the application busy state and restore it back to normal so user interaction is allowed again
      */
     removeModalBusyState() {
 
