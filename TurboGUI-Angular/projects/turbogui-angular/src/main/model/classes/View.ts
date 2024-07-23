@@ -13,7 +13,7 @@ import { ViewService } from "./ViewService";
 
 /**
  * Defines an application view.
- * Our View components must extend this class so they can be manipulated via ViewsService and be correctly linked to a view service.
+ * Our View components must extend this class so they can be manipulated via ViewsService and be correctly linked to a views-container.
  */
 export abstract class View {
 

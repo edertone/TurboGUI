@@ -343,8 +343,8 @@ export class DialogService extends SingletoneStrictClass {
      *            - viewContainerRef: This is important if we want to propagate providers from a parent component to this dialog. We must specify 
 	 *              this reference to make sure the same services injected on the parent are available too at the child dialog 
      * 
-     * @param callback A function that will be called after the dialog is closed and will receive a selection object with the numeric index and value for
-     *        the option that's been selected by the user. if no option was selected, index will be -1 and value null
+     * @param callback A function that will be called after the dialog is closed. It will receive a selection object with two properties: index and value. Those 
+     *        will contain the index and value from the options array that's selected by the user. if no option selected, index will be -1 and value null
      */
     addDialog(dialogComponentClass: Type<DialogBaseComponent>,
               properties: {id?: string,
