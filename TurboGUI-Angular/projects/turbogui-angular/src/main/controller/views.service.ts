@@ -39,6 +39,12 @@ export class ViewsService extends SingletoneStrictClass {
      */
     private _currentComponentRef: ComponentRef<View> | null = null;
     
+    
+    /**
+     * Flag that stores if any view is in the process of being loaded
+     */
+    private _isLoadingView = false;
+    
 
     constructor(private animationBuilder: AnimationBuilder) {
 
@@ -74,24 +80,31 @@ export class ViewsService extends SingletoneStrictClass {
 
     /**
      * Create a new view instance with the specified type and add it to the current application views container. Any currently loaded 
-     * view will be removed
+     * view will be removed.
+     * 
+     * If we push a view while another one is in the process of being loaded, the new push will be ignored.
      *
      * Make sure this method is called when all the visual components of the application have been created (ngAfterViewInit)
      *
-     * @param view The classname for the view that we want to create and add to the views container (must extend View base class).
-     *
-     * @return The instance of the newly added and created view. 
+     * @param view The classname for the view that we want to create (must extend View base class). A new angular object 
+     *        will be instantiated and loaded into the views container.
      */
     async pushView(view: Type<View>) {
         
-        this.verifyViewsContainerExist();
-                
         // If the loaded view is the same as the specified one, we will do nothing
         if (this._loadedViewClass === view) {
 
-            return this._currentComponentRef;
+            return;
         }
                     
+        // If a view is already being loaded, nothing to do
+        if(this._isLoadingView){
+            
+            return;
+        }
+        
+        this._isLoadingView = true;
+                
         // If a view is already loaded, we will unload it first
         if (this._loadedViewClass !== null) {
 
@@ -115,12 +128,11 @@ export class ViewsService extends SingletoneStrictClass {
             fadeInPlayer.onDone(() => {
                 this._currentComponentRef = newComponentRef;
                 this._loadedViewClass = view;
+                this._isLoadingView = false;
                 resolve();
             });
             fadeInPlayer.play();
         });
-
-        return this._currentComponentRef;
     }
 
 
@@ -129,8 +141,6 @@ export class ViewsService extends SingletoneStrictClass {
      * If no view is currently loaded, this method will do nothing
      */
     async popView() {
-
-        this.verifyViewsContainerExist();
 
         if (this._loadedViewClass !== null && this._currentComponentRef) {
             
@@ -144,6 +154,11 @@ export class ViewsService extends SingletoneStrictClass {
      */
     private removeCurrentView(): Promise<void> {
         
+        if (this._viewContainerRef === null) {
+
+            throw new Error('Views container not defined. Please declare a <views-container> element in your application');
+        }
+
         return new Promise<void>((resolve) => {
             
             if (this._currentComponentRef) {
@@ -174,17 +189,5 @@ export class ViewsService extends SingletoneStrictClass {
                 resolve();
             }
         });
-    }
-
-
-    /**
-     * Auxiliary method to test if the views container instance is available on the application
-     */
-    private verifyViewsContainerExist() {
-
-        if (this._viewContainerRef === null) {
-
-            throw new Error('Views container not defined. Please declare a <views-container> element in your application');
-        }
     }
 }
