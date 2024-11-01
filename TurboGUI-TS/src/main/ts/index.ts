@@ -10,6 +10,7 @@
 
 // Managers package
 export { DialogManager } from './managers/DialogManager';
+export { LocalesManager } from './managers/LocalesManager';
 
 // Model package
 

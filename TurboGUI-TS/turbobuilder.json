@@ -5,9 +5,10 @@
 	"metadata": {
 		"name": "turbogui-ts",
 		"description": "A library that tries to help with the most common user interface elements on several frameworks and platforms",
-		"builderVersion": "7.0.2"
-	},
-	
+		"builderVersion": "8.0.0"
+	},"containers": {
+        "docker": []    
+    },	
 	"validate": {
 	    "projectStructure" : {                    
             "readmeFileMandatory": false
@@ -51,9 +52,8 @@
 	        "strict": true,
 	        "sourceMap": true,
 	        "targets": [
-	            {"folder": "ts", "jsTarget": "ES5"},
-	            {"folder": "es5", "jsTarget": "ES5", "mergedFile": "turbogui-es5", "globalVar": "org_turbogui"},
-	            {"folder": "es6", "jsTarget": "ES6", "mergedFile": "turbogui-es6", "globalVar": "org_turbogui"}
+	            {"folder": "ts", "jsTarget": "es2016"},
+	            {"folder": "es2016", "jsTarget": "es2016", "mergedFile": "turbogui-es2016", "globalVar": "org_turbogui"}
 	        ]
 	    }
     },
