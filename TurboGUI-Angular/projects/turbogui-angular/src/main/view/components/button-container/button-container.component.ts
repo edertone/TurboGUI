@@ -12,9 +12,6 @@ import { FadeAnimationClass } from '../../animations/fade.animation';
 import { ButtonBaseComponent } from '../../../view/components/button-base/button-base.component';
 
 
-/**
- * This component is a basic button without visual appearance, that is used as a container to load any content.
- */
 @Component({
   	selector: 'tg-button-container',
   	standalone: true,
@@ -26,6 +23,9 @@ import { ButtonBaseComponent } from '../../../view/components/button-base/button
 })
 
 
+/**
+ * This component is a basic button without visual appearance, that is used as a container to load any content.
+ */
 export class ButtonContainerComponent extends ButtonBaseComponent {
 
 

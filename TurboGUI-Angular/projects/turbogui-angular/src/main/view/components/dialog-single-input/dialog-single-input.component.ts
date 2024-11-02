@@ -18,10 +18,6 @@ import { TurboGuiAngularModule } from '../../../model/modules/turbogui-angular.m
 import { StringUtils } from 'turbocommons-ts';
 
 
-/**
- * A dialog component with a single input element and an accept button, to be used with dialog service
- * It lets us easily ask the user for any arbitrary text we may need. 
- */
 @Component({
   	selector: 'tg-dialog-single-input',
   	standalone: true,
@@ -33,6 +29,17 @@ import { StringUtils } from 'turbocommons-ts';
 })
 
 
+/**
+ * A dialog component with a single input element and an accept button, to be used with dialog service
+ * It lets us easily ask the user for any arbitrary text we may need.
+ * 
+ * 1st text is the dialog title
+ * 2nd text is the dialog subtitle (leave it empty to hide the subtitle)
+ * 3rd text is the input prompt caption
+ * 4rd text is the default value of the input contents
+ * 
+ * 1st option will be the text on the unique save button that exists on the dialog
+ */
 export class DialogSingleInputComponent extends DialogBaseComponent {
 
     
@@ -44,6 +51,12 @@ export class DialogSingleInputComponent extends DialogBaseComponent {
      */
     inputText = '';
     
+    
+    /**
+    * Contains the default text that's been specified for the input
+    */
+    defaultTextValue = '';
+    
 
     constructor(public elementRef: ElementRef, public dialogRef: MatDialogRef<DialogBaseComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
 
@@ -51,17 +64,28 @@ export class DialogSingleInputComponent extends DialogBaseComponent {
         
         if (data.texts.length < 1) {
 
-            throw new Error('DialogSingleInputComponent expects 2 texts: The title and optionally a description');
+            throw new Error('DialogSingleInputComponent expects 1 text: The dialog title');
         }
 
         if (data.options.length !== 1) {
 
             throw new Error('DialogSingleInputComponent expects only one option');
         }
+        
+        if (data.texts.length > 3) {
+
+            this.inputText = data.texts[3]; 
+            this.defaultTextValue = data.texts[3]; 
+        }
     }
     
     
-    isInputEmpty(){
+    isButtonDisabled(){
+        
+        if (this.defaultTextValue !== '' && this.inputText === this.defaultTextValue) {
+
+            return true;
+        }
         
         return StringUtils.isEmpty(this.inputText);
     }
@@ -69,9 +93,6 @@ export class DialogSingleInputComponent extends DialogBaseComponent {
     
     closeDialog(){
     
-        if(!this.isInputEmpty()){
-            
-            super.closeDialog(0, this.inputText);
-        }        
+        super.closeDialog(0, this.inputText);       
     }
 }

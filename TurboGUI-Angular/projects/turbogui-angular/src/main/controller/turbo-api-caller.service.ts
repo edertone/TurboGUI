@@ -45,13 +45,13 @@ export class TurboApiCallerService extends SingletoneStrictClass {
     /**
      * The username that is currently defined and will be used by the login methods
      */
-    userName = '';
+    private _userName = '';
 
 
     /**
      * The password for the user that is currently defined and will be used by the login methods
      */
-    password = '';
+    private _password = '';
     
     
     /**
@@ -79,19 +79,59 @@ export class TurboApiCallerService extends SingletoneStrictClass {
     
     
     /**
-     * Private http service instance that will be exclusive to this turbo api caller service. It is a duplicate.
+     * Private http manager instance that will be exclusive to this turbo api caller service.
      */
-    private httpManager: HTTPManager;
+    private readonly httpManager: HTTPManager;
     
     
-    constructor(private dialogService: DialogService, 
-                private browserService: BrowserService) {
+    constructor(private readonly dialogService: DialogService, 
+                private readonly browserService: BrowserService) {
         
         super(TurboApiCallerService);
         
         // Create a fresh instance of the http service so we can use it independently
         this.httpManager = new HTTPManager();
         this._clearUserAndToken();
+    }
+    
+    
+    /** 
+     * The username that is currently defined and will be used by the login methods
+     */
+    set userName(v:string){
+
+        this._isLogged = false;
+        this._token = '';
+        this._userName = v;
+    }
+    
+    
+    /** 
+     * The username that is currently defined and will be used by the login methods
+     */
+    get userName(){
+        
+        return this._userName;
+    }
+    
+    
+    /** 
+     * The password for the user that is currently defined and will be used by the login methods
+     */
+    set password(v:string){
+
+        this._isLogged = false;
+        this._token = '';
+        this._password = v;
+    }
+    
+    
+    /** 
+     * The password for the user that is currently defined and will be used by the login methods
+     */
+    get password(){
+        
+        return this._password;
     }
     
 
@@ -203,9 +243,12 @@ export class TurboApiCallerService extends SingletoneStrictClass {
     
     
     /**
-     * Authenticates the user by sending an encoded credentials request to the login web service.
+     * Authenticates the userName and password that are currently defined at the respective properties of this service.
      * Returns a promise that resolves with the server's response or rejects with an error if the login fails.
      * Path to the login service must be correctly defined at this.loginWebService
+     * 
+     * The authentication process is performed by sending an encoded credentials request to the login web service using the 
+     * currently defined user name and psw.
      *
      * Here's an example of a call:
      * 
@@ -229,7 +272,7 @@ export class TurboApiCallerService extends SingletoneStrictClass {
             request.ignoreGlobalPostParams = true;
                
             const encodedCredentials = ConversionUtils.stringToBase64(
-                ConversionUtils.stringToBase64(this.userName) + ',' + ConversionUtils.stringToBase64(this.password));
+                ConversionUtils.stringToBase64(this._userName) + ',' + ConversionUtils.stringToBase64(this._password));
     
             request.parameters = { data: encodedCredentials };
             
@@ -277,12 +320,13 @@ export class TurboApiCallerService extends SingletoneStrictClass {
      */
     get isUserAndPswDefined(): boolean  {
 
-        return !StringUtils.isEmpty(this.userName) && !StringUtils.isEmpty(this.password);
+        return !StringUtils.isEmpty(this._userName) && !StringUtils.isEmpty(this._password);
     }
 
 
     /**
-     * Tells if exists a user that is currently logged or not
+     * Tells if the user name and psw that are specified on this service are currently logged or not. This means
+     * also a token is active.
      */
     get isLogged(): boolean {
 
@@ -536,8 +580,8 @@ export class TurboApiCallerService extends SingletoneStrictClass {
      */
     private _clearUserAndToken(){
         
-        this.userName = '';
-        this.password = '';
+        this._userName = '';
+        this._password = '';
         this._isLogged = false;
         this._token = '';
         this.httpManager.setGlobalPostParam('token', '-'); 

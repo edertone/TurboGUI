@@ -14,9 +14,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 
 
-/**
- * A dialog component that is designed to show more than one option buttons (usually more than two), to be used with dialog service
- */
 @Component({
   	selector: 'tg-dialog-multiple-option',
   	standalone: true,
@@ -27,6 +24,9 @@ import { CommonModule } from '@angular/common';
 })
 
 
+/**
+ * A dialog component that is designed to show more than one option buttons (usually more than two), to be used with dialog service
+ */
 export class DialogMultipleOptionComponent extends DialogBaseComponent {
 
 

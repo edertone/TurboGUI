@@ -10,7 +10,7 @@ export { TurboGuiAngularModule } from './main/model/modules/turbogui-angular.mod
  */
 export { NotificationService } from './main/controller/notification.service';
 export { GlobalErrorService } from './main/controller/globalerror.service';
-export { LocalizationService } from './main/controller/localization.service';
+export { LocalesService } from './main/controller/locales.service';
 export { HTTPService } from './main/controller/http.service';
 export { HTTPServiceGetRequest } from './main/controller/httpservice/HTTPServiceGetRequest';
 export { HTTPServicePostRequest } from './main/controller/httpservice/HTTPServicePostRequest';

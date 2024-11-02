@@ -15,9 +15,6 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { CommonModule } from '@angular/common';
 
 
-/**
- * A dialog component with a calendar that allows us to select a single date value
- */
 @Component({
   	selector: 'tg-dialog-date-selection',
   	standalone: true,
@@ -28,6 +25,9 @@ import { CommonModule } from '@angular/common';
 })
 
 
+/**
+ * A dialog component with a calendar that allows us to select a single date value
+ */
 export class DialogDateSelectionComponent extends DialogBaseComponent {
 
 

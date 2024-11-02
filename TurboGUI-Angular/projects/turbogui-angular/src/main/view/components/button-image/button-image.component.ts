@@ -12,9 +12,6 @@ import { FadeAnimationClass } from '../../animations/fade.animation';
 import { ButtonBaseComponent } from '../../../view/components/button-base/button-base.component';
 
 
-/**
- * This component is a basic button that uses an image as its visual appearance
- */
 @Component({
   	selector: 'tg-button-image',
   	standalone: true,
@@ -26,6 +23,9 @@ import { ButtonBaseComponent } from '../../../view/components/button-base/button
 })
 
 
+/**
+ * This component is a basic button that uses an image as its visual appearance
+ */
 export class ButtonImageComponent extends ButtonBaseComponent implements OnInit {
 
 

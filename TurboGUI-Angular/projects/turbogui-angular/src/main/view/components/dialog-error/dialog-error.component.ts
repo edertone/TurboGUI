@@ -14,9 +14,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 
 
-/**
- * A dialog component with a single option button, to be used for error notifications
- */
 @Component({
   	selector: 'tg-dialog-error',
   	standalone: true,
@@ -25,6 +22,11 @@ import { CommonModule } from '@angular/common';
   	templateUrl: './dialog-error.component.html',
   	styleUrls: ['./dialog-error.component.scss']
 })
+
+
+/**
+ * A dialog component with a single option button, to be used for error notifications
+ */
 export class DialogErrorComponent extends DialogBaseComponent {
 
 
