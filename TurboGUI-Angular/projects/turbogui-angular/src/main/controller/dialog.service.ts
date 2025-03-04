@@ -338,8 +338,9 @@ export class DialogService extends SingletoneStrictClass {
      *            - modal: True (default) if selecting an option is mandatory to close the dialog, false if the dialog can be closed
      *              by the user clicking outside it 
      *            - texts: A list with strings containing the dialog texts, sorted by importance. When dialog has a title, this should
-     *              be placed first, subtitle second and so (Each dialog may accept different number of texts).
+     *              be placed first, subtitle second and so (Each dialog may accept a different custom number of texts).
      *            - options: A list of strings that will be used as button captions for each one of the accepted dialog options
+     *            - data: An object that we can use to pass any extra data that we want to the dialog
      *            - viewContainerRef: This is important if we want to propagate providers from a parent component to this dialog. We must specify 
 	 *              this reference to make sure the same services injected on the parent are available too at the child dialog 
      * 
@@ -355,6 +356,7 @@ export class DialogService extends SingletoneStrictClass {
                            modal?: boolean,
                            texts?: string[],
                            options?: string[],
+                           data?: any,
                            viewContainerRef?: ViewContainerRef}, 
               callback: null | ((selection: {index:number, value?: any}) => void) = null) {
 
@@ -367,6 +369,7 @@ export class DialogService extends SingletoneStrictClass {
         properties.modal = properties.modal ?? true;
         properties.texts = properties.texts ?? [];
         properties.options = properties.options ?? [];
+        properties.data = properties.data ?? {};
 
         // Generate a string to uniquely identify this dialog on the list of active dialogs
         // A dialog is considered as unique if the dialog id and texts are exactly the same. We do not take options into consideration
@@ -393,7 +396,7 @@ export class DialogService extends SingletoneStrictClass {
             autoFocus: false,
             closeOnNavigation: !properties.modal,
             viewContainerRef: properties.viewContainerRef,
-            data: { texts: properties.texts, options: properties.options }
+            data: { texts: properties.texts, options: properties.options, data: properties.data }
           });      
 		
 		// Assign the dialog ID only if specifically set on properties

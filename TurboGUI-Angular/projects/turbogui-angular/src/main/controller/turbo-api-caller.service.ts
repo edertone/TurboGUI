@@ -31,6 +31,12 @@ export class TurboApiCallerService extends SingletoneStrictClass {
     
     
     /**
+     * URI Path to the web service that allows us to create extra user tokens
+     */
+    tokenCreationServiceURI = 'users/user-token-create';
+    
+    
+    /**
      * URI Path to the web service that performs the user log out
      */
     logOutServiceURI = 'users/logout';
@@ -311,6 +317,21 @@ export class TurboApiCallerService extends SingletoneStrictClass {
         
             this.httpManager.execute(request);
         }); 
+    }
+    
+    
+    /**
+     * Perform a request to the API service to create a new token for the user that is currently logged in.
+     * 
+     * @param options The parameters that will affect the token behaviour. To learn more about each option, please
+     *        refer to the turbodepot UsersManager class createToken method documentation
+     * 
+     * @returns A promise that resolves with the created token string if the request is successful, or rejects 
+     *          with an error (containing all the error response details) if the request fails.
+     */
+    createUserToken(options: {lifeTime?:number, useCount?:number, isLifeTimeRecycled?:boolean}) {
+        
+        return this.call(this.tokenCreationServiceURI, {options: options}, {resultFormat: 'STRING'});
     }
     
 

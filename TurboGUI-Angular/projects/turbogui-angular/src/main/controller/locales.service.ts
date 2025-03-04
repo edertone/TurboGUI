@@ -150,6 +150,8 @@ export class LocalesService extends SingletoneStrictClass {
     
     /**
      * Initializes the translation system by loading and parsing bundle files from the specified translations path.
+     * After the promise finishes, the class will contain all the translation data and will be ready to translate any 
+     * provided key.
      * 
      * @param translationsPath - Url where the translations Json structure of libraries/bundles/locales/keys is available.
      * @param locales An array of locale codes (e.g., ['en_US', 'es_ES', 'fr_FR']) to load. These will be added to the translation
@@ -286,8 +288,8 @@ export class LocalesService extends SingletoneStrictClass {
      * @param string key The key we want to read from the specified resource bundle
      * @param string bundlePath A string with the format 'library_name/bundle_name' that is used to locate the bundle were the key to translate is found
      * @param array replaceWildcards A list of values that will replace wildcards that may be found on the translated text. Each wildcard
-     *        will be replaced with the element whose index on toReplace matches it. Check the documentation for this.wildCardsFormat
-     *        property to know more about how to setup wildcards.
+     *        will be replaced with the element whose index on replaceWildcards matches it. Check the documentation for this.wildCardsFormat
+     *        property to know more about how to setup wildcards on your translations.
      *
      * @see setWildCardsFormat()
      *
