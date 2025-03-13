@@ -13,16 +13,21 @@ import { ViewService } from "./ViewService";
 
 /**
  * Defines an application view.
- * Our View components must extend this class so they can be manipulated via ViewsService and be correctly linked to a views-container.
+ * This is a base class that helps managing our application views. We should extend this class to create our views, as it forces us
+ * to set the viewContainerRef and the viewService, which are both used when working with views.
+ * 
+ * When using view services, it is important to specify the view service as a provider for the view component to ensure that it will
+ * be created and destroyed when the view is created and destroyed. 
  */
 export abstract class View {
 
 
 	/**
 	 * This constructor is specifically designed to force the view to set the viewContainerRef which will be automatically assigned
-	 * to the respective view service. If the view has no service, we can set it to null.
+	 * to the respective view service. If the view has no service, we can set it to null, but it is recommended to always use a service with a view,
+     * to store the view state and global methods that can be used by other components loaded in the view.
 	 */
-	constructor(viewContainerRef: ViewContainerRef, viewService:ViewService|null) {
+	constructor(public viewContainerRef: ViewContainerRef, public viewService:ViewService|null) {
 	
 		if(viewService !== null){
 			

@@ -16,7 +16,6 @@ export { HTTPServiceGetRequest } from './main/controller/httpservice/HTTPService
 export { HTTPServicePostRequest } from './main/controller/httpservice/HTTPServicePostRequest';
 export { TurboApiCallerService } from './main/controller/turbo-api-caller.service';
 export { DialogService } from './main/controller/dialog.service';
-export { ViewsService } from './main/controller/views.service';
 export { BrowserService } from './main/controller/browser.service';
 
 
@@ -32,7 +31,6 @@ export { DialogTwoOptionComponent } from './main/view/components/dialog-two-opti
 export { DialogMultipleOptionComponent } from './main/view/components/dialog-multiple-option/dialog-multiple-option.component';
 export { DialogSingleSelectionListComponent } from './main/view/components/dialog-single-selection-list/dialog-single-selection-list.component';
 export { DialogSingleInputComponent } from './main/view/components/dialog-single-input/dialog-single-input.component';
-export { ViewsContainerComponent } from './main/view/components/views-container/views-container.component';
 export { ButtonImageComponent } from './main/view/components/button-image/button-image.component';
 export { ButtonContainerComponent } from './main/view/components/button-container/button-container.component';
 
