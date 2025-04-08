@@ -244,7 +244,7 @@ export class TurboApiCallerService extends SingletoneStrictClass {
      */
     getLastVerifiedMail(){
 
-        return this._lastVerifiedMail;;
+        return this._lastVerifiedMail;
     }
     
     

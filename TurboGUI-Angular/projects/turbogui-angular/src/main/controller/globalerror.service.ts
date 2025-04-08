@@ -16,7 +16,7 @@ import { SingletoneStrictClass } from '../model/classes/SingletoneStrictClass';
  * It also contains multiple general error management features.
  *
  * To define this class as your application error handler, you must add the following to your
- * main app module providers:
+ * Application providers:
  *      {
  *          provide: ErrorHandler,
  *          useClass: GlobalErrorService
