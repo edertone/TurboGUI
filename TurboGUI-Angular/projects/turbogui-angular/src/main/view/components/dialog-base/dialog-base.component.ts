@@ -15,7 +15,10 @@ import { MatDialogRef } from '@angular/material/dialog';
 /**
  * This is the base class for all the dialog components that can be loaded by the dialog service class
  */
-@Component({ template: '' })
+@Component({
+    template: '',
+    standalone: false
+})
 export abstract class DialogBaseComponent implements AfterViewInit {
 
 

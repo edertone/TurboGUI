@@ -16,12 +16,11 @@ import { CommonModule } from '@angular/common';
 
 
 @Component({
-  	selector: 'tg-dialog-date-selection',
-  	standalone: true,
-	imports: [CommonModule, MatDatepickerModule, MatNativeDateModule],
-	providers: [],
-  	templateUrl: './dialog-date-selection.component.html',
-  	styleUrls: ['./dialog-date-selection.component.scss']
+    selector: 'tg-dialog-date-selection',
+    imports: [CommonModule, MatDatepickerModule, MatNativeDateModule],
+    providers: [],
+    templateUrl: './dialog-date-selection.component.html',
+    styleUrls: ['./dialog-date-selection.component.scss']
 })
 
 

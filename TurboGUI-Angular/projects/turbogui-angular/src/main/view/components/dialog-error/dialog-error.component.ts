@@ -15,12 +15,11 @@ import { CommonModule } from '@angular/common';
 
 
 @Component({
-  	selector: 'tg-dialog-error',
-  	standalone: true,
-	imports: [CommonModule, MatButtonModule],
-	providers: [],
-  	templateUrl: './dialog-error.component.html',
-  	styleUrls: ['./dialog-error.component.scss']
+    selector: 'tg-dialog-error',
+    imports: [CommonModule, MatButtonModule],
+    providers: [],
+    templateUrl: './dialog-error.component.html',
+    styleUrls: ['./dialog-error.component.scss']
 })
 
 

@@ -12,7 +12,8 @@ import { Directive, OnDestroy, EventEmitter, Output } from '@angular/core';
 
 /** This directive is used to listen for onDestroy events on raw html elements */
 @Directive({
-  selector: '[elementDestroyed]'
+    selector: '[elementDestroyed]',
+    standalone: false
 })
 
 

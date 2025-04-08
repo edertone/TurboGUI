@@ -15,12 +15,11 @@ import { CommonModule } from '@angular/common';
 
 
 @Component({
-  	selector: 'tg-dialog-multiple-option',
-  	standalone: true,
-	imports: [CommonModule, MatButtonModule],
-	providers: [],
-  	templateUrl: './dialog-multiple-option.component.html',
-  	styleUrls: ['./dialog-multiple-option.component.scss']
+    selector: 'tg-dialog-multiple-option',
+    imports: [CommonModule, MatButtonModule],
+    providers: [],
+    templateUrl: './dialog-multiple-option.component.html',
+    styleUrls: ['./dialog-multiple-option.component.scss']
 })
 
 

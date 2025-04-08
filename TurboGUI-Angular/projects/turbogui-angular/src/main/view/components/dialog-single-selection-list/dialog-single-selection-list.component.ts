@@ -31,12 +31,11 @@ import { TurboGuiAngularModule } from '../../../model/modules/turbogui-angular.m
  * options parameter must contain the list of elements that will be displayed to the user  
  */
 @Component({
-  	selector: 'tg-dialog-single-selection-list',
-  	standalone: true,
-	imports: [CommonModule, MatInputModule, MatFormFieldModule, TurboGuiAngularModule],
-	providers: [],
-  	templateUrl: './dialog-single-selection-list.component.html',
-  	styleUrls: ['./dialog-single-selection-list.component.scss']
+    selector: 'tg-dialog-single-selection-list',
+    imports: [CommonModule, MatInputModule, MatFormFieldModule, TurboGuiAngularModule],
+    providers: [],
+    templateUrl: './dialog-single-selection-list.component.html',
+    styleUrls: ['./dialog-single-selection-list.component.scss']
 })
 
 

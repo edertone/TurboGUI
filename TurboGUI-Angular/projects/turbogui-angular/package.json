@@ -1,6 +1,6 @@
 {
     "name": "turbogui-angular",
-    "version": "16.0.0",
+    "version": "17.0.0",
     "description": "A library that tries to help with the most common user interface elements on several frameworks and platforms",
     "repository": {
         "type": "git",

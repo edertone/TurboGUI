@@ -13,13 +13,12 @@ import { ButtonBaseComponent } from '../../../view/components/button-base/button
 
 
 @Component({
-  	selector: 'tg-button-container',
-  	standalone: true,
-	imports: [],
-	providers: [],
-  	templateUrl: './button-container.component.html',
-  	animations: [FadeAnimationClass.getTrigger('buttonFade', '300ms ease', '300ms ease')],
-  	styleUrls: ['./button-container.component.scss']
+    selector: 'tg-button-container',
+    imports: [],
+    providers: [],
+    templateUrl: './button-container.component.html',
+    animations: [FadeAnimationClass.getTrigger('buttonFade', '300ms ease', '300ms ease')],
+    styleUrls: ['./button-container.component.scss']
 })
 
 

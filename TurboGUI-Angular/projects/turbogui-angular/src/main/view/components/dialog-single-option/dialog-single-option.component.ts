@@ -18,12 +18,11 @@ import { CommonModule } from '@angular/common';
  * A dialog component with a single option button, to be used with dialog service
  */
 @Component({
-  	selector: 'tg-dialog-single-option',
-  	standalone: true,
-	imports: [CommonModule, MatButtonModule],
-	providers: [],
-  	templateUrl: './dialog-single-option.component.html',
-  	styleUrls: ['./dialog-single-option.component.scss']
+    selector: 'tg-dialog-single-option',
+    imports: [CommonModule, MatButtonModule],
+    providers: [],
+    templateUrl: './dialog-single-option.component.html',
+    styleUrls: ['./dialog-single-option.component.scss']
 })
 
 

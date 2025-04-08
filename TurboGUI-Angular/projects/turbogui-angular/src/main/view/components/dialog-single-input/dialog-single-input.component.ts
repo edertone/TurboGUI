@@ -19,13 +19,12 @@ import { StringUtils } from 'turbocommons-ts';
 
 
 @Component({
-  	selector: 'tg-dialog-single-input',
-  	standalone: true,
-	imports: [CommonModule, MatButtonModule, MatInputModule, FormsModule,
-              TurboGuiAngularModule],
-	providers: [],
-  	templateUrl: './dialog-single-input.component.html',
-  	styleUrls: ['./dialog-single-input.component.scss']
+    selector: 'tg-dialog-single-input',
+    imports: [CommonModule, MatButtonModule, MatInputModule, FormsModule,
+        TurboGuiAngularModule],
+    providers: [],
+    templateUrl: './dialog-single-input.component.html',
+    styleUrls: ['./dialog-single-input.component.scss']
 })
 
 

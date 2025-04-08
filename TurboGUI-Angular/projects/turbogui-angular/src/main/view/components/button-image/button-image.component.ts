@@ -13,13 +13,12 @@ import { ButtonBaseComponent } from '../../../view/components/button-base/button
 
 
 @Component({
-  	selector: 'tg-button-image',
-  	standalone: true,
-	imports: [],
-	providers: [],
-  	templateUrl: './button-image.component.html',
-  	animations: [FadeAnimationClass.getTrigger('buttonFade', '300ms ease', '300ms ease')],
-  	styleUrls: ['./button-image.component.scss']
+    selector: 'tg-button-image',
+    imports: [],
+    providers: [],
+    templateUrl: './button-image.component.html',
+    animations: [FadeAnimationClass.getTrigger('buttonFade', '300ms ease', '300ms ease')],
+    styleUrls: ['./button-image.component.scss']
 })
 
 

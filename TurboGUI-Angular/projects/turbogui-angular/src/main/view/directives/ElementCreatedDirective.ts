@@ -12,7 +12,8 @@ import { Directive, EventEmitter, Output, OnInit } from '@angular/core';
 
 /** This directive is used to listen for onInit events on raw html elements */
 @Directive({
-  selector: '[elementCreated]'
+    selector: '[elementCreated]',
+    standalone: false
 })
 
 

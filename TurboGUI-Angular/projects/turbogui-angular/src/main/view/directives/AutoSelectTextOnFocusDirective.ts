@@ -12,7 +12,8 @@ import { Directive, ElementRef, Renderer2, HostListener } from '@angular/core';
 
 /** This directive is used to perform an automatic select all text on an element every time it is focused */
 @Directive({
-  selector: '[autoSelectTextOnFocus]'
+    selector: '[autoSelectTextOnFocus]',
+    standalone: false
 })
 
 

@@ -12,7 +12,8 @@ import { Directive, ElementRef, NgZone, Renderer2, AfterContentInit } from '@ang
 
 /** This directive is used to perform an autofocus on an element every time it is displayed */
 @Directive({
-  selector: '[autoFocusOnDisplay]'
+    selector: '[autoFocusOnDisplay]',
+    standalone: false
 })
 
 

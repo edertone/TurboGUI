@@ -19,12 +19,11 @@ import { CommonModule } from '@angular/common';
  * The first of the options is considered to be the primary one and will therefore have more visual accent
  */
 @Component({
-  	selector: 'tg-dialog-two-option',
-  	standalone: true,
-	imports: [CommonModule, MatButtonModule],
-	providers: [],
-  	templateUrl: './dialog-two-option.component.html',
-  	styleUrls: ['./dialog-two-option.component.scss']
+    selector: 'tg-dialog-two-option',
+    imports: [CommonModule, MatButtonModule],
+    providers: [],
+    templateUrl: './dialog-two-option.component.html',
+    styleUrls: ['./dialog-two-option.component.scss']
 })
 
 
