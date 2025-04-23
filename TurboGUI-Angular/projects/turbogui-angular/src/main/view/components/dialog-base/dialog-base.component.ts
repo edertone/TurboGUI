@@ -35,7 +35,7 @@ export abstract class DialogBaseComponent implements AfterViewInit {
 
 
 	constructor(public elementRef: ElementRef,
-				public dialogRef: MatDialogRef<DialogBaseComponent>,) {
+				public dialogRef: MatDialogRef<DialogBaseComponent>) {
   
     }
 

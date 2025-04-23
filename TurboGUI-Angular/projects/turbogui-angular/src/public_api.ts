@@ -17,6 +17,7 @@ export { HTTPServicePostRequest } from './main/controller/httpservice/HTTPServic
 export { TurboApiCallerService } from './main/controller/turbo-api-caller.service';
 export { DialogService } from './main/controller/dialog.service';
 export { BrowserService } from './main/controller/browser.service';
+export { RouterBaseService } from './main/controller/router-base.service';
 
 
 /**

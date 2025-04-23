@@ -114,7 +114,7 @@ export class LocalesService extends SingletoneStrictClass {
     
     
     /**
-     * Defines the behaviour for get(), getStartCase(), etc... methods when a key is not found on
+     * Defines the behaviour for t(), tStartCase(), etc... methods when a key is not found on
      * a bundle or the bundle does not exist
      *
      * If missingKeyFormat is an empty string, all missing keys will return an empty value (not recommended)
@@ -149,6 +149,58 @@ export class LocalesService extends SingletoneStrictClass {
     
     
     /**
+     * Initializes the translation system by loading and parsing bundle files from the specified JSON object.
+     * After the method finishes, the class will contain all the translation data and will be ready to translate any provided key.
+     *
+     * @param translations A JSON object containing the translation data. The structure must be as follows:
+     *       { library_name: { bundle_name: { locale_code: { key1: "translation1", key2: "translation2" } } } ... }  
+     * 
+     * @param locales An array of locale codes (e.g., ['en_US', 'es_ES', 'fr_FR']) to load into this class. The order of this array 
+     *        will determine the translation priority
+     * 
+     * @return True if the translations get correctly loaded. Any unsuccessful initialization will throw an exception
+     */
+    initializeFromJson(translations:any, locales:string[]){
+
+        this._isInitialized = false;
+       
+        // Validate received locales are correct
+        for(const locale of locales) {
+
+            this._validateLocaleString(locale);
+        }
+        
+        // Validate the translations object follows the right structure
+        let isTranslationsValid = false;
+          
+        for (const library in translations) {
+
+            for (const bundle in translations[library]) {
+
+                for (const locale in translations[library][bundle]) {
+
+                    this._validateLocaleString(locale);
+                    
+                    isTranslationsValid = true;
+                }
+            }
+        }
+        
+        if (!isTranslationsValid) {
+                
+            throw new Error('translations must be a non empty object with the structure: { library: { bundle: { xx_XX: { key: translation } } } }');
+        }
+          
+        this._loadedTranslations = translations;
+        this._locales = locales;
+        this._languages = locales.map((l: string) => l.substring(0, 2));
+        this._cacheHashBaseString = this._wildCardsFormat + this._missingKeyFormat + this._locales[0];
+        
+        return this._isInitialized = true;
+    }
+    
+    
+    /**
      * Initializes the translation system by loading and parsing bundle files from the specified translations path.
      * After the promise finishes, the class will contain all the translation data and will be ready to translate any 
      * provided key.
@@ -161,18 +213,11 @@ export class LocalesService extends SingletoneStrictClass {
      * 
      * @return A promise that will resolve if the translations get correctly loaded, or reject with an error if load fails 
      */
-    initialize(translationsPath:string, locales:string[], parameters:string[]){
-    
-        this._isInitialized = false;
-        this._loadedTranslations = {};
-        
-        // Validate received locales are correct
-        for(const locale of locales) {
+    initializeFromUrl(translationsPath:string, locales:string[], parameters:string[]){
 
-            this._validateLocaleString(locale);
-        }
+        this._isInitialized = false;
         
-        let translationsFullPath = translationsPath + '/' + locales.join('-') + '/' + parameters.join('/');
+        const translationsFullPath = translationsPath + '/' + locales.join('-') + '/' + parameters.join('/');
         
         return new Promise((resolve, reject) => {
         
@@ -180,19 +225,15 @@ export class LocalesService extends SingletoneStrictClass {
                 
                 if (!response.ok) {
                     
-                  throw new Error(`HTTP error! status: ${response.status}`);
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 
                 return response.json();
           
             }).then(data => {
                 
-                this._loadedTranslations = data;
-                this._isInitialized = true;
-                this._locales = locales;
-                this._languages = locales.map((l: string) => l.substring(0, 2));
-                this._cacheHashBaseString = this._wildCardsFormat + this._missingKeyFormat + this._locales[0];
-                
+                this.initializeFromJson(data, locales);
+                                
                 resolve(undefined);
           
             }).catch(error => {
@@ -219,7 +260,7 @@ export class LocalesService extends SingletoneStrictClass {
 
         if(!this._isInitialized){
 
-            throw new Error('LocalesManager not initialized');
+            throw new Error('Translation service not initialized');
         }
     }
     
@@ -336,7 +377,7 @@ export class LocalesService extends SingletoneStrictClass {
             // Check if an exception needs to be thrown if the specified key is not found on this bundle
             if (this._missingKeyFormat.includes('$exception')) {
                 
-                throw new Error(`key <${key}> not found on ${bundlePath}`);
+                throw new Error(`Translation key <${key}> not found on <${bundlePath}>`);
             }
 
             this._keyValuesCache[cacheKey] = this._replace(this._missingKeyFormat, '$key', key);
@@ -411,7 +452,7 @@ export class LocalesService extends SingletoneStrictClass {
      * list for a translated text. If missing, the next one will be used, and so. This list is constructed after initialize
      * methods is called.
      *
-     * @example: After loading the following list of locales ['en_US', 'es_ES', 'fr_FR'] if we call LocalesManager.t('HELLO', 'lib1/greetings')
+     * @example: After loading the following list of locales ['en_US', 'es_ES', 'fr_FR'] if we call t('HELLO', 'lib1/greetings')
      * the localization manager will try to locate the en_US value for the HELLO tag on the greetings bundle for the library lib1.
      * If the tag is not found for the specified locale and bundle, the same search will be performed for the es_ES locale, and so, till a
      * value is found or no more locales are defined.

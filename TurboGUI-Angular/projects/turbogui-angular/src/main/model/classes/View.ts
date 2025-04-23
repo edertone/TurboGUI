@@ -12,26 +12,37 @@ import { ViewService } from "./ViewService";
 
 
 /**
- * Defines an application view.
- * This is a base class that helps managing our application views. We should extend this class to create our views, as it forces us
- * to set the viewContainerRef and the viewService, which are both used when working with views.
+ * This is a base class that helps managing our application pages.
+ * We should extend this class to create our application pages, as it forces us to set the viewContainerRef and the viewService, 
+ * which are both used when working with pages.
  * 
- * When using view services, it is important to specify the view service as a provider for the view component to ensure that it will
- * be created and destroyed when the view is created and destroyed. 
+ * IMPORTANT!!! View services are created and destroyed when the page is created and destroyed. It is vital to specify the view service 
+ * as a provider for the page to ensure that it will be created and destroyed when the view is created and destroyed.
+ * 
+ * Example:
+ * 
+ * @Component({
+ *   ...
+ *   selector: 'app-my-view-page',
+ *   providers: [MyViewService]
+ *   ...
+ *})  
  */
 export abstract class View {
 
 
 	/**
-	 * This constructor is specifically designed to force the view to set the viewContainerRef which will be automatically assigned
-	 * to the respective view service. If the view has no service, we can set it to null, but it is recommended to always use a service with a view,
-     * to store the view state and global methods that can be used by other components loaded in the view.
+	 * This constructor is specifically designed to force the following:
+     * 
+     * - Set the viewContainerRef which will be automatically assigned to the respective view service.
+     * 
+     * - If the view has no service, we can set it to null, but it is recommended to always use a service with a view, to store the view state and global methods 
 	 */
 	constructor(public viewContainerRef: ViewContainerRef, public viewService:ViewService|null) {
 	
 		if(viewService !== null){
 			
 			viewService.viewContainerRef = viewContainerRef;
-		}	
+		}
 	}
 }

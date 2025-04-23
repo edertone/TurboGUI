@@ -266,31 +266,38 @@ export class DialogService extends SingletoneStrictClass {
      * @param action If not empty, the text to place on the snackbar confirmation button
      * @param actionCallback A method to execute once the user clicks into the action button.
      *
-     * @return void
+     * @return A promise that will be resolved once the snackbar is closed.
      */
-    addSnackBar(config: MatSnackBarConfig, message: string, action = '', actionCallback: (() => void) | null = null) {
+    addSnackBar(config: MatSnackBarConfig, message: string, action = '') {
 
         if (!this._isEnabled) {
-
-            return;
+            
+            return Promise.reject(new Error('Dialog service is disabled'));
         }
 
         if (this._isShowingSnackBar) {
-
+            
             throw new Error('Trying to show a snackbar while another one is still visible');
         }
 
         this._isShowingSnackBar = true;
 
-        const snackBarRef = this.matSnackBar.open(message, action === '' ? undefined : action, config);
+        return new Promise((resolve) => {
+            
+            const snackBarRef = this.matSnackBar.open(message, action === '' ? undefined : action, config);
 
-        if (actionCallback !== null) {
-
+            // Handle action button click
             snackBarRef.onAction().subscribe(() => {
-
-                actionCallback();
+                this._isShowingSnackBar = false;
+                resolve(true);
             });
-        }
+
+            // Handle dismiss
+            snackBarRef.afterDismissed().subscribe(() => {
+                this._isShowingSnackBar = false;
+                resolve(false);
+            });
+        });
     }
 
 
@@ -344,12 +351,13 @@ export class DialogService extends SingletoneStrictClass {
      *            - viewContainerRef: This is important if we want to propagate providers from a parent component to this dialog. We must specify 
 	 *              this reference to make sure the same services injected on the parent are available too at the child dialog 
      * 
-     * @param callback A function that will be called after the dialog is closed. It will receive a selection object with two properties: index and value. Those 
-     *        will contain the index and value from the options array that's selected by the user. if no option selected, index will be -1 and value null
+     * @return A promise that will be resolved once the dialog is closed.
+     *         The promise will receive a selection object with two properties which will correspond to the index and value from the options 
+     *         array that's selected by the user. If no option selected, index will be -1 and value null
      */
     addDialog(dialogComponentClass: Type<DialogBaseComponent>,
               properties: {id?: string,
-						   width?: string,
+                           width?: string,
                            maxWidth?: string,
                            height?: string,
                            maxHeight?: string,
@@ -357,80 +365,79 @@ export class DialogService extends SingletoneStrictClass {
                            texts?: string[],
                            options?: string[],
                            data?: any,
-                           viewContainerRef?: ViewContainerRef}, 
-              callback: null | ((selection: {index:number, value?: any}) => void) = null) {
+                           viewContainerRef?: ViewContainerRef}): Promise<{index: number, value?: any}> {
 
         if (!this._isEnabled) {
-
-            return;
-        }
-        
-        // Set the default values for non specified properties
-        properties.modal = properties.modal ?? true;
-        properties.texts = properties.texts ?? [];
-        properties.options = properties.options ?? [];
-        properties.data = properties.data ?? {};
-
-        // Generate a string to uniquely identify this dialog on the list of active dialogs
-        // A dialog is considered as unique if the dialog id and texts are exactly the same. We do not take options into consideration
-        // as there may be dialogs with a big amount of options available.
-        let className = (dialogComponentClass as any).DIALOG_CLASS_NAME;
-        
-        if(className === ''){
-        
-            throw new Error(`The static property DIALOG_CLASS_NAME is not defined or is empty for this dialog component (${dialogComponentClass})`);     
-        }
-        
-        const dialogHash = className + properties.texts.join('');
-
-        // identical dialogs won't be allowed at the same time
-        if (this._activeDialogs.includes(dialogHash)) {
-
-            return;
-        }
-
-        const dialogRef = this.matDialog.open(dialogComponentClass, {
-            width: properties.width ?? "50%",
-            maxWidth: properties.maxWidth ?? "96vw",
-            disableClose: properties.modal,
-            autoFocus: false,
-            closeOnNavigation: !properties.modal,
-            viewContainerRef: properties.viewContainerRef,
-            data: { texts: properties.texts, options: properties.options, data: properties.data }
-          });      
-		
-		// Assign the dialog ID only if specifically set on properties
-		if(properties.id && properties.id !== undefined){
-			
-			dialogRef.id = properties.id;
-		}
-		
-        this._activeDialogs.push(dialogHash);
-        this._activeDialogInstances.push(dialogRef);
-
-        dialogRef.beforeClosed().subscribe((selection:{index:number, value?:any}) => {
-
-            this._activeDialogs = ArrayUtils.removeElement(this._activeDialogs, dialogHash);
-            this._activeDialogInstances = ArrayUtils.removeElement(this._activeDialogInstances, dialogRef);
-
-            if(!properties.modal && selection === undefined){
             
-                selection = { index: -1 };
+            return Promise.reject(new Error('Dialog service is disabled'));
+        }
+        
+        return new Promise((resolve) => {
             
-            }else if (!NumericUtils.isInteger(selection.index)) {
+            // Set the default values for non specified properties
+            properties.modal = properties.modal ?? true;
+            properties.texts = properties.texts ?? [];
+            properties.options = properties.options ?? [];
+            properties.data = properties.data ?? {};
 
-                throw new Error(`closeDialog() expects index to be an integer`);               
+            // Generate a string to uniquely identify this dialog on the list of active dialogs
+            // A dialog is considered as unique if the dialog id and texts are exactly the same. We do not take options into consideration
+            // as there may be dialogs with a big amount of options available.
+            let className = (dialogComponentClass as any).DIALOG_CLASS_NAME;
+            
+            if(className === '') {
+                
+                throw new Error(`The static property DIALOG_CLASS_NAME is not defined or is empty for this dialog component (${dialogComponentClass})`);     
+            }
+            
+            const dialogHash = className + properties.texts.join('');
+
+        	// identical dialogs won't be allowed at the same time
+            if (this._activeDialogs.includes(dialogHash)) {
+                
+                return resolve({index: -1});
             }
 
-            if (callback !== null) {
+            const dialogRef = this.matDialog.open(dialogComponentClass, {
+                width: properties.width ?? "50%",
+                maxWidth: properties.maxWidth ?? "96vw",
+                disableClose: properties.modal,
+                autoFocus: false,
+                closeOnNavigation: !properties.modal,
+                viewContainerRef: properties.viewContainerRef,
+                data: { texts: properties.texts, options: properties.options, data: properties.data }
+            });      
 
-                if(selection.index >= 0 && selection.value === null){
+			// Assign the dialog ID only if specifically set on properties
+            if(properties.id && properties.id !== undefined) {
+                
+                dialogRef.id = properties.id;
+            }
+            
+            this._activeDialogs.push(dialogHash);
+            this._activeDialogInstances.push(dialogRef);
+
+            dialogRef.beforeClosed().subscribe((selection: {index: number, value?: any}) => {
+                
+                this._activeDialogs = ArrayUtils.removeElement(this._activeDialogs, dialogHash);
+                this._activeDialogInstances = ArrayUtils.removeElement(this._activeDialogInstances, dialogRef);
+
+                if(!properties.modal && selection === undefined) {
+                    
+                    selection = { index: -1 };
+                    
+                } else if (!NumericUtils.isInteger(selection.index)) {
+                    
+                    throw new Error(`closeDialog() expects index to be an integer`);               
+                }
+
+                if(selection.index >= 0 && selection.value === null) {
                     
                     selection.value = properties.options![selection.index];
                 }
 
-                (callback as ((selection:{index:number, value?:any}) => void))(selection);
-            }
+                resolve(selection);
+            });
         });
     }
     
@@ -451,38 +458,36 @@ export class DialogService extends SingletoneStrictClass {
      *              by the user clicking outside it 
      *            - title: An optional dialog title
      *            - viewContainerRef: This is important to propagate providers from a parent component to this dialog. We must specify 
-	 *              this reference to make sure the same services injected on the parent are available too at the child dialog 
-     * @param callback A function to be called after the dialog is closed. It will receive a Date() object selected by the user or null if no selection happened
+	 *              this reference to make sure the same services injected on the parent are available too at the child dialog
+     * 
+     * @returns A Promise that resolves to a Date() object selected by the user or null if no selection was made 
      */
-    addDateSelectionDialog(properties: {id?: string,
-                                        width?: string,
-                                        maxWidth?: string,
-                                        height?: string,
-                                        maxHeight?: string,
-                                        modal?: boolean,
-                                        title?: string,
-                           				viewContainerRef: ViewContainerRef},
-                           callback: ((selectedDate: null | Date) => void)) {
+    async addDateSelectionDialog(properties: {id?: string,
+                                              width?: string,
+                                              maxWidth?: string,
+                                              height?: string,
+                                              maxHeight?: string,
+                                              modal?: boolean,
+                                              title?: string,
+                           			          viewContainerRef: ViewContainerRef}): Promise<Date|null> {
 
         if (!this._isEnabled) {
-
-            return;
+            
+            return null;
         }
-        
-        this.addDialog(DialogDateSelectionComponent,
-            {
-                id: properties.id ?? undefined,
-                width: properties.width ?? "50%",
-                maxWidth: properties.maxWidth ?? "96vw",
-                height: properties.height ?? "50%",
-                maxHeight: properties.maxHeight ?? "92vw",
-                modal: properties.modal ?? false,
-                texts: [properties.title ?? ''],
-                viewContainerRef: properties.viewContainerRef
-            },(selection) => {
-                
-                callback(selection.index === -1 ? null : (selection.value as Date));  
-            });
+
+        const selection = await this.addDialog(DialogDateSelectionComponent, {
+            id: properties.id ?? undefined,
+            width: properties.width ?? "50%",
+            maxWidth: properties.maxWidth ?? "96vw",
+            height: properties.height ?? "50%",
+            maxHeight: properties.maxHeight ?? "92vw",
+            modal: properties.modal ?? false,
+            texts: [properties.title ?? ''],
+            viewContainerRef: properties.viewContainerRef
+        });
+
+        return selection.index === -1 ? null : (selection.value as Date);
     }
     
     
