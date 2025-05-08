@@ -12,7 +12,7 @@ import { Title } from '@angular/platform-browser';
 import { Router, NavigationEnd } from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { LocalesService } from './locales.service';
+import { LocalesBaseService } from './locales-base.service';
 
 
 /**
@@ -46,9 +46,17 @@ export abstract class RouterBaseService implements OnDestroy {
     private readonly _currentRoute = new BehaviorSubject<string>(this.router.url);
 
     
+    /** 
+     * Instance of the LocalesService to be used for translations.
+     * It will be provided by the methods that require it.
+     * This is not injected in the constructor as the locales service class is an abstract class, and we 
+     * need the custom implementation of the service to be provided by the application that extends it.
+     */
+    private _localesService: LocalesBaseService;
+    
+    
     constructor(private readonly router: Router,
-                private readonly titleService: Title,
-                private readonly ls: LocalesService) {
+                private readonly titleService: Title) {
                     
         // Initial update in case the service loads after the first NavigationEnd
         this._updateCurrentRoute();
@@ -106,7 +114,9 @@ export abstract class RouterBaseService implements OnDestroy {
      * @param prefix A text to be added before the computed title.
      * @param sufix A text to be added after the computed title.
      */
-    initializeAutoTranslateTitleByRoute(prefix:string = '', sufix:string = ''): void {
+    initializeAutoTranslateTitleByRoute(localesService:LocalesBaseService, prefix:string = '', sufix:string = ''): void {
+        
+        this._localesService = localesService;
         
         if (this._isTitleManagerInitialized) {
             
@@ -151,7 +161,7 @@ export abstract class RouterBaseService implements OnDestroy {
         
         if (data['titleKey'] && data['titleBundle']) {
             
-            this.titleService.setTitle(prefix + this.ls.t(data['titleKey'], data['titleBundle']) + sufix);       
+            this.titleService.setTitle(prefix + this._localesService.t(data['titleKey'], data['titleBundle']) + sufix);       
         } 
     }
     

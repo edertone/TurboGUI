@@ -10,7 +10,6 @@ export { TurboGuiAngularModule } from './main/model/modules/turbogui-angular.mod
  */
 export { NotificationService } from './main/controller/notification.service';
 export { GlobalErrorService } from './main/controller/globalerror.service';
-export { LocalesService } from './main/controller/locales.service';
 export { HTTPService } from './main/controller/http.service';
 export { HTTPServiceGetRequest } from './main/controller/httpservice/HTTPServiceGetRequest';
 export { HTTPServicePostRequest } from './main/controller/httpservice/HTTPServicePostRequest';
@@ -18,6 +17,7 @@ export { TurboApiCallerService } from './main/controller/turbo-api-caller.servic
 export { DialogService } from './main/controller/dialog.service';
 export { BrowserService } from './main/controller/browser.service';
 export { RouterBaseService } from './main/controller/router-base.service';
+export { LocalesBaseService } from './main/controller/locales-base.service';
 
 
 /**

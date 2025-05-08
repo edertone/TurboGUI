@@ -8,16 +8,17 @@
  */
 
 import { Injectable } from '@angular/core';
-import { SingletoneStrictClass } from '../model/classes/SingletoneStrictClass';
 
 
 /**
- * Manages application text translations and languages
+ * Fully featured translation manager to be used with any application that requires text internationalization.
+ * It is defined as an abstract class so it must be extended in our application. This way we can
+ * write custom methods to extend the functionality of this class if needed.
  */
 @Injectable({
   providedIn: 'root',
 })
-export class LocalesService extends SingletoneStrictClass {
+export abstract class LocalesBaseService {
 
 
     /**
@@ -69,15 +70,6 @@ export class LocalesService extends SingletoneStrictClass {
      * performance will be as fast as possible.
      */
     private _cacheHashBaseString = '';
-    
-    
-    /**
-     * Fully featured translation manager to be used with any application that requires text internationalization.
-     */
-    constructor() {
-
-        super(LocalesService);
-    }
     
     
     /**
