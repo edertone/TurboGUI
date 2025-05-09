@@ -141,21 +141,22 @@ export abstract class LocalesBaseService {
     
     
     /**
-     * Initializes the translation system by loading and parsing bundle files from the specified JSON object.
-     * After the method finishes, the class will contain all the translation data and will be ready to translate any provided key.
+     * Adds translations to the class by loading and parsing bundles from the provided JSON object.
+     * After the method finishes, the class will contain all the translation data and will be ready to translate 
+     * any provided key to any of the specified locales.
      *
-     * @param translations A JSON object containing the translation data. The structure must be as follows:
-     *       { library_name: { bundle_name: { locale_code: { key1: "translation1", key2: "translation2" } } } ... }  
+     * @param locales An array of locale codes (e.g., ['en_US', 'es_ES', 'fr_FR']) to load from the json data into this class.
+     *        The order of this array will determine the priority when looking for translations.
      * 
-     * @param locales An array of locale codes (e.g., ['en_US', 'es_ES', 'fr_FR']) to load into this class. The order of this array 
-     *        will determine the translation priority
+     * @param json A JSON object containing the translation data. The structure must be as follows:
+     *       { library_name: { bundle_name: { locale_code: { key1: "translation1", key2: "translation2" } } } ... }  
      * 
      * @return True if the translations get correctly loaded. Any unsuccessful initialization will throw an exception
      */
-    initializeFromJson(translations:any, locales:string[]){
+    loadLocalesFromJson(locales:string[], json:any){
 
         this._isInitialized = false;
-       
+        
         // Validate received locales are correct
         for(const locale of locales) {
 
@@ -165,11 +166,11 @@ export abstract class LocalesBaseService {
         // Validate the translations object follows the right structure
         let isTranslationsValid = false;
           
-        for (const library in translations) {
+        for (const library in json) {
 
-            for (const bundle in translations[library]) {
+            for (const bundle in json[library]) {
 
-                for (const locale in translations[library][bundle]) {
+                for (const locale in json[library][bundle]) {
 
                     this._validateLocaleString(locale);
                     
@@ -183,12 +184,14 @@ export abstract class LocalesBaseService {
             throw new Error('translations must be a non empty object with the structure: { library: { bundle: { xx_XX: { key: translation } } } }');
         }
           
-        this._loadedTranslations = translations;
+        this._loadedTranslations = json;
         this._locales = locales;
         this._languages = locales.map((l: string) => l.substring(0, 2));
         this._cacheHashBaseString = this._wildCardsFormat + this._missingKeyFormat + this._locales[0];
         
-        return this._isInitialized = true;
+        this._isInitialized = true;
+        
+        return true;
     }
     
     
@@ -197,23 +200,20 @@ export abstract class LocalesBaseService {
      * After the promise finishes, the class will contain all the translation data and will be ready to translate any 
      * provided key.
      * 
-     * @param translationsPath - Url where the translations Json structure of libraries/bundles/locales/keys is available.
-     * @param locales An array of locale codes (e.g., ['en_US', 'es_ES', 'fr_FR']) to load. These will be added to the translation
-     *        path using the following format: translationsPath/en_US-es_ES-fr_FR. The order of this array will determine the
-     *        translation priority
-     * @param parameters Any extra parameters to be attached to the translationsPath after the locales like /param1/param2/ etc
+     * @param locales An array of locale codes (['en_US', 'es_ES', 'fr_FR', ...]) to load from the url response.
+     *        The order of this array will determine the translation priority
+     * @param url - Url where the translations are found. The response must be a Json with the expected structure:
+     *              { library_name: { bundle_name: { locale_code: { key1: "translation1", key2: "translation2" } } } ... } 
      * 
      * @return A promise that will resolve if the translations get correctly loaded, or reject with an error if load fails 
      */
-    initializeFromUrl(translationsPath:string, locales:string[], parameters:string[]){
+    loadLocalesFromUrl(locales:string[], url:string){
 
         this._isInitialized = false;
         
-        const translationsFullPath = translationsPath + '/' + locales.join('-') + '/' + parameters.join('/');
-        
         return new Promise((resolve, reject) => {
         
-            fetch(translationsFullPath).then(response => {
+            fetch(url).then(response => {
                 
                 if (!response.ok) {
                     
@@ -224,17 +224,17 @@ export abstract class LocalesBaseService {
           
             }).then(data => {
                 
-                this.initializeFromJson(data, locales);
+                this.loadLocalesFromJson(locales, data);
                                 
                 resolve(undefined);
           
             }).catch(error => {
             
-                reject(new Error(`ERROR LOADING LOCALES FROM: ${translationsFullPath}\n` + error));
+                reject(new Error(`ERROR LOADING LOCALES FROM: ${url}\n` + error));
             });
         });
     }
-    
+
     
     /**
      * Check if the class has been correctly initialized and translations have been correctly loaded
