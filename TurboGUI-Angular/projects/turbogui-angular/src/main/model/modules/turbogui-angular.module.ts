@@ -8,6 +8,7 @@
  */
 
 import { NgModule } from '@angular/core';
+import { ElementClickOutsideDirective } from '../../view/directives/ElementClickOutsideDirective';
 import { ElementCreatedDirective } from '../../view/directives/ElementCreatedDirective';
 import { ElementDestroyedDirective } from '../../view/directives/ElementDestroyedDirective';
 import { AutoFocusOnDisplayDirective } from '../../view/directives/AutoFocusOnDisplayDirective';
@@ -23,6 +24,7 @@ import { AutoSelectTextOnFocusDirective } from '../../view/directives/AutoSelect
     ],
 
     declarations: [
+        ElementClickOutsideDirective,
         ElementCreatedDirective,
         ElementDestroyedDirective,
         AutoFocusOnDisplayDirective,
@@ -33,6 +35,7 @@ import { AutoSelectTextOnFocusDirective } from '../../view/directives/AutoSelect
     ],
 
     exports: [
+        ElementClickOutsideDirective,
         ElementCreatedDirective,
         ElementDestroyedDirective,
         AutoFocusOnDisplayDirective,

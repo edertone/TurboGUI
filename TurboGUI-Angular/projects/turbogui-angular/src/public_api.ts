@@ -45,6 +45,7 @@ export { View } from './main/model/classes/View';
 export { ViewService } from './main/model/classes/ViewService';
 export { DelayedMethodCallManager } from './main/managers/DelayedMethodCallManager';
 export { FadeAnimationClass } from './main/view/animations/fade.animation';
+export { ElementClickOutsideDirective } from './main/view/directives/ElementClickOutsideDirective';
 export { ElementCreatedDirective } from './main/view/directives/ElementCreatedDirective';
 export { ElementDestroyedDirective } from './main/view/directives/ElementDestroyedDirective';
 export { AutoFocusOnDisplayDirective } from './main/view/directives/AutoFocusOnDisplayDirective';
