@@ -333,7 +333,10 @@ export class DialogService extends SingletoneStrictClass {
      * this library or extend DialogBaseComponent to create our own custom ones.
      *
      * @param dialogComponentClass A class for a component that extends DialogBaseComponent, which will be the dialog that is shown to the user.
-     * @param properties An object containing the different visual and textual options that this dialog allows:
+     * @param properties An object containing the different visual and textual options that this dialog allows.
+     *                   IMPORTANT: texts, options and data values need to be read at the dialog component by declaring "@Inject(MAT_DIALOG_DATA) public data: any"
+     *                   at the dialog component constructor. This data object will contain the texts, options and data properties
+     *  
      *            - id: The html unique identifier that the dialog will have once created. If not specified, no id will be explicitly set
      *            - width: 50% by default. Specify the css value for the default dialog width. As the dialog is responsive, the value will be automatically
      *              reduced if the available screen is not enough, and will reach the desired value otherwise. We can set any css unit like pixels, 

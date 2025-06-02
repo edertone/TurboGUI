@@ -10,7 +10,6 @@
 import { Injectable } from '@angular/core';
 import { DialogService } from './dialog.service';
 import { ConversionUtils, HTTPManager, HTTPManagerPostRequest, StringUtils } from 'turbocommons-ts';
-import { SingletoneStrictClass } from '../model/classes/SingletoneStrictClass';
 import { DialogErrorComponent } from '../view/components/dialog-error/dialog-error.component';
 import { BrowserService } from './browser.service';
 
@@ -21,7 +20,7 @@ import { BrowserService } from './browser.service';
 @Injectable({
   providedIn: 'root',
 })
-export class TurboApiCallerService extends SingletoneStrictClass {
+export abstract class TurboApiService {
     
 
     /**
@@ -92,8 +91,6 @@ export class TurboApiCallerService extends SingletoneStrictClass {
     
     constructor(private readonly dialogService: DialogService, 
                 private readonly browserService: BrowserService) {
-        
-        super(TurboApiCallerService);
         
         // Create a fresh instance of the http service so we can use it independently
         this.httpManager = new HTTPManager();

@@ -13,7 +13,7 @@ export { GlobalErrorService } from './main/controller/globalerror.service';
 export { HTTPService } from './main/controller/http.service';
 export { HTTPServiceGetRequest } from './main/controller/httpservice/HTTPServiceGetRequest';
 export { HTTPServicePostRequest } from './main/controller/httpservice/HTTPServicePostRequest';
-export { TurboApiCallerService } from './main/controller/turbo-api-caller.service';
+export { TurboApiService } from './main/controller/turbo-api.service';
 export { DialogService } from './main/controller/dialog.service';
 export { BrowserService } from './main/controller/browser.service';
 export { RouterBaseService } from './main/controller/router-base.service';
