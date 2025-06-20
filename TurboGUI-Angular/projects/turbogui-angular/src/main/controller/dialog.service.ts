@@ -7,8 +7,9 @@
  * CopyRight : -> Copyright 2018 Edertone Advanded Solutions. https://www.edertone.com
  */
 
+import { take } from 'rxjs/operators';
 import { ArrayUtils, NumericUtils } from 'turbocommons-ts';
-import { Type, Injectable, ComponentFactoryResolver, Injector, ApplicationRef, Renderer2, RendererFactory2, ViewContainerRef } from '@angular/core';
+import { Type, Injectable, Injector, ApplicationRef, Renderer2, RendererFactory2, ViewContainerRef, EnvironmentInjector } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { BusyStateBaseComponent } from '../view/components/busy-state-base/busy-state-base.component';
@@ -68,7 +69,7 @@ export class DialogService extends SingletoneStrictClass {
 
 
     /**
-     * Contains a list of the dialogs that are currently visible to the user.
+     * Contains a list of the dialogs (MODAL AND NON MODAL) that are currently visible to the user.
      * Each item in this list is a hash that is computed when dialog is created to uniquely identify it.
      *
      * Empty list means no dialogs are currently visible
@@ -81,6 +82,12 @@ export class DialogService extends SingletoneStrictClass {
      * The list uses the same order as the list of _activeDialogs hash values
      */
     private _activeDialogInstances: MatDialogRef<DialogBaseComponent>[] = [];
+
+
+    /**
+     * Counts the number of dialogs that are currently open and that can be closed by the user by navigating with the browser
+     */
+    private _activeCloseableDialogs = 0;
 
 
     /**
@@ -118,7 +125,7 @@ export class DialogService extends SingletoneStrictClass {
                 private readonly matDialog: MatDialog,
                 private readonly injector: Injector,
                 private readonly applicationRef: ApplicationRef,
-                private readonly componentFactoryResolver: ComponentFactoryResolver) {
+                private readonly environmentInjector: EnvironmentInjector) {
 
 		super(DialogService);
 
@@ -153,11 +160,7 @@ export class DialogService extends SingletoneStrictClass {
      */
     addCloseApplicationWarning() {
 
-        if (this._windowBeforeUnloadUnListen === null) {
-
-            this._windowBeforeUnloadUnListen = this._renderer.listen('window', 'beforeunload',
-                (event) => event.returnValue = true);
-        }
+        this._windowBeforeUnloadUnListen ??= this._renderer.listen('window', 'beforeunload', (event) => event.returnValue = true);
     }
 
 
@@ -205,7 +208,7 @@ export class DialogService extends SingletoneStrictClass {
             // Create a PortalHost with document.body as its anchor element
             this._modalBusyStateHost = new DomPortalOutlet(
                     document.body,
-                    this.componentFactoryResolver,
+                    this.environmentInjector,
                     this.applicationRef,
                     this.injector);
         }
@@ -287,13 +290,13 @@ export class DialogService extends SingletoneStrictClass {
             const snackBarRef = this.matSnackBar.open(message, action === '' ? undefined : action, config);
 
             // Handle action button click
-            snackBarRef.onAction().subscribe(() => {
+            snackBarRef.onAction().pipe(take(1)).subscribe(() => {
                 this._isShowingSnackBar = false;
                 resolve(true);
             });
 
             // Handle dismiss
-            snackBarRef.afterDismissed().subscribe(() => {
+            snackBarRef.afterDismissed().pipe(take(1)).subscribe(() => {
                 this._isShowingSnackBar = false;
                 resolve(false);
             });
@@ -341,16 +344,21 @@ export class DialogService extends SingletoneStrictClass {
      *            - width: 50% by default. Specify the css value for the default dialog width. As the dialog is responsive, the value will be automatically
      *              reduced if the available screen is not enough, and will reach the desired value otherwise. We can set any css unit like pixels, 
      *              %, vh, vw, or any other. For example: '400px', '50%', etc.
-     *            - maxWidth: Defines the maximum width that the dialog will have regarding the viewport. We can specify it in % or vw, just like is done in
+     *            - maxWidth: Defines the maximum width that the dialog will have. We can specify it in % or vw, just like is done in
      *              css. By default it is defined as 96vw, which will fit 96% of the viewport on small devices
-     *            - height: TODO docs
-     *            - maxHeight: TODO docs
+     *            - height: Unset by default. Specify the css value for the dialog height.
+     *            - maxHeight: Defines the maximum height that the dialog will have. We can specify it in % or vh, just like is done in
+         *          css. By default it is defined as 96vh, which will fit 96% of the viewport
      *            - modal: True (default) if selecting an option is mandatory to close the dialog, false if the dialog can be closed
      *              by the user clicking outside it 
+     *            - closeOnNavigation: Tells if the dialog should be closed when the user navigates with the browser. By default is true for non modal and false for modal dialogs. 
      *            - texts: A list with strings containing the dialog texts, sorted by importance. When dialog has a title, this should
      *              be placed first, subtitle second and so (Each dialog may accept a different custom number of texts).
-     *            - options: A list of strings that will be used as button captions for each one of the accepted dialog options
-     *            - data: An object that we can use to pass any extra data that we want to the dialog
+     *              (add "@Inject(MAT_DIALOG_DATA) public data: any" to dialog constructor and read it with data.texts)
+     *            - options: A list of strings that will be used as button captions for each one of the accepted dialog options 
+     *              (add "@Inject(MAT_DIALOG_DATA) public data: any" to dialog constructor and read it with data.options)
+     *            - data: An object to pass any extra data we want to the dialog.
+     *              (add "@Inject(MAT_DIALOG_DATA) public data: any" to dialog constructor and read it with data.data)
      *            - viewContainerRef: This is important if we want to propagate providers from a parent component to this dialog. We must specify 
 	 *              this reference to make sure the same services injected on the parent are available too at the child dialog 
      * 
@@ -365,6 +373,7 @@ export class DialogService extends SingletoneStrictClass {
                            height?: string,
                            maxHeight?: string,
                            modal?: boolean,
+                           closeOnNavigation?: boolean,
                            texts?: string[],
                            options?: string[],
                            data?: any,
@@ -379,6 +388,7 @@ export class DialogService extends SingletoneStrictClass {
             
             // Set the default values for non specified properties
             properties.modal = properties.modal ?? true;
+            properties.closeOnNavigation = properties.closeOnNavigation ?? !properties.modal;
             properties.texts = properties.texts ?? [];
             properties.options = properties.options ?? [];
             properties.data = properties.data ?? {};
@@ -401,16 +411,31 @@ export class DialogService extends SingletoneStrictClass {
                 return resolve({index: -1});
             }
 
-            const dialogRef = this.matDialog.open(dialogComponentClass, {
+            let dialogRefConfig:any = {
                 width: properties.width ?? "50%",
                 maxWidth: properties.maxWidth ?? "96vw",
+                maxHeight: properties.maxHeight ?? "96vh",
                 disableClose: properties.modal,
                 autoFocus: false,
-                closeOnNavigation: !properties.modal,
+                closeOnNavigation: properties.closeOnNavigation,
                 viewContainerRef: properties.viewContainerRef,
                 data: { texts: properties.texts, options: properties.options, data: properties.data }
-            });      
+            };                      
+            
+            // Dialog height will only be set if it is specified on properties
+            if(properties.height && properties.height !== undefined) {
+               
+                dialogRefConfig['height'] = properties.height; 
+            }
+            
+            const dialogRef = this.matDialog.open(dialogComponentClass, dialogRefConfig);   
 
+            // Push a new state to handle browser navigation to close the dialog
+            if(properties.closeOnNavigation && this._activeCloseableDialogs === 0){
+                
+                history.pushState({ dialogOpen: true }, '');
+            }
+            
 			// Assign the dialog ID only if specifically set on properties
             if(properties.id && properties.id !== undefined) {
                 
@@ -419,12 +444,28 @@ export class DialogService extends SingletoneStrictClass {
             
             this._activeDialogs.push(dialogHash);
             this._activeDialogInstances.push(dialogRef);
+            
+            if(properties.closeOnNavigation) {
+                
+                this._activeCloseableDialogs += 1;
+            }
 
-            dialogRef.beforeClosed().subscribe((selection: {index: number, value?: any}) => {
+            dialogRef.beforeClosed().pipe(take(1)).subscribe((selection: {index: number, value?: any}) => {
                 
                 this._activeDialogs = ArrayUtils.removeElement(this._activeDialogs, dialogHash);
                 this._activeDialogInstances = ArrayUtils.removeElement(this._activeDialogInstances, dialogRef);
 
+                if(properties.closeOnNavigation) {
+                    
+                    // Remove dialog state from browser history
+                    if (this._activeCloseableDialogs === 1 && window.history.state?.dialogOpen) {
+                        
+                        history.back();
+                    }
+                    
+                    this._activeCloseableDialogs -= 1;
+                }
+                
                 if(!properties.modal && selection === undefined) {
                     
                     selection = { index: -1 };
@@ -483,7 +524,7 @@ export class DialogService extends SingletoneStrictClass {
             id: properties.id ?? undefined,
             width: properties.width ?? "50%",
             maxWidth: properties.maxWidth ?? "96vw",
-            height: properties.height ?? "50%",
+            height: properties.height ?? "auto",
             maxHeight: properties.maxHeight ?? "92vw",
             modal: properties.modal ?? false,
             texts: [properties.title ?? ''],
@@ -505,6 +546,12 @@ export class DialogService extends SingletoneStrictClass {
 
             return;
         }
+        
+        // If there are dialogs that should close on navigation and a history state was pushed, pop it
+        if (this._activeCloseableDialogs > 0 && window.history.state?.dialogOpen) {
+            
+            history.back();
+        }
 
         for (const dialogRef of this._activeDialogInstances) {
 
@@ -513,6 +560,7 @@ export class DialogService extends SingletoneStrictClass {
         
         this._activeDialogs = [];
         this._activeDialogInstances = [];
+        this._activeCloseableDialogs = 0;
     }
 
 
@@ -544,20 +592,11 @@ export class DialogService extends SingletoneStrictClass {
      */
     private _disableUserInteraction() {
 
-        if (this._documentKeydownUnlisten === null) {
+        this._documentKeydownUnlisten ??= this._renderer.listen('document', 'keydown', (event) => event.preventDefault());
 
-            this._documentKeydownUnlisten = this._renderer.listen('document', 'keydown', (event) => event.preventDefault());
-        }
+        this._documentMousedownUnlisten ??= this._renderer.listen('document', 'mousedown', (event) => event.preventDefault());
 
-        if (this._documentMousedownUnlisten === null) {
-
-            this._documentMousedownUnlisten = this._renderer.listen('document', 'mousedown', (event) => event.preventDefault());
-        }
-
-        if (this._documentPointerdownUnlisten === null) {
-
-            this._documentPointerdownUnlisten = this._renderer.listen('document', 'pointerdown', (event) => event.preventDefault());
-        }
+        this._documentPointerdownUnlisten ??= this._renderer.listen('document', 'pointerdown', (event) => event.preventDefault());
     }
 
 
@@ -581,7 +620,7 @@ export class DialogService extends SingletoneStrictClass {
         if (this._documentPointerdownUnlisten !== null) {
 
             this._documentPointerdownUnlisten();
-            this._documentMousedownUnlisten = null;
+            this._documentPointerdownUnlisten = null;
         }
     }
 }
