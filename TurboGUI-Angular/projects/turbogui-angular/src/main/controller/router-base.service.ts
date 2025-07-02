@@ -94,6 +94,34 @@ export abstract class RouterBaseService implements OnDestroy {
         return this._currentRoute.getValue();
     }
     
+    
+    /**
+     * Gets the value of a specific route parameter by its key from the current route.
+     * 
+     * For example, if the current route is `/user/123`, and you call this method with `key` as `id`, it will return `123`.
+     * The name of the parameter must match the one defined in the route configuration on your application (e.g., `{ path: 'user/:id', component: UserComponent }`).
+     * 
+     * @param key The key of the route parameter to retrieve.
+     * 
+     * @returns The value of the specified route parameter, or undefined if it does not exist.
+     */
+    getCurrentRouteParamValue(key: string) {
+        
+        let currentRoute = this.router.routerState.snapshot.root;
+        
+        while (currentRoute.firstChild) {
+            
+            currentRoute = currentRoute.firstChild;
+        }
+        
+        if (!(key in currentRoute.params)) {
+            
+            throw new Error(`Route parameter '${key}' does not exist.`);
+        }
+        
+        return currentRoute.params[key];
+    }
+
 
     /**
      * Initializes the title management feature to automatically refresh the browser title based on the current
