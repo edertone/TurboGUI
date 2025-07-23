@@ -7,7 +7,7 @@
  * CopyRight : -> Copyright 2018 Edertone Advanded Solutions. https://www.edertone.com
  */
 
-import { FormControl, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { StringUtils } from 'turbocommons-ts';
 
 
@@ -47,5 +47,35 @@ export class ValidatorsPlus extends Validators {
             
           return null;
         }
+    }
+    
+    
+    /**
+     * Validator to check that at least one of the specified form controls has a non empty value.
+     * Non empty criteria is the same as the nonEmpty validator on this same class, which verifies that the value is not semantically empty.
+     * 
+     * To use this validator, you need to pass an array of control names that you want to check. And set it to the validators property
+     * of the form builder group. 
+     * 
+     * @param controlNames An array of control names to check. For example, ['name', 'surname'].
+     * 
+     * @returns A validator function.
+     */
+    static atLeastOneIsNotEmpty(controlNames: string[]): ValidatorFn {
+        
+        return (control: AbstractControl): ValidationErrors | null => {
+            
+            const formGroup = control as FormGroup;
+            
+            const hasValue = controlNames.some(name => {
+                
+                const formControl = formGroup.get(name);
+                
+                // Check if it's a FormControl and if it's not empty
+                return formControl instanceof FormControl && ValidatorsPlus.nonEmpty(formControl) === null;
+            });
+
+            return hasValue ? null : { atLeastOneRequired: true };
+        };
     }
 }

@@ -88,10 +88,23 @@ export abstract class RouterBaseService implements OnDestroy {
 
     /**
      * Gets the current value of the route URL synchronously.
+     * For example, if the current route is `/user/123`, it will return `/user/123`.
+     * Notice that the base URL is not included in the returned value.
      */
     getCurrentRoute(): string {
         
         return this._currentRoute.getValue();
+    }
+
+
+    /**
+     * Gets the current value of the route absolute URL synchronously.
+     * 
+     * For example, if the current route is `/user/123` and the base href is `http://example.com/app/`, it will return `http://example.com/app/user/123`.
+     */
+    getCurrentRouteAbsolute(){
+
+        return window.location.origin + this.getCurrentRoute();
     }
     
     
