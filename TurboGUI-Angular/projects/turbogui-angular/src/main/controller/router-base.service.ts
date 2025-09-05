@@ -152,6 +152,7 @@ export abstract class RouterBaseService implements OnDestroy {
      *   { path: '', component: HomePageComponent, 
      *     data: { titleKey: 'HOME',  titleBundle: 'turbodepot/user-interface'} },
      * 
+     * @param localesService An instance of the LocalesService to be used for translations. 
      * @param prefix A text to be added before the computed title.
      * @param sufix A text to be added after the computed title.
      */
