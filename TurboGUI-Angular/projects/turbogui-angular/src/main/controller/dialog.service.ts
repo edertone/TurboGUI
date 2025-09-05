@@ -546,12 +546,6 @@ export class DialogService extends SingletoneStrictClass {
 
             return;
         }
-        
-        // If there are dialogs that should close on navigation and a history state was pushed, pop it
-        if (this._activeCloseableDialogs > 0 && window.history.state?.dialogOpen) {
-            
-            history.back();
-        }
 
         for (const dialogRef of this._activeDialogInstances) {
 
