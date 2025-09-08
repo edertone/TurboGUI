@@ -31,6 +31,18 @@ export abstract class RouterBaseService implements OnDestroy {
      * This should only be done once, typically at application startup.
      */ 
     private _isTitleManagerInitialized = false;
+    
+    
+    /**
+     * @see getCurrentRouteTitle
+     */
+    private _currentRouteTitle:string;
+    
+
+    /**
+     * @see getCurrentBrowserTitle
+     */
+    private _currentBrowserTitle:string;
 
     
     /**
@@ -91,9 +103,29 @@ export abstract class RouterBaseService implements OnDestroy {
      * For example, if the current route is `/user/123`, it will return `/user/123`.
      * Notice that the base URL is not included in the returned value.
      */
-    getCurrentRoute(): string {
+    getCurrentRoute():string {
         
         return this._currentRoute.getValue();
+    }
+    
+    
+    /**
+     * The current route title, translated using the LocalesService.
+     * This is updated automatically after each navigation event if the title manager is initialized.
+     */ 
+    getCurrentRouteTitle():string {
+        
+        return this._currentRouteTitle;
+    }
+    
+    
+    /**
+     * The current browser title, which may include prefixes or suffixes.
+     * This is updated automatically after each navigation event if the title manager is initialized.
+     */
+    getCurrentBrowserTitle():string {
+        
+        return this._currentBrowserTitle;
     }
 
 
@@ -192,6 +224,8 @@ export abstract class RouterBaseService implements OnDestroy {
      */
     private updateTitleFromCurrentRoute(prefix:string, sufix:string): void {
         
+        this._currentRouteTitle = '';
+        this._currentBrowserTitle = '';
         let currentRoute = this.router.routerState.snapshot.root;
         
         while (currentRoute.firstChild) {
@@ -203,8 +237,12 @@ export abstract class RouterBaseService implements OnDestroy {
         
         if (data['titleKey'] && data['titleBundle']) {
             
-            this.titleService.setTitle(prefix + this._localesService.t(data['titleKey'], data['titleBundle']) + sufix);       
-        } 
+            this._currentRouteTitle = this._localesService.t(data['titleKey'], data['titleBundle']);
+        }
+        
+        this._currentBrowserTitle = prefix + this._currentRouteTitle + sufix;
+        
+        this.titleService.setTitle(this._currentBrowserTitle);
     }
     
     
@@ -219,6 +257,12 @@ export abstract class RouterBaseService implements OnDestroy {
     }
     
 
+    /**
+     * Automatically called when the service is destroyed.
+     * We use it to clean up subscriptions and other resources.
+     * 
+     * Usially not necessary to call this manually.
+     */
     ngOnDestroy(): void {
         
         this._routerSubscription?.unsubscribe();
