@@ -15,6 +15,7 @@ import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { BusyStateBaseComponent } from '../view/components/busy-state-base/busy-state-base.component';
 import { ComponentPortal, DomPortalOutlet } from '@angular/cdk/portal';
 import { DialogBaseComponent } from '../view/components/dialog-base/dialog-base.component';
+import { DialogErrorComponent } from '../../public_api';
 import { DialogDateSelectionComponent } from '../view/components/dialog-date-selection/dialog-date-selection.component';
 import { SingletoneStrictClass } from '../model/classes/SingletoneStrictClass';
 
@@ -490,19 +491,14 @@ export class DialogService extends SingletoneStrictClass {
      * Show a dialog with a calendar to let the user pick a date.
      *
      * @param properties An object containing the different visual and textual options that this dialog allows:
-     *            - id: The html unique identifier that the dialog will have once created. If not specified, no id will be explicitly set
-     *            - width: Specify the css value for the default dialog width. As the dialog is responsive, the value will be automatically
-     *              reduced if the available screen is not enough, and will reach the desired value otherwise. We can set any css unit like pixels, 
-     *              %, vh, vw, or any other. For example: '400px', '50%', etc.
-     *            - maxWidth: Defines the maximum width that the dialog will have regarding the viewport. We can specify it in % or vw, just like is done in
-     *              css. By default it is defined as 96vw, which will fit 96% of the viewport on small devices
-     *            - height: TODO docs
-     *            - maxHeight: TODO docs
-     *            - modal: True (default) if selecting an option is mandatory to close the dialog, false if the dialog can be closed
-     *              by the user clicking outside it 
-     *            - title: An optional dialog title
-     *            - viewContainerRef: This is important to propagate providers from a parent component to this dialog. We must specify 
-	 *              this reference to make sure the same services injected on the parent are available too at the child dialog
+     *            - id: see addDialog() docs
+     *            - width: see addDialog() docs
+     *            - maxWidth: see addDialog() docs
+     *            - height: see addDialog() docs
+     *            - maxHeight: see addDialog() docs
+     *            - modal: see addDialog() docs
+     *            - title: see addDialog() docs
+     *            - viewContainerRef: see addDialog() docs
      * 
      * @returns A Promise that resolves to a Date() object selected by the user or null if no selection was made 
      */
@@ -534,6 +530,60 @@ export class DialogService extends SingletoneStrictClass {
         return selection.index === -1 ? null : (selection.value as Date);
     }
     
+    
+    /**
+     * Show a dialog with an error message and a single option button to close it.
+     * 
+     * This method is a shortcut for addDialog() method using DialogErrorComponent as the dialog component class
+     *
+     * @param properties An object containing the different visual and textual options that this dialog allows:
+     *            - title (mandatory): The dialog title
+     *            - option (mandatory): The text to place on the single option button
+     *            - description: An optional description text to show below the title
+     *            - id: see addDialog() docs
+     *            - width: see addDialog() docs
+     *            - maxWidth: see addDialog() docs
+     *            - height: see addDialog() docs
+     *            - maxHeight: see addDialog() docs
+     *            - modal: see addDialog() docs
+     *            - dialogErrorComponentClass: A custom component class to use instead of the default DialogErrorComponent. This custom component must extend DialogErrorComponent
+     * 
+     * @returns A Promise that resolves once the user selects the button with the option caption 
+     */
+    async addErrorDialog(properties: {title:string,
+                                      option: string,
+                                      description?: string,
+                                      id?: string,
+                                      width?: string,
+                                      maxWidth?: string,
+                                      height?: string,
+                                      maxHeight?: string,
+                                      modal?: boolean,
+                                      dialogErrorComponentClass?:Type<DialogErrorComponent>}): Promise<null> {
+
+        if (this._isEnabled) {
+            
+            let texts = [properties.title];
+            
+            if(properties.description && properties.description !== undefined) {
+                
+                texts.push(properties.description); 
+            }
+            
+            await this.addDialog(properties.dialogErrorComponentClass ?? DialogErrorComponent, {
+                id: properties.id ?? undefined,
+                width: properties.width ?? "70%",
+                maxWidth: properties.maxWidth ?? "500px",
+                height: properties.height ?? "auto",
+                maxHeight: properties.maxHeight ?? "92vw",
+                modal: properties.modal ?? false,
+                texts: texts,
+                options: [properties.option]
+            });
+        }
+        
+        return null;
+    }
     
     /**
      * Force the removal of all the dialogs that are currently visible.
