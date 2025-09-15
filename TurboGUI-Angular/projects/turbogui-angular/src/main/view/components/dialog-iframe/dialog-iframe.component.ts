@@ -27,7 +27,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
  * A dialog component with an iframe that can be used to display any url or content.
  * 
  * We must specify the url in the data parameter when opening the dialog, and we can also specify the title 
- * bi placing it at the first position of the texts array.
+ * by placing it at the first position of the texts array.
  */
 export class DialogIFrameComponent extends DialogBaseComponent {
 

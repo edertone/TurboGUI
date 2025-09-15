@@ -1,0 +1,7 @@
+<h2 *ngIf="title !== ''">{{title}}</h2>
+
+<!-- For images -->
+<img *ngIf="mimeType.startsWith('image/')" [src]="blobUrl" [alt]="title" />
+
+<!-- For PDFs and other types -->
+<iframe *ngIf="!mimeType.startsWith('image/')" [src]="blobUrl" [title]="title"></iframe>

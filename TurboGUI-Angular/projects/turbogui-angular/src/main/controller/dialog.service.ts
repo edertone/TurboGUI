@@ -15,7 +15,9 @@ import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { BusyStateBaseComponent } from '../view/components/busy-state-base/busy-state-base.component';
 import { ComponentPortal, DomPortalOutlet } from '@angular/cdk/portal';
 import { DialogBaseComponent } from '../view/components/dialog-base/dialog-base.component';
-import { DialogErrorComponent } from '../../public_api';
+import { DialogErrorComponent } from '../view/components/dialog-error/dialog-error.component';
+import { DialogIFrameComponent } from '../view/components/dialog-iframe/dialog-iframe.component';
+import { DialogBlobComponent } from '../view/components/dialog-blob/dialog-blob.component';
 import { DialogDateSelectionComponent } from '../view/components/dialog-date-selection/dialog-date-selection.component';
 import { SingletoneStrictClass } from '../model/classes/SingletoneStrictClass';
 
@@ -488,6 +490,95 @@ export class DialogService extends SingletoneStrictClass {
     
     
     /**
+     * Show a dialog with an iframe inside it, to show external web pages or web applications.
+     * 
+     * This method is a shortcut for addDialog() method using DialogIFrameComponent as the dialog component class
+     *
+     * @param properties An object containing the different visual and textual options that this dialog allows:
+     *            - url (mandatory): The url to load in the iframe
+     *            - title: The title to show at the top of the dialog
+     *            - id: see addDialog() docs
+     *            - width: see addDialog() docs
+     *            - maxWidth: see addDialog() docs
+     *            - height: see addDialog() docs
+     *            - maxHeight: see addDialog() docs
+     *            - modal: see addDialog() docs
+     * 
+     * @returns A Promise that resolves once the user closes the dialog 
+     */
+    async addIFrameDialog(properties: {url:string,
+                                       title?:string,
+                                       id?: string,
+                                       width?: string,
+                                       maxWidth?: string,
+                                       height?: string,
+                                       maxHeight?: string,
+                                       modal?: boolean}): Promise<null> {
+        
+        if (this._isEnabled) {
+                    
+            await this.addDialog(DialogIFrameComponent, {
+                id: properties.id ?? undefined,
+                data: properties.url,
+                texts: properties.title ? [properties.title] : undefined,
+                width: properties.width ?? "98vw",
+                maxWidth: properties.maxWidth ?? "1000px",
+                height: properties.height ?? "98vh",
+                maxHeight: properties.maxHeight ?? "3000px",
+                modal: properties.modal ?? false
+            });
+        }
+         
+        return null;
+    }
+    
+    
+    /**
+     * Show a dialog with a pdf from a binary blob data.
+     * 
+     * This method is a shortcut for addDialog() method using DialogBlobComponent as the dialog component class, using the received blob
+     * data with a mime type of 'application/pdf'
+     *
+     * @param properties An object containing the different visual and textual options that this dialog allows:
+     *            - blob (mandatory): The binary data containing the pdf file to show. It can be a Blob, an ArrayBuffer or a raw binary string
+     *            - title: The title to show at the top of the dialog
+     *            - id: see addDialog() docs
+     *            - width: see addDialog() docs
+     *            - maxWidth: see addDialog() docs
+     *            - height: see addDialog() docs
+     *            - maxHeight: see addDialog() docs
+     *            - modal: see addDialog() docs
+     * 
+     * @returns A Promise that resolves once the user closes the dialog 
+     */
+    async addPdfDialog(properties: {blob:any,
+                                    title?:string,
+                                    id?: string,
+                                    width?: string,
+                                    maxWidth?: string,
+                                    height?: string,
+                                    maxHeight?: string,
+                                    modal?: boolean}): Promise<null> {
+        
+        if (this._isEnabled) {
+            
+            await this.addDialog(DialogBlobComponent, {
+                id: properties.id ?? undefined,
+                data: { blob: properties.blob, mimeType: 'application/pdf' },
+                texts: properties.title ? [properties.title] : undefined,
+                width: properties.width ?? "98vw",
+                maxWidth: properties.maxWidth ?? "1000px",
+                height: properties.height ?? "98vh",
+                maxHeight: properties.maxHeight ?? "3000px",
+                modal: properties.modal ?? false
+            });
+        }
+
+        return null;
+    }
+    
+    
+    /**
      * Show a dialog with a calendar to let the user pick a date.
      *
      * @param properties An object containing the different visual and textual options that this dialog allows:
@@ -497,7 +588,7 @@ export class DialogService extends SingletoneStrictClass {
      *            - height: see addDialog() docs
      *            - maxHeight: see addDialog() docs
      *            - modal: see addDialog() docs
-     *            - title: see addDialog() docs
+     *            - title: The title to show at the top of the dialog
      *            - viewContainerRef: see addDialog() docs
      * 
      * @returns A Promise that resolves to a Date() object selected by the user or null if no selection was made 
