@@ -521,8 +521,8 @@ export class DialogService extends SingletoneStrictClass {
                 id: properties.id ?? undefined,
                 data: properties.url,
                 texts: properties.title ? [properties.title] : undefined,
-                width: properties.width ?? "98vw",
-                maxWidth: properties.maxWidth ?? "1000px",
+                width: properties.width ?? "85vw",
+                maxWidth: properties.maxWidth ?? "1200px",
                 height: properties.height ?? "98vh",
                 maxHeight: properties.maxHeight ?? "3000px",
                 modal: properties.modal ?? false
@@ -566,8 +566,8 @@ export class DialogService extends SingletoneStrictClass {
                 id: properties.id ?? undefined,
                 data: { blob: properties.blob, mimeType: 'application/pdf' },
                 texts: properties.title ? [properties.title] : undefined,
-                width: properties.width ?? "98vw",
-                maxWidth: properties.maxWidth ?? "1000px",
+                width: properties.width ?? "85vw",
+                maxWidth: properties.maxWidth ?? "1200px",
                 height: properties.height ?? "98vh",
                 maxHeight: properties.maxHeight ?? "3000px",
                 modal: properties.modal ?? false
