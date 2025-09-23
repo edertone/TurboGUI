@@ -20,7 +20,7 @@ import { DialogIFrameComponent } from '../view/components/dialog-iframe/dialog-i
 import { DialogBlobComponent } from '../view/components/dialog-blob/dialog-blob.component';
 import { DialogDateSelectionComponent } from '../view/components/dialog-date-selection/dialog-date-selection.component';
 import { SingletoneStrictClass } from '../model/classes/SingletoneStrictClass';
-
+import { DialogSingleOptionComponent } from '../view/components/dialog-single-option/dialog-single-option.component';
 
 /**
  * Manages the application modal and non modal floating elements
@@ -637,7 +637,8 @@ export class DialogService extends SingletoneStrictClass {
      *            - height: see addDialog() docs
      *            - maxHeight: see addDialog() docs
      *            - modal: see addDialog() docs
-     *            - dialogErrorComponentClass: A custom component class to use instead of the default DialogErrorComponent. This custom component must extend DialogErrorComponent
+     *            - dialogClass: A custom component class to use instead of the default DialogErrorComponent.
+     *              This custom class must extend DialogErrorComponent
      * 
      * @returns A Promise that resolves once the user selects the button with the option caption 
      */
@@ -650,7 +651,7 @@ export class DialogService extends SingletoneStrictClass {
                                       height?: string,
                                       maxHeight?: string,
                                       modal?: boolean,
-                                      dialogErrorComponentClass?:Type<DialogErrorComponent>}): Promise<null> {
+                                      dialogClass?:Type<DialogErrorComponent>}): Promise<null> {
 
         if (this._isEnabled) {
             
@@ -661,7 +662,7 @@ export class DialogService extends SingletoneStrictClass {
                 texts.push(properties.description); 
             }
             
-            await this.addDialog(properties.dialogErrorComponentClass ?? DialogErrorComponent, {
+            await this.addDialog(properties.dialogClass ?? DialogErrorComponent, {
                 id: properties.id ?? undefined,
                 width: properties.width ?? "70%",
                 maxWidth: properties.maxWidth ?? "500px",
@@ -675,6 +676,44 @@ export class DialogService extends SingletoneStrictClass {
         
         return null;
     }
+    
+    
+    /**
+     * Show a dialog with a message and a single option button to close it.
+     * 
+     * This method is a shortcut for addDialog() method using DialogSingleOptionComponent as the dialog component class
+     *
+     * @param properties An object containing the different visual and textual options that this dialog allows:
+     *            - title (mandatory): The dialog title
+     *            - option (mandatory): The text to place on the single option button
+     *            - description: An optional description text to show below the title
+     *            - id: see addDialog() docs
+     *            - width: see addDialog() docs
+     *            - maxWidth: see addDialog() docs
+     *            - height: see addDialog() docs
+     *            - maxHeight: see addDialog() docs
+     *            - modal: see addDialog() docs
+     *            - dialogClass: A custom component class to use instead of the default DialogSingleOptionComponent.
+     *              This custom class must extend DialogSingleOptionComponent
+     * 
+     * @returns A Promise that resolves once the user selects the button with the option caption 
+     */
+    async addMessageDialog(properties: {title:string,
+                                        option: string,
+                                        description?: string,
+                                        id?: string,
+                                        width?: string,
+                                        maxWidth?: string,
+                                        height?: string,
+                                        maxHeight?: string,
+                                        modal?: boolean,
+                                        dialogClass?:Type<DialogSingleOptionComponent>}): Promise<null> {
+    
+        properties.dialogClass ??= DialogSingleOptionComponent;   
+                         
+        return this.addErrorDialog(properties);
+    }
+        
     
     /**
      * Force the removal of all the dialogs that are currently visible.
