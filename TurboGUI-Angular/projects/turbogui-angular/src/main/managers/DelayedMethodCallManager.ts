@@ -7,6 +7,7 @@
  * CopyRight : -> Copyright 2018 Edertone Advanded Solutions. https://www.edertone.com
  */
 
+
 /**
  * Sometimes it is necessary to apply some kind of buffer to the user input for certain operations that may be executed
  * several times but we need to capture only the latest of them into a certain period of time. This class does exactly this:

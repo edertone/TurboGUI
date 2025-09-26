@@ -25,14 +25,12 @@ p{
     margin-bottom: 5px;
 }
 
-.listItemContainer{
-}
-
 .listItemContainer p{
     margin: 0px;
     line-height: 36px;
     width: calc(100% - 12px);
     margin-left: 6px;
+    cursor: pointer;
 }
 
 button{
