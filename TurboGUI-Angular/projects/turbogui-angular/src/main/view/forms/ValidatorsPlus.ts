@@ -34,13 +34,13 @@ export class ValidatorsPlus extends Validators {
         // first check if the control has a value
         if (control.value && control.value.length > 0) {
 
-            if(!StringUtils.isEmpty(control.value)){
+            if(StringUtils.isEmpty(control.value)){
                 
-                return null;
+                return { isEmpty: true };
             
             }else{
                 
-                return { isEmpty: true };
+                return null;
             }
             
         } else {
@@ -77,5 +77,38 @@ export class ValidatorsPlus extends Validators {
 
             return hasValue ? null : { atLeastOneRequired: true };
         };
+    }
+    
+    
+    /**
+     * Validator to check that a control value is a valid mobile phone number with country code.
+     * 
+     * The expected format is: +<country code><number>, where:
+     *    - <country code> is 1 to 3 digits
+     *    - <number> is 6 to 14 digits
+     * 
+     * The country code must be prefixed with a plus sign (+). Spaces, dots (.), and hyphens (-) are allowed as separators.
+     * 
+     * Examples of valid formats:
+     * - +1 1234567890
+     * - +44-1234-567890
+     * - +91.9876543210
+     * 
+     * Examples of invalid formats:
+     * - 1234567890 (missing country code)
+     * - +123 (too short)
+     * - +123456789012345671 (too long)
+     * 
+     * @param control The form control to validate.
+     * 
+     * @returns An object with the validation error if invalid, or null if valid.
+     */
+    static mobilePhoneWithCountryCode(control: FormControl) {
+    
+        const mobilePhoneRegex = /^\+\d{1,3}[\s.-]?\d{6,14}$/;
+        
+        const valid = mobilePhoneRegex.test(control.value);
+        
+        return valid ? null : { mobilePhoneWithCountryCode: true };
     }
 }
