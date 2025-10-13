@@ -28,8 +28,7 @@ export class ElementCreatedDirective implements OnInit {
     /**
      * Event that will be dispatched once element is created
      */
-    @Output('elementCreated')
-    public elementCreated: EventEmitter<ElementCreatedDirective> = new EventEmitter();
+    @Output() elementCreated: EventEmitter<ElementCreatedDirective> = new EventEmitter();
 
 
     /**

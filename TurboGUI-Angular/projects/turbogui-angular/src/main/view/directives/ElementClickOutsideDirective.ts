@@ -10,22 +10,25 @@
 import { Directive, ElementRef, Output, EventEmitter, HostListener } from '@angular/core';
 
 
-/** This directive is used to trigger an event when the user clicks outside of an element */
+/**
+ * It is necessary to import TurboGuiAngularModule at the component that uses this directive
+ * 
+ * This directive is used to execute an action when the user clicks outside of an element.
+ * 
+ * If we set the elementClickOutside tag to the html element and set the clickOutsideElement event to a function: <element elementClickOutside (clickOutsideElement)="clickOutsideElement()" ...,
+ * this function will be executed when the user clicks outside of the element.
+ */
 @Directive({
     selector: '[elementClickOutside]',
     standalone: false
 })
 
 
-/**
- * This directive is used to execute an action when the user clicks outside of an element.
- * If we set the elementClickOutside tag to the html element and set the onClickOutside event to a function: <element elementClickOutside (onClickOutside)="onClickedOutside()" ...,
- * this function will be executed when the user clicks outside of the element.
- */
+
 export class ElementClickOutsideDirective {
     
     
-    @Output() onClickOutside = new EventEmitter<void>();
+    @Output() clickOutsideElement = new EventEmitter<void>();
   
 
     constructor(private readonly elementRef: ElementRef) {
@@ -39,7 +42,7 @@ export class ElementClickOutsideDirective {
     
         if (!clickedInside) {
             
-            this.onClickOutside.emit();
+            this.clickOutsideElement.emit();
         }
     }  
 }

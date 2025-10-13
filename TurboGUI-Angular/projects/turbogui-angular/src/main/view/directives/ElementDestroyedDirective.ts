@@ -28,8 +28,7 @@ export class ElementDestroyedDirective implements OnDestroy {
     /**
      * Event that will be dispatched once element is destroyed
      */
-    @Output('elementDestroyed')
-    public elementDestroyed: EventEmitter<ElementDestroyedDirective> = new EventEmitter();
+    @Output() elementDestroyed: EventEmitter<ElementDestroyedDirective> = new EventEmitter();
 
 
     /**

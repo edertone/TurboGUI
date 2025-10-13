@@ -24,7 +24,7 @@ import { Directive, ElementRef, NgZone, Renderer2, AfterContentInit } from '@ang
 export class AutoFocusOnDisplayDirective implements AfterContentInit {
     
     
-    constructor(private el: ElementRef, private zone: NgZone, private renderer: Renderer2) {
+    constructor(private readonly el: ElementRef, private readonly zone: NgZone, private readonly renderer: Renderer2) {
     
         if (!el.nativeElement['focus']) {
         
