@@ -495,22 +495,29 @@ export class DialogService extends SingletoneStrictClass {
      * @param options An object containing options for the file browser dialog:
      *   - accept: A string that defines the file types the file input should accept. For example: '.csv,.xlsx', 'image/*', '.pdf', 'image/jpeg, image/png'.
      *   - maxFileSize: (Optional) The maximum file size in bytes allowed for the selected file. If the selected file exceeds this size, the promise will be rejected with an error
+     *   - loadData: (Optional) Defines how the file content should be read and returned.
+     *             'no' (default): Returns the raw File object without its data.
+     *             'raw': Returns the File object with its content read as a raw binary `ArrayBuffer` in the `data` property.
+     *             'text': Returns the File object with its content read as a text string in the `data` property.
+     *             'base64': Returns the File object with its content read as a Base64 encoded string in the `data` property.
      *
-     * @returns A Promise that resolves with the selected `File` object, or `null` if the user cancels the dialog.
+     * @returns A Promise that resolves with the selected `File` object (which may have an added `data` property), or `null` if the user cancels the dialog.
      *          The promise will be rejected with an Error if the selected file exceeds the specified size limits.
      */
     async addFileBrowserDialog(options: {accept: string,
-                                         maxFileSize?: number}): Promise<File | null> {
+                                         maxFileSize?: number,
+                                         loadData?: 'no' | 'raw' | 'text' | 'base64'}): Promise<File | null> {
 
-        const fileList = await this._addFileBrowserDialogInternal({
+        const files = await this._addFileBrowserDialogInternal({
             multiple: false,
             accept: options.accept,
-            maxFileSize: options.maxFileSize});
+            maxFileSize: options.maxFileSize,
+            loadData: options.loadData});
 
-        return fileList ? fileList[0] : null;
+        return files ? files[0] : null;
     }
-    
-    
+
+
     /**
      * Shows a native OS file browser dialog to let the user select one or more files from their local file system.
      *
@@ -518,19 +525,26 @@ export class DialogService extends SingletoneStrictClass {
      *   - accept: A string that defines the file types the file input should accept. For example: '.csv,.xlsx', 'image/*', '.pdf', 'image/jpeg, image/png'.
      *   - maxFileSize: (Optional) The maximum file size in bytes allowed for any single selected file. If a selected file exceeds this size, the promise will be rejected with an error.
      *   - maxTotalSize: (Optional) The maximum total size in bytes for all selected files combined. If the total size of all files exceeds this limit, the promise will be rejected with an error.
+     *   - loadData: (Optional) Defines how the file content should be read and returned.
+     *             'no' (default): Returns an array of `File` objects without their data.
+     *             'raw': Returns an array of `File` objects, each with its content read as a raw binary `ArrayBuffer` in the `data` property.
+     *             'text': Returns an array of `File` objects, each with its content read as a text string in the `data` property.
+     *             'base64': Returns an array of `File` objects, each with its content read as a Base64 encoded string in the `data` property.
      *
-     * @returns A Promise that resolves with a `FileList` object containing the selected files, or `null` if the user cancels the dialog.
+     * @returns A Promise that resolves with an array of `File` objects (which may have an added `data` property), or `null` if the user cancels the dialog.
      *          The promise will be rejected with an Error if the selected files exceed the specified size limits.
      */
     addFilesBrowserDialog(options: {accept: string,
                                     maxFileSize?: number,
-                                    maxTotalSize?: number}): Promise<FileList | null> {
+                                    maxTotalSize?: number,
+                                    loadData?: 'no' | 'raw' | 'text' | 'base64'}): Promise<File[] | null> {
 
         return this._addFileBrowserDialogInternal({
             multiple: true,
             accept: options.accept,
             maxFileSize: options.maxFileSize,
-            maxTotalSize: options.maxTotalSize});
+            maxTotalSize: options.maxTotalSize,
+            loadData: options.loadData});
     }
 
 
@@ -540,14 +554,15 @@ export class DialogService extends SingletoneStrictClass {
     private _addFileBrowserDialogInternal(options: {multiple: boolean,
                                                     accept: string,
                                                     maxFileSize?: number,
-                                                    maxTotalSize?: number}): Promise<FileList | null> {
+                                                    maxTotalSize?: number,
+                                                    loadData?: 'no' | 'raw' | 'text' | 'base64'}): Promise<File[] | null> {
 
         if (!this._isEnabled) {
 
             return Promise.resolve(null);
         }
 
-        return new Promise<FileList | null>(resolve => {
+        return new Promise<File[] | null>((resolve, reject) => {
 
             // Create a hidden input element to show the file browser dialog
             const input = this._renderer.createElement('input');
@@ -566,58 +581,96 @@ export class DialogService extends SingletoneStrictClass {
                 this._renderer.removeChild(document.body, input);
                 window.removeEventListener('focus', onFocus);
             };
-            
+
             // Event handler for the change event when files are selected
             // We must check here for file size if maxFileSize is defined
             const onChange = (event: Event) => {
-                
+
                 const files = (event.target as HTMLInputElement).files;
-                
+
                 if (files && files.length > 0) {
-                    
+
                     let totalSize = 0;
-                    
+                    const fileArray = Array.from(files);
+
                     if (options.maxFileSize !== undefined || options.maxTotalSize !== undefined) {
-                       
-                       for (const file of Array.from(files)) {
-                           
+
+                       for (const file of fileArray) {
+
                            if (options.maxFileSize !== undefined && file.size > options.maxFileSize) {
-                               
+
                                removeElement();
-                               throw new Error(`Max file size exceeded: "${file.name}" exceeds ${options.maxFileSize} bytes`);
+                               return reject(new Error(`Max file size exceeded: "${file.name}" exceeds ${options.maxFileSize} bytes`));
                            }
-                           
+
                            totalSize += file.size;
                        }
-                       
+
                        if (options.maxTotalSize !== undefined && totalSize > options.maxTotalSize) {
-                           
+
                            removeElement();
-                           throw new Error(`Max total size exceeded: ${options.maxTotalSize} bytes`);
+                           return reject(new Error(`Max total size exceeded: ${options.maxTotalSize} bytes`));
                        }
                    }
-                   
-                   resolve(files);
-                    
+
+                   if (!options.loadData || options.loadData === 'no') {
+
+                        resolve(fileArray);
+                        removeElement();
+                        return;
+                   }
+
+                    const fileReadPromises = fileArray.map(file => new Promise<File>((fileResolve, fileReject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                            if (options.loadData === 'base64' && typeof reader.result === 'string') {
+                                (file as any).data = reader.result.split(',')[1];
+                            } else {
+                                (file as any).data = reader.result;
+                            }
+                            fileResolve(file);
+                        };
+                        reader.onerror = () => {
+                            fileReject(reader.error);
+                        };
+
+                        if (options.loadData === 'raw') {
+                            reader.readAsArrayBuffer(file);
+                        } else if (options.loadData === 'text') {
+                            reader.readAsText(file);
+                        } else if (options.loadData === 'base64') {
+                            reader.readAsDataURL(file);
+                        }
+                    }));
+
+                    Promise.all(fileReadPromises)
+                        .then(filesWithData => {
+                            resolve(filesWithData);
+                            removeElement();
+                        })
+                        .catch(error => {
+                            reject(error);
+                            removeElement();
+                        });
+
                 } else {
-                    
+
                     resolve(null);
+                    removeElement();
                 }
-                
-                removeElement();
             };
 
             // This is a trick to detect when the file dialog has been cancelled by the user.
             // The timeout is needed to wait for the change event to fire before resolving.
             const onFocus = () => {
-                
+
                 setTimeout(() => {
-                    
+
                     if (!input.files || input.files.length === 0) {
                         resolve(null);
+                        removeElement();
                     }
-                    
-                    removeElement();
+
                 }, 600);
             };
 
