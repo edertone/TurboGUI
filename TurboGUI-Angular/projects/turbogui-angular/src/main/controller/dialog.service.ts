@@ -551,155 +551,115 @@ export class DialogService extends SingletoneStrictClass {
     /**
      * Auxiliary method that combines the logic for addFileBrowserDialog and addFilesBrowserDialog
      */
-    private _addFileBrowserDialogInternal(options: {multiple: boolean,
-                                                    accept: string,
-                                                    maxFileSize?: number,
-                                                    maxTotalSize?: number,
-                                                    loadData?: 'no' | 'ArrayBuffer' | 'text' | 'base64'}): Promise<File[] | null> {
+    private async _addFileBrowserDialogInternal(options: {multiple: boolean,
+                                                          accept: string,
+                                                          maxFileSize?: number,
+                                                          maxTotalSize?: number,
+                                                          loadData?: 'no' | 'ArrayBuffer' | 'text' | 'base64'}): Promise<File[] | null> {
 
         if (!this._isEnabled) {
 
-            return Promise.resolve(null);
+            return null;
         }
 
-        return new Promise<File[] | null>((resolve, reject) => {
+        // Create a hidden input element to show the file browser dialog
+        const input = this._renderer.createElement('input');
+        this._renderer.setAttribute(input, 'type', 'file');
+        this._renderer.setAttribute(input, 'accept', options.accept);
 
-            // Create a hidden input element to show the file browser dialog
-            const input = this._renderer.createElement('input');
-            this._renderer.setAttribute(input, 'type', 'file');
-            this._renderer.setAttribute(input, 'accept', options.accept);
+        if (options.multiple) {
 
-            if (options.multiple) {
+            this._renderer.setAttribute(input, 'multiple', 'true');
+        }
 
-                this._renderer.setAttribute(input, 'multiple', 'true');
+        this._renderer.setStyle(input, 'display', 'none');
+        this._renderer.appendChild(document.body, input);
+
+        try {
+
+            const files = await new Promise<File[] | null>((resolve) => {
+
+                const onFocus = () => {
+                    setTimeout(() => {
+                        if (!input.files || input.files.length === 0) {
+                            resolve(null);
+                        }
+                    }, 600);
+                };
+
+                const onChange = (event: Event) => {
+                    const fileList = (event.target as HTMLInputElement).files;
+                    resolve(fileList ? Array.from(fileList) : null);
+                };
+
+                this._renderer.listen(input, 'change', onChange);
+                window.addEventListener('focus', onFocus, { once: true });
+
+                input.click();
+            });
+
+            if (!files || files.length === 0) {
+
+                return null;
             }
 
-            this._renderer.setStyle(input, 'display', 'none');
+            let totalSize = 0;
+            for (const file of files) {
 
-            // Function to remove the input element and its event listeners from the DOM
-            const removeElement = () => {
-                this._renderer.removeChild(document.body, input);
-                window.removeEventListener('focus', onFocus);
-            };
+                if (options.maxFileSize !== undefined && file.size > options.maxFileSize) {
 
-            // Event handler for the change event when files are selected
-            const onChange = (event: Event) => {
-
-                const files = (event.target as HTMLInputElement).files;
-
-                if (files && files.length > 0) {
-
-                    let totalSize = 0;
-                    const fileArray = Array.from(files);
-
-                    if (options.maxFileSize !== undefined || options.maxTotalSize !== undefined) {
-
-                        for (const file of fileArray) {
-
-                            if (options.maxFileSize !== undefined && file.size > options.maxFileSize) {
-
-                                removeElement();
-                                return reject(new Error(`Max file size exceeded: "${file.name}" exceeds ${options.maxFileSize} bytes`));
-                            }
-
-                            totalSize += file.size;
-                        }
-
-                        if (options.maxTotalSize !== undefined && totalSize > options.maxTotalSize) {
-    
-                            removeElement();
-                            return reject(new Error(`Max total size exceeded: ${options.maxTotalSize} bytes`));
-                        }
-                    }
-
-                    if (!options.loadData || options.loadData === 'no') {
-
-                        resolve(fileArray);
-                        removeElement();
-                        return;
-                    }
-
-                    const fileReadPromises = fileArray.map(file => new Promise<File>((fileResolve, fileReject) => {
-                        
-                        const reader = new FileReader();
-                        
-                        reader.onload = () => {
-                            
-                            if (options.loadData === 'base64' && typeof reader.result === 'string') {
-                                
-                                (file as any).data = reader.result.split(',')[1];
-                                
-                            } else {
-                                
-                                (file as any).data = reader.result;
-                            }
-                            
-                            fileResolve(file);
-                        };
-                        
-                        reader.onerror = () => {
-                            
-                            if(reader.error === null){
-                                
-                                fileReject(new Error(reader.error ? String(reader.error) : 'Unknown FileReader error'));
-                                
-                            }else{
-                                
-                                fileReject(reader.error);
-                            }
-                        };
-                        
-                        switch (options.loadData) {
-                            case 'ArrayBuffer':
-                                reader.readAsArrayBuffer(file);
-                                break;
-                            case 'text':
-                                reader.readAsText(file);
-                                break;
-                            case 'base64':
-                                reader.readAsDataURL(file);
-                                break;
-                        }
-                    }));
-
-                    Promise.all(fileReadPromises).then(filesWithData => {
-                
-                        resolve(filesWithData);
-                        removeElement();
-                    
-                    }).catch(error => {
-                        
-                        reject(error);
-                        removeElement();
-                    });
-
-                } else {
-
-                    resolve(null);
-                    removeElement();
+                    throw new Error(`Max file size exceeded: "${file.name}" exceeds ${options.maxFileSize} bytes`);
                 }
-            };
 
-            // This is a trick to detect when the file dialog has been cancelled by the user.
-            // The timeout is needed to wait for the change event to fire before resolving.
-            const onFocus = () => {
+                totalSize += file.size;
+            }
 
-                setTimeout(() => {
+            if (options.maxTotalSize !== undefined && totalSize > options.maxTotalSize) {
 
-                    if (!input.files || input.files.length === 0) {
-                        resolve(null);
-                        removeElement();
+                throw new Error(`Max total size exceeded: ${options.maxTotalSize} bytes`);
+            }
+
+            if (!options.loadData || options.loadData === 'no') {
+
+                return files;
+            }
+
+            const fileReadPromises = files.map(file => new Promise<File>((resolve, reject) => {
+
+                const reader = new FileReader();
+
+                reader.onload = () => {
+                    if (options.loadData === 'base64' && typeof reader.result === 'string') {
+                        (file as any).data = reader.result.split(',')[1];
+                    } else {
+                        (file as any).data = reader.result;
                     }
+                    resolve(file);
+                };
 
-                }, 600);
-            };
+                reader.onerror = () => {
+                    reject(reader.error ?? new Error('Unknown FileReader error'));
+                };
 
-            this._renderer.listen(input, 'change', onChange);
-            window.addEventListener('focus', onFocus);
+                switch (options.loadData) {
+                    case 'ArrayBuffer':
+                        reader.readAsArrayBuffer(file);
+                        break;
+                    case 'text':
+                        reader.readAsText(file);
+                        break;
+                    case 'base64':
+                        reader.readAsDataURL(file);
+                        break;
+                }
+            }));
 
-            this._renderer.appendChild(document.body, input);
-            input.click();
-       });
+            return await Promise.all(fileReadPromises);
+
+        } finally {
+
+            this._renderer.removeChild(document.body, input);
+        }
     }
     
     
