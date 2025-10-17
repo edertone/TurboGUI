@@ -555,7 +555,7 @@ export class DialogService extends SingletoneStrictClass {
                                                           accept: string,
                                                           maxFileSize?: number,
                                                           maxTotalSize?: number,
-                                                          loadData?: 'no' | 'ArrayBuffer' | 'text' | 'base64'}): Promise<File[] | null> {
+                                                          loadData?: 'no'|'ArrayBuffer'|'text'|'base64'}): Promise<File[] | null> {
 
         if (!this._isEnabled) {
 
@@ -624,35 +624,29 @@ export class DialogService extends SingletoneStrictClass {
                 return files;
             }
 
-            const fileReadPromises = files.map(file => new Promise<File>((resolve, reject) => {
-
-                const reader = new FileReader();
-
-                reader.onload = () => {
-                    if (options.loadData === 'base64' && typeof reader.result === 'string') {
-                        (file as any).data = reader.result.split(',')[1];
-                    } else {
-                        (file as any).data = reader.result;
-                    }
-                    resolve(file);
-                };
-
-                reader.onerror = () => {
-                    reject(reader.error ?? new Error('Unknown FileReader error'));
-                };
-
+            const fileReadPromises = files.map(async file => {
+                
                 switch (options.loadData) {
                     case 'ArrayBuffer':
-                        reader.readAsArrayBuffer(file);
+                        (file as any).data = await file.arrayBuffer();
                         break;
+
                     case 'text':
-                        reader.readAsText(file);
+                        (file as any).data = await file.text();
                         break;
+
                     case 'base64':
-                        reader.readAsDataURL(file);
+                        (file as any).data = await new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onload = () => resolve((reader.result as string).split(',')[1]);
+                            reader.onerror = () => reject(reader.error ?? new Error('Unknown FileReader error'));
+                            reader.readAsDataURL(file);
+                        });
                         break;
                 }
-            }));
+
+                return file;
+            });
 
             return await Promise.all(fileReadPromises);
 
