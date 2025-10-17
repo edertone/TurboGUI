@@ -22,6 +22,15 @@ import { DialogDateSelectionComponent } from '../view/components/dialog-date-sel
 import { SingletoneStrictClass } from '../model/classes/SingletoneStrictClass';
 import { DialogSingleOptionComponent } from '../view/components/dialog-single-option/dialog-single-option.component';
 
+
+/**
+ * Defines a File object that may contain its data loaded.
+ */
+export interface FileWithData extends File {
+    
+    data?: any;
+}
+
 /**
  * Manages the application modal and non modal floating elements
  */
@@ -506,7 +515,7 @@ export class DialogService extends SingletoneStrictClass {
      */
     async addFileBrowserDialog(options: {accept: string,
                                          maxFileSize?: number,
-                                         loadData?: 'no' | 'ArrayBuffer' | 'text' | 'base64'}): Promise<File | null> {
+                                         loadData?: 'no' | 'ArrayBuffer' | 'text' | 'base64'}): Promise<FileWithData | null> {
 
         const files = await this._addFileBrowserDialogInternal({
             multiple: false,
@@ -537,7 +546,7 @@ export class DialogService extends SingletoneStrictClass {
     addFilesBrowserDialog(options: {accept: string,
                                     maxFileSize?: number,
                                     maxTotalSize?: number,
-                                    loadData?: 'no' | 'ArrayBuffer' | 'text' | 'base64'}): Promise<File[] | null> {
+                                    loadData?: 'no' | 'ArrayBuffer' | 'text' | 'base64'}): Promise<FileWithData[] | null> {
 
         return this._addFileBrowserDialogInternal({
             multiple: true,
@@ -555,7 +564,7 @@ export class DialogService extends SingletoneStrictClass {
                                                           accept: string,
                                                           maxFileSize?: number,
                                                           maxTotalSize?: number,
-                                                          loadData?: 'no'|'ArrayBuffer'|'text'|'base64'}): Promise<File[] | null> {
+                                                          loadData?: 'no'|'ArrayBuffer'|'text'|'base64'}): Promise<FileWithData[] | null> {
 
         if (!this._isEnabled) {
 
@@ -624,19 +633,19 @@ export class DialogService extends SingletoneStrictClass {
                 return files;
             }
 
-            const fileReadPromises = files.map(async file => {
+            const fileReadPromises = files.map(async (file: FileWithData) => {
                 
                 switch (options.loadData) {
                     case 'ArrayBuffer':
-                        (file as any).data = await file.arrayBuffer();
+                        file.data = await file.arrayBuffer();
                         break;
 
                     case 'text':
-                        (file as any).data = await file.text();
+                        file.data = await file.text();
                         break;
 
                     case 'base64':
-                        (file as any).data = await new Promise((resolve, reject) => {
+                        file.data = await new Promise((resolve, reject) => {
                             const reader = new FileReader();
                             reader.onload = () => resolve((reader.result as string).split(',')[1]);
                             reader.onerror = () => reject(reader.error ?? new Error('Unknown FileReader error'));
