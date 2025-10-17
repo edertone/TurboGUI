@@ -497,7 +497,7 @@ export class DialogService extends SingletoneStrictClass {
      *   - maxFileSize: (Optional) The maximum file size in bytes allowed for the selected file. If the selected file exceeds this size, the promise will be rejected with an error
      *   - loadData: (Optional) Defines how the file content should be read and returned.
      *             'no' (default): Returns the raw File object without its data.
-     *             'raw': Returns the File object with its content read as a raw binary `ArrayBuffer` in the `data` property.
+     *             'ArrayBuffer': Returns the File object with its content read as a raw binary `ArrayBuffer` in the `data` property.
      *             'text': Returns the File object with its content read as a text string in the `data` property.
      *             'base64': Returns the File object with its content read as a Base64 encoded string in the `data` property.
      *
@@ -506,7 +506,7 @@ export class DialogService extends SingletoneStrictClass {
      */
     async addFileBrowserDialog(options: {accept: string,
                                          maxFileSize?: number,
-                                         loadData?: 'no' | 'raw' | 'text' | 'base64'}): Promise<File | null> {
+                                         loadData?: 'no' | 'ArrayBuffer' | 'text' | 'base64'}): Promise<File | null> {
 
         const files = await this._addFileBrowserDialogInternal({
             multiple: false,
@@ -527,7 +527,7 @@ export class DialogService extends SingletoneStrictClass {
      *   - maxTotalSize: (Optional) The maximum total size in bytes for all selected files combined. If the total size of all files exceeds this limit, the promise will be rejected with an error.
      *   - loadData: (Optional) Defines how the file content should be read and returned.
      *             'no' (default): Returns an array of `File` objects without their data.
-     *             'raw': Returns an array of `File` objects, each with its content read as a raw binary `ArrayBuffer` in the `data` property.
+     *             'ArrayBuffer': Returns an array of `File` objects, each with its content read as a raw binary `ArrayBuffer` in the `data` property.
      *             'text': Returns an array of `File` objects, each with its content read as a text string in the `data` property.
      *             'base64': Returns an array of `File` objects, each with its content read as a Base64 encoded string in the `data` property.
      *
@@ -537,7 +537,7 @@ export class DialogService extends SingletoneStrictClass {
     addFilesBrowserDialog(options: {accept: string,
                                     maxFileSize?: number,
                                     maxTotalSize?: number,
-                                    loadData?: 'no' | 'raw' | 'text' | 'base64'}): Promise<File[] | null> {
+                                    loadData?: 'no' | 'ArrayBuffer' | 'text' | 'base64'}): Promise<File[] | null> {
 
         return this._addFileBrowserDialogInternal({
             multiple: true,
@@ -549,13 +549,13 @@ export class DialogService extends SingletoneStrictClass {
 
 
     /**
-     * Auxiliary method that combines the logic for addFileBrowserDialog addFilesBrowserDialog
+     * Auxiliary method that combines the logic for addFileBrowserDialog and addFilesBrowserDialog
      */
     private _addFileBrowserDialogInternal(options: {multiple: boolean,
                                                     accept: string,
                                                     maxFileSize?: number,
                                                     maxTotalSize?: number,
-                                                    loadData?: 'no' | 'raw' | 'text' | 'base64'}): Promise<File[] | null> {
+                                                    loadData?: 'no' | 'ArrayBuffer' | 'text' | 'base64'}): Promise<File[] | null> {
 
         if (!this._isEnabled) {
 
@@ -583,7 +583,6 @@ export class DialogService extends SingletoneStrictClass {
             };
 
             // Event handler for the change event when files are selected
-            // We must check here for file size if maxFileSize is defined
             const onChange = (event: Event) => {
 
                 const files = (event.target as HTMLInputElement).files;
@@ -595,63 +594,84 @@ export class DialogService extends SingletoneStrictClass {
 
                     if (options.maxFileSize !== undefined || options.maxTotalSize !== undefined) {
 
-                       for (const file of fileArray) {
+                        for (const file of fileArray) {
 
-                           if (options.maxFileSize !== undefined && file.size > options.maxFileSize) {
+                            if (options.maxFileSize !== undefined && file.size > options.maxFileSize) {
 
-                               removeElement();
-                               return reject(new Error(`Max file size exceeded: "${file.name}" exceeds ${options.maxFileSize} bytes`));
-                           }
+                                removeElement();
+                                return reject(new Error(`Max file size exceeded: "${file.name}" exceeds ${options.maxFileSize} bytes`));
+                            }
 
-                           totalSize += file.size;
-                       }
+                            totalSize += file.size;
+                        }
 
-                       if (options.maxTotalSize !== undefined && totalSize > options.maxTotalSize) {
+                        if (options.maxTotalSize !== undefined && totalSize > options.maxTotalSize) {
+    
+                            removeElement();
+                            return reject(new Error(`Max total size exceeded: ${options.maxTotalSize} bytes`));
+                        }
+                    }
 
-                           removeElement();
-                           return reject(new Error(`Max total size exceeded: ${options.maxTotalSize} bytes`));
-                       }
-                   }
-
-                   if (!options.loadData || options.loadData === 'no') {
+                    if (!options.loadData || options.loadData === 'no') {
 
                         resolve(fileArray);
                         removeElement();
                         return;
-                   }
+                    }
 
                     const fileReadPromises = fileArray.map(file => new Promise<File>((fileResolve, fileReject) => {
+                        
                         const reader = new FileReader();
+                        
                         reader.onload = () => {
+                            
                             if (options.loadData === 'base64' && typeof reader.result === 'string') {
+                                
                                 (file as any).data = reader.result.split(',')[1];
+                                
                             } else {
+                                
                                 (file as any).data = reader.result;
                             }
+                            
                             fileResolve(file);
                         };
+                        
                         reader.onerror = () => {
-                            fileReject(reader.error);
+                            
+                            if(reader.error === null){
+                                
+                                fileReject(new Error(reader.error ? String(reader.error) : 'Unknown FileReader error'));
+                                
+                            }else{
+                                
+                                fileReject(reader.error);
+                            }
                         };
-
-                        if (options.loadData === 'raw') {
-                            reader.readAsArrayBuffer(file);
-                        } else if (options.loadData === 'text') {
-                            reader.readAsText(file);
-                        } else if (options.loadData === 'base64') {
-                            reader.readAsDataURL(file);
+                        
+                        switch (options.loadData) {
+                            case 'ArrayBuffer':
+                                reader.readAsArrayBuffer(file);
+                                break;
+                            case 'text':
+                                reader.readAsText(file);
+                                break;
+                            case 'base64':
+                                reader.readAsDataURL(file);
+                                break;
                         }
                     }));
 
-                    Promise.all(fileReadPromises)
-                        .then(filesWithData => {
-                            resolve(filesWithData);
-                            removeElement();
-                        })
-                        .catch(error => {
-                            reject(error);
-                            removeElement();
-                        });
+                    Promise.all(fileReadPromises).then(filesWithData => {
+                
+                        resolve(filesWithData);
+                        removeElement();
+                    
+                    }).catch(error => {
+                        
+                        reject(error);
+                        removeElement();
+                    });
 
                 } else {
 
