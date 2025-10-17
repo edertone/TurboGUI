@@ -487,6 +487,147 @@ export class DialogService extends SingletoneStrictClass {
             });
         });
     }
+
+
+    /**
+     * Shows a native OS file browser dialog to let the user select a single file from their local file system.
+     *
+     * @param options An object containing options for the file browser dialog:
+     *   - accept: A string that defines the file types the file input should accept. For example: '.csv,.xlsx', 'image/*', '.pdf', 'image/jpeg, image/png'.
+     *   - maxFileSize: (Optional) The maximum file size in bytes allowed for the selected file. If the selected file exceeds this size, the promise will be rejected with an error
+     *
+     * @returns A Promise that resolves with the selected `File` object, or `null` if the user cancels the dialog.
+     *          The promise will be rejected with an Error if the selected file exceeds the specified size limits.
+     */
+    async addFileBrowserDialog(options: {accept: string,
+                                         maxFileSize?: number}): Promise<File | null> {
+
+        const fileList = await this._addFileBrowserDialogInternal({
+            multiple: false,
+            accept: options.accept,
+            maxFileSize: options.maxFileSize});
+
+        return fileList ? fileList[0] : null;
+    }
+    
+    
+    /**
+     * Shows a native OS file browser dialog to let the user select one or more files from their local file system.
+     *
+     * @param options An object containing options for the file browser dialog:
+     *   - accept: A string that defines the file types the file input should accept. For example: '.csv,.xlsx', 'image/*', '.pdf', 'image/jpeg, image/png'.
+     *   - maxFileSize: (Optional) The maximum file size in bytes allowed for any single selected file. If a selected file exceeds this size, the promise will be rejected with an error.
+     *   - maxTotalSize: (Optional) The maximum total size in bytes for all selected files combined. If the total size of all files exceeds this limit, the promise will be rejected with an error.
+     *
+     * @returns A Promise that resolves with a `FileList` object containing the selected files, or `null` if the user cancels the dialog.
+     *          The promise will be rejected with an Error if the selected files exceed the specified size limits.
+     */
+    addFilesBrowserDialog(options: {accept: string,
+                                    maxFileSize?: number,
+                                    maxTotalSize?: number}): Promise<FileList | null> {
+
+        return this._addFileBrowserDialogInternal({
+            multiple: true,
+            accept: options.accept,
+            maxFileSize: options.maxFileSize,
+            maxTotalSize: options.maxTotalSize});
+    }
+
+
+    /**
+     * Auxiliary method that combines the logic for addFileBrowserDialog addFilesBrowserDialog
+     */
+    private _addFileBrowserDialogInternal(options: {multiple: boolean,
+                                                    accept: string,
+                                                    maxFileSize?: number,
+                                                    maxTotalSize?: number}): Promise<FileList | null> {
+
+        if (!this._isEnabled) {
+
+            return Promise.resolve(null);
+        }
+
+        return new Promise<FileList | null>(resolve => {
+
+            // Create a hidden input element to show the file browser dialog
+            const input = this._renderer.createElement('input');
+            this._renderer.setAttribute(input, 'type', 'file');
+            this._renderer.setAttribute(input, 'accept', options.accept);
+
+            if (options.multiple) {
+
+                this._renderer.setAttribute(input, 'multiple', 'true');
+            }
+
+            this._renderer.setStyle(input, 'display', 'none');
+
+            // Function to remove the input element and its event listeners from the DOM
+            const removeElement = () => {
+                this._renderer.removeChild(document.body, input);
+                window.removeEventListener('focus', onFocus);
+            };
+            
+            // Event handler for the change event when files are selected
+            // We must check here for file size if maxFileSize is defined
+            const onChange = (event: Event) => {
+                
+                const files = (event.target as HTMLInputElement).files;
+                
+                if (files && files.length > 0) {
+                    
+                    let totalSize = 0;
+                    
+                    if (options.maxFileSize !== undefined || options.maxTotalSize !== undefined) {
+                       
+                       for (const file of Array.from(files)) {
+                           
+                           if (options.maxFileSize !== undefined && file.size > options.maxFileSize) {
+                               
+                               removeElement();
+                               throw new Error(`Max file size exceeded: "${file.name}" exceeds ${options.maxFileSize} bytes`);
+                           }
+                           
+                           totalSize += file.size;
+                       }
+                       
+                       if (options.maxTotalSize !== undefined && totalSize > options.maxTotalSize) {
+                           
+                           removeElement();
+                           throw new Error(`Max total size exceeded: ${options.maxTotalSize} bytes`);
+                       }
+                   }
+                   
+                   resolve(files);
+                    
+                } else {
+                    
+                    resolve(null);
+                }
+                
+                removeElement();
+            };
+
+            // This is a trick to detect when the file dialog has been cancelled by the user.
+            // The timeout is needed to wait for the change event to fire before resolving.
+            const onFocus = () => {
+                
+                setTimeout(() => {
+                    
+                    if (!input.files || input.files.length === 0) {
+                        resolve(null);
+                    }
+                    
+                    removeElement();
+                }, 600);
+            };
+
+            this._renderer.listen(input, 'change', onChange);
+            window.addEventListener('focus', onFocus);
+
+            this._renderer.appendChild(document.body, input);
+            input.click();
+       });
+    }
     
     
     /**
