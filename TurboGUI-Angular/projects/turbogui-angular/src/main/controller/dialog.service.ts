@@ -22,6 +22,15 @@ import { DialogDateSelectionComponent } from '../view/components/dialog-date-sel
 import { SingletoneStrictClass } from '../model/classes/SingletoneStrictClass';
 import { DialogSingleOptionComponent } from '../view/components/dialog-single-option/dialog-single-option.component';
 
+
+/**
+ * Defines a File object that may contain its data loaded.
+ */
+export interface FileWithData extends File {
+    
+    data?: any;
+}
+
 /**
  * Manages the application modal and non modal floating elements
  */
@@ -486,6 +495,174 @@ export class DialogService extends SingletoneStrictClass {
                 resolve(selection);
             });
         });
+    }
+
+
+    /**
+     * Shows a native OS file browser dialog to let the user select a single file from their local file system.
+     *
+     * @param options An object containing options for the file browser dialog:
+     *   - accept: A string that defines the file types the file input should accept. For example: '.csv,.xlsx', 'image/*', '.pdf', 'image/jpeg, image/png'.
+     *   - maxFileSize: (Optional) The maximum file size in bytes allowed for the selected file. If the selected file exceeds this size, the promise will be rejected with an error
+     *   - loadData: (Optional) Defines how the file content should be read and returned.
+     *             'no' (default): Returns the raw File object without its data.
+     *             'ArrayBuffer': Returns the File object with its content read as a raw binary `ArrayBuffer` in the `data` property.
+     *             'text': Returns the File object with its content read as a text string in the `data` property.
+     *             'base64': Returns the File object with its content read as a Base64 encoded string in the `data` property.
+     *
+     * @returns A Promise that resolves with the selected `File` object (which may have an added `data` property), or `null` if the user cancels the dialog.
+     *          The promise will be rejected with an Error if the selected file exceeds the specified size limits.
+     */
+    async addFileBrowserDialog(options: {accept: string,
+                                         maxFileSize?: number,
+                                         loadData?: 'no' | 'ArrayBuffer' | 'text' | 'base64'}): Promise<FileWithData | null> {
+
+        const files = await this._addFileBrowserDialogInternal({
+            multiple: false,
+            accept: options.accept,
+            maxFileSize: options.maxFileSize,
+            loadData: options.loadData});
+
+        return files ? files[0] : null;
+    }
+
+
+    /**
+     * Shows a native OS file browser dialog to let the user select one or more files from their local file system.
+     *
+     * @param options An object containing options for the file browser dialog:
+     *   - accept: A string that defines the file types the file input should accept. For example: '.csv,.xlsx', 'image/*', '.pdf', 'image/jpeg, image/png'.
+     *   - maxFileSize: (Optional) The maximum file size in bytes allowed for any single selected file. If a selected file exceeds this size, the promise will be rejected with an error.
+     *   - maxTotalSize: (Optional) The maximum total size in bytes for all selected files combined. If the total size of all files exceeds this limit, the promise will be rejected with an error.
+     *   - loadData: (Optional) Defines how the file content should be read and returned.
+     *             'no' (default): Returns an array of `File` objects without their data.
+     *             'ArrayBuffer': Returns an array of `File` objects, each with its content read as a raw binary `ArrayBuffer` in the `data` property.
+     *             'text': Returns an array of `File` objects, each with its content read as a text string in the `data` property.
+     *             'base64': Returns an array of `File` objects, each with its content read as a Base64 encoded string in the `data` property.
+     *
+     * @returns A Promise that resolves with an array of `File` objects (which may have an added `data` property), or `null` if the user cancels the dialog.
+     *          The promise will be rejected with an Error if the selected files exceed the specified size limits.
+     */
+    addFilesBrowserDialog(options: {accept: string,
+                                    maxFileSize?: number,
+                                    maxTotalSize?: number,
+                                    loadData?: 'no' | 'ArrayBuffer' | 'text' | 'base64'}): Promise<FileWithData[] | null> {
+
+        return this._addFileBrowserDialogInternal({
+            multiple: true,
+            accept: options.accept,
+            maxFileSize: options.maxFileSize,
+            maxTotalSize: options.maxTotalSize,
+            loadData: options.loadData});
+    }
+
+
+    /**
+     * Auxiliary method that combines the logic for addFileBrowserDialog and addFilesBrowserDialog
+     */
+    private async _addFileBrowserDialogInternal(options: {multiple: boolean,
+                                                          accept: string,
+                                                          maxFileSize?: number,
+                                                          maxTotalSize?: number,
+                                                          loadData?: 'no'|'ArrayBuffer'|'text'|'base64'}): Promise<FileWithData[] | null> {
+
+        if (!this._isEnabled) {
+
+            return null;
+        }
+
+        // Create a hidden input element to show the file browser dialog
+        const input = this._renderer.createElement('input');
+        this._renderer.setAttribute(input, 'type', 'file');
+        this._renderer.setAttribute(input, 'accept', options.accept);
+
+        if (options.multiple) {
+
+            this._renderer.setAttribute(input, 'multiple', 'true');
+        }
+
+        this._renderer.setStyle(input, 'display', 'none');
+        this._renderer.appendChild(document.body, input);
+
+        try {
+
+            const files = await new Promise<File[] | null>((resolve) => {
+
+                const onFocus = () => {
+                    setTimeout(() => {
+                        if (!input.files || input.files.length === 0) {
+                            resolve(null);
+                        }
+                    }, 600);
+                };
+
+                const onChange = (event: Event) => {
+                    const fileList = (event.target as HTMLInputElement).files;
+                    resolve(fileList ? Array.from(fileList) : null);
+                };
+
+                this._renderer.listen(input, 'change', onChange);
+                window.addEventListener('focus', onFocus, { once: true });
+
+                input.click();
+            });
+
+            if (!files || files.length === 0) {
+
+                return null;
+            }
+
+            let totalSize = 0;
+            for (const file of files) {
+
+                if (options.maxFileSize !== undefined && file.size > options.maxFileSize) {
+
+                    throw new Error(`Max file size exceeded: "${file.name}" exceeds ${options.maxFileSize} bytes`);
+                }
+
+                totalSize += file.size;
+            }
+
+            if (options.maxTotalSize !== undefined && totalSize > options.maxTotalSize) {
+
+                throw new Error(`Max total size exceeded: ${options.maxTotalSize} bytes`);
+            }
+
+            if (!options.loadData || options.loadData === 'no') {
+
+                return files;
+            }
+
+            const fileReadPromises = files.map(async (file: FileWithData) => {
+                
+                switch (options.loadData) {
+                    case 'ArrayBuffer':
+                        file.data = await file.arrayBuffer();
+                        break;
+
+                    case 'text':
+                        file.data = await file.text();
+                        break;
+
+                    case 'base64':
+                        file.data = await new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onload = () => resolve((reader.result as string).split(',')[1]);
+                            reader.onerror = () => reject(reader.error ?? new Error('Unknown FileReader error'));
+                            reader.readAsDataURL(file);
+                        });
+                        break;
+                }
+
+                return file;
+            });
+
+            return await Promise.all(fileReadPromises);
+
+        } finally {
+
+            this._renderer.removeChild(document.body, input);
+        }
     }
     
     
