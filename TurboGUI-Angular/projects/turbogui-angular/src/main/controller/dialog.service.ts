@@ -575,6 +575,7 @@ export class DialogService extends SingletoneStrictClass {
         const input = this._renderer.createElement('input');
         this._renderer.setAttribute(input, 'type', 'file');
         this._renderer.setAttribute(input, 'accept', options.accept);
+        this._renderer.setAttribute(input, 'id', 'turbogui-file-browser-input-hidden-dialog');
 
         if (options.multiple) {
 
