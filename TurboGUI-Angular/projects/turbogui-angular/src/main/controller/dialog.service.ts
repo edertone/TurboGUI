@@ -767,7 +767,7 @@ export class DialogService extends SingletoneStrictClass {
      *            - maxHeight: see addDialog() docs
      *            - modal: see addDialog() docs
      *            - title: The title to show at the top of the dialog
-     *            - viewContainerRef: see addDialog() docs
+     *            - viewContainerRef: MANDATORY! or the component won't render. see addDialog() docs
      * 
      * @returns A Promise that resolves to a Date() object selected by the user or null if no selection was made 
      */
