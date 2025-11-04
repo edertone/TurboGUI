@@ -28,6 +28,7 @@ export { DialogBaseComponent } from './main/view/components/dialog-base/dialog-b
 export { DialogDateSelectionComponent } from './main/view/components/dialog-date-selection/dialog-date-selection.component';
 export { DialogErrorComponent } from './main/view/components/dialog-error/dialog-error.component';
 export { DialogIFrameComponent } from './main/view/components/dialog-iframe/dialog-iframe.component';
+export { DialogImageComponent } from './main/view/components/dialog-image/dialog-image.component';
 export { DialogSingleOptionComponent } from './main/view/components/dialog-single-option/dialog-single-option.component';
 export { DialogTwoOptionComponent } from './main/view/components/dialog-two-option/dialog-two-option.component';
 export { DialogMultipleOptionComponent } from './main/view/components/dialog-multiple-option/dialog-multiple-option.component';

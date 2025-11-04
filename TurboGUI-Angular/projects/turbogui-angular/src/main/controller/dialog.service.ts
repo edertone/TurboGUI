@@ -17,6 +17,7 @@ import { ComponentPortal, DomPortalOutlet } from '@angular/cdk/portal';
 import { DialogBaseComponent } from '../view/components/dialog-base/dialog-base.component';
 import { DialogErrorComponent } from '../view/components/dialog-error/dialog-error.component';
 import { DialogIFrameComponent } from '../view/components/dialog-iframe/dialog-iframe.component';
+import { DialogImageComponent } from '../view/components/dialog-image/dialog-image.component';
 import { DialogBlobComponent } from '../view/components/dialog-blob/dialog-blob.component';
 import { DialogDateSelectionComponent } from '../view/components/dialog-date-selection/dialog-date-selection.component';
 import { SingletoneStrictClass } from '../model/classes/SingletoneStrictClass';
@@ -393,7 +394,7 @@ export class DialogService extends SingletoneStrictClass {
 
         if (!this._isEnabled) {
             
-            return Promise.reject(new Error('Dialog service is disabled'));
+            return Promise.resolve({index: -1});
         }
         
         return new Promise((resolve) => {
@@ -602,7 +603,7 @@ export class DialogService extends SingletoneStrictClass {
                     resolve(fileList ? Array.from(fileList) : null);
                 };
 
-                this._renderer.listen(input, 'change', onChange);
+                input.addEventListener('change', onChange);
                 window.addEventListener('focus', onFocus, { once: true });
 
                 input.click();
@@ -635,7 +636,7 @@ export class DialogService extends SingletoneStrictClass {
             }
 
             const fileReadPromises = files.map(async (file: FileWithData) => {
-                
+
                 switch (options.loadData) {
                     case 'ArrayBuffer':
                         file.data = await file.arrayBuffer();
@@ -707,6 +708,50 @@ export class DialogService extends SingletoneStrictClass {
             });
         }
          
+        return null;
+    }
+    
+    
+    /**
+     * Show a dialog with an image inside it, to load image files from a url.
+     * 
+     * This method is a shortcut for addDialog() method using DialogImageComponent as the dialog component class
+     *
+     * @param properties An object containing the different visual and textual options that this dialog allows:
+     *            - url (mandatory): The url to load in the image
+     *            - title: The title to show at the top of the dialog
+     *            - id: see addDialog() docs
+     *            - width: see addDialog() docs
+     *            - maxWidth: see addDialog() docs
+     *            - height: see addDialog() docs
+     *            - maxHeight: see addDialog() docs
+     *            - modal: see addDialog() docs
+     * 
+     * @returns A Promise that resolves once the user closes the dialog 
+     */
+    async addImageDialog(properties: {url:string,
+                                      title?:string,
+                                      id?: string,
+                                      width?: string,
+                                      maxWidth?: string,
+                                      height?: string,
+                                      maxHeight?: string,
+                                      modal?: boolean}): Promise<null> {
+                                        
+        if (this._isEnabled) {
+                           
+            await this.addDialog(DialogImageComponent, {
+                id: properties.id ?? undefined,
+                data: properties.url,
+                texts: properties.title ? [properties.title] : undefined,
+                width: properties.width ?? "85vw",
+                maxWidth: properties.maxWidth ?? "1200px",
+                height: properties.height ?? "98vh",
+                maxHeight: properties.maxHeight ?? "3000px",
+                modal: properties.modal ?? false
+            });
+        }
+    
         return null;
     }
     
