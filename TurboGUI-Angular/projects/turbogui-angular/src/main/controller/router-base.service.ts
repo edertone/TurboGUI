@@ -166,6 +166,49 @@ export abstract class RouterBaseService implements OnDestroy {
         
         return currentRoute.params[key];
     }
+    
+    
+    /**
+     * Gets the value of a specific query parameter by its key from the current route.
+     * For example, if the current route is `/search?query=angular`, and you call this method with `key` as `query`, it will return `angular`.
+     * 
+     * @param key The key of the query parameter to retrieve.
+     */
+    getQueryParamValue(key: string) {
+        let currentRoute = this.router.routerState.snapshot.root;
+
+        while (currentRoute.firstChild) {
+            currentRoute = currentRoute.firstChild;
+        }
+
+        return currentRoute.queryParams[key];
+    }
+    
+    
+    /**
+     * Sets or updates the value of a specific query parameter in the current route.
+     * For example, if the current route is `/search?query=angular`, and you call this method with `key` as `page` and `value` as `2`, 
+     * it will navigate to `/search?query=angular&page=2`.
+     * 
+     * @param key The key of the query parameter to set or update.
+     * @param value The value to set for the specified query parameter.
+     */
+    setQueryParamValue(key: string, value: string) {
+        
+        let currentRoute = this.router.routerState.root;
+        
+        while (currentRoute.firstChild) {
+            
+            currentRoute = currentRoute.firstChild;
+        }
+
+        this.router.navigate([], {
+            relativeTo: currentRoute,
+            queryParams: { [key]: value },
+            queryParamsHandling: 'merge'
+        });
+    }
+
 
 
     /**
