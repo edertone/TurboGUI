@@ -573,41 +573,63 @@ export class DialogService extends SingletoneStrictClass {
         }
 
         // Create a hidden input element to show the file browser dialog
-        const input = this._renderer.createElement('input');
-        this._renderer.setAttribute(input, 'type', 'file');
-        this._renderer.setAttribute(input, 'accept', options.accept);
-        this._renderer.setAttribute(input, 'id', 'turbogui-file-browser-input-hidden-dialog');
+        const hiddenInput = this._renderer.createElement('input');
+        this._renderer.setAttribute(hiddenInput, 'type', 'file');
+        this._renderer.setAttribute(hiddenInput, 'accept', options.accept);
+        this._renderer.setAttribute(hiddenInput, 'id', 'turbogui-file-browser-input-hidden-dialog');
 
         if (options.multiple) {
 
-            this._renderer.setAttribute(input, 'multiple', 'true');
+            this._renderer.setAttribute(hiddenInput, 'multiple', 'true');
         }
 
-        this._renderer.setStyle(input, 'display', 'none');
-        this._renderer.appendChild(document.body, input);
+        this._renderer.setStyle(hiddenInput, 'display', 'none');
+        this._renderer.appendChild(document.body, hiddenInput);
 
         try {
 
-            const files = await new Promise<File[] | null>((resolve) => {
+            const filesBrowserPromise = new Promise<File[] | null>((resolve) => {
 
-                const onFocus = () => {
-                    setTimeout(() => {
-                        if (!input.files || input.files.length === 0) {
-                            resolve(null);
-                        }
-                    }, 600);
+                let resolved = false;
+                
+                const resolveOnce = (files: File[] | null) => {
+                    if (!resolved) {
+                        resolved = true;
+                        window.removeEventListener('focus', onUserInteraction, true);
+                        document.removeEventListener('keydown', onUserInteraction, true);
+                        document.removeEventListener('mousedown', onUserInteraction, true);
+                        document.removeEventListener('pointerdown', onUserInteraction, true);
+                        document.removeEventListener('mousemove', onUserInteraction, true);
+                        document.removeEventListener('scroll', onUserInteraction, true);
+                        hiddenInput.removeEventListener('change', onChange);
+                        resolve(files);
+                    }
+                };
+                
+                // Detect any user activity that may indicate the user has cancelled the file selection
+                // Use a short timeout to allow the 'change' event to fire first if files were selected
+                const onUserInteraction = () => {
+                    setTimeout(() => resolveOnce(null), 800);
                 };
 
+                // Detect when files are selected by the user
                 const onChange = (event: Event) => {
                     const fileList = (event.target as HTMLInputElement).files;
-                    resolve(fileList ? Array.from(fileList) : null);
+                    resolveOnce(fileList ? Array.from(fileList) : null);
                 };
 
-                input.addEventListener('change', onChange);
-                window.addEventListener('focus', onFocus, { once: true });
+                window.addEventListener('focus', onUserInteraction, true);
+                document.addEventListener('keydown', onUserInteraction, true);
+                document.addEventListener('mousedown', onUserInteraction, true);
+                document.addEventListener('pointerdown', onUserInteraction, true);
+                document.addEventListener('mousemove', onUserInteraction, true);
+                document.addEventListener('scroll', onUserInteraction, true);
+                hiddenInput.addEventListener('change', onChange, { once: true });
 
-                input.click();
+                hiddenInput.click();
             });
+
+            const files = await filesBrowserPromise;
 
             if (!files || files.length === 0) {
 
@@ -635,6 +657,7 @@ export class DialogService extends SingletoneStrictClass {
                 return files;
             }
 
+            // Load file data in the specified format if loadData is set
             const fileReadPromises = files.map(async (file: FileWithData) => {
 
                 switch (options.loadData) {
@@ -663,7 +686,7 @@ export class DialogService extends SingletoneStrictClass {
 
         } finally {
 
-            this._renderer.removeChild(document.body, input);
+            this._renderer.removeChild(document.body, hiddenInput);
         }
     }
     
