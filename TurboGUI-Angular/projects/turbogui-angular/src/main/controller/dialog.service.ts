@@ -74,6 +74,12 @@ export class DialogService extends SingletoneStrictClass {
      */
     private _modalBusyStateHost: DomPortalOutlet | null = null;
 
+    
+    /**
+     * Used to store the previous document body overflow values when scroll locks are added
+     */
+    private readonly _scrollLockSavedOverflowStates: string[] = [];
+    
 
     /**
      * Tells if the manager is currently showing a snackbar element or not
@@ -188,7 +194,32 @@ export class DialogService extends SingletoneStrictClass {
             this._windowBeforeUnloadUnListen = null;
         }
     }
-
+    
+    
+    /**
+     * Disable application scroll by setting document body overflow to hidden.
+     * Each call to this method must be matched with a call to removeScrollLock() to restore it back to previous state.
+     * If multiple calls to addScrollLock() are done, multiple calls to removeScrollLock() will be required to restore
+     * the original scroll state.
+     */
+    addScrollLock() {
+        this._scrollLockSavedOverflowStates.push(document.body.style.overflow);
+        document.body.style.overflow = 'hidden';
+    }
+    
+    
+    /**
+     * Restore application scroll by restoring document body overflow to the value it had before
+     * the last call to addScrollLock().
+     * Each call to this method will restore one level of scroll lock. If multiple calls to addScrollLock()
+     * were done, multiple calls to removeScrollLock() will be required to restore the original scroll state.
+     */
+    removeScrollLock() {
+        if (this._scrollLockSavedOverflowStates.length > 0) {
+            document.body.style.overflow = this._scrollLockSavedOverflowStates.pop() as string;
+        }      
+    }
+    
 
     /**
      * Change the application visual appearance so the user perceives that the application is
@@ -361,10 +392,11 @@ export class DialogService extends SingletoneStrictClass {
      *              css. By default it is defined as 96vw, which will fit 96% of the viewport on small devices
      *            - height: Unset by default. Specify the css value for the dialog height.
      *            - maxHeight: Defines the maximum height that the dialog will have. We can specify it in % or vh, just like is done in
-         *          css. By default it is defined as 96vh, which will fit 96% of the viewport
-     *            - modal: True (default) if selecting an option is mandatory to close the dialog, false if the dialog can be closed
+     *              css. By default it is defined as 96vh, which will fit 96% of the viewport
+     *            - scrollLock: (False by default) disables the background scroll to prevent the user from scrolling the document body when the dialog is visible 
+     *            - modal: (False default) if the dialog can be closed without interaction or true if selecting an option is mandatory to close it
      *              by the user clicking outside it 
-     *            - closeOnNavigation: Tells if the dialog should be closed when the user navigates with the browser. By default is true for non modal and false for modal dialogs. 
+     *            - closeOnNavigation: Tells if the dialog should be closed when the user navigates with the browser. By default is true for non modal and false for modal dialogs.
      *            - texts: A list with strings containing the dialog texts, sorted by importance. When dialog has a title, this should
      *              be placed first, subtitle second and so (Each dialog may accept a different custom number of texts).
      *              (add "@Inject(MAT_DIALOG_DATA) public data: any" to dialog constructor and read it with data.texts)
@@ -385,6 +417,7 @@ export class DialogService extends SingletoneStrictClass {
                            maxWidth?: string,
                            height?: string,
                            maxHeight?: string,
+                           scrollLock?: boolean,
                            modal?: boolean,
                            closeOnNavigation?: boolean,
                            texts?: string[],
@@ -400,7 +433,7 @@ export class DialogService extends SingletoneStrictClass {
         return new Promise((resolve) => {
             
             // Set the default values for non specified properties
-            properties.modal = properties.modal ?? true;
+            properties.modal = properties.modal ?? false;
             properties.closeOnNavigation = properties.closeOnNavigation ?? !properties.modal;
             properties.texts = properties.texts ?? [];
             properties.options = properties.options ?? [];
@@ -418,7 +451,7 @@ export class DialogService extends SingletoneStrictClass {
             
             const dialogHash = className + properties.texts.join('');
 
-        	// identical dialogs won't be allowed at the same time
+            // identical dialogs won't be allowed at the same time
             if (this._activeDialogs.includes(dialogHash)) {
                 
                 return resolve({index: -1});
@@ -442,7 +475,11 @@ export class DialogService extends SingletoneStrictClass {
             }
             
             const dialogRef = this.matDialog.open(dialogComponentClass, dialogRefConfig);   
-
+           
+            if (properties.scrollLock) {
+                this.addScrollLock();
+            }
+            
             // Push a new state to handle browser navigation to close the dialog
             if(properties.closeOnNavigation && this._activeCloseableDialogs === 0){
                 
@@ -464,6 +501,10 @@ export class DialogService extends SingletoneStrictClass {
             }
 
             dialogRef.beforeClosed().pipe(take(1)).subscribe((selection: {index: number, value?: any}) => {
+
+                if (properties.scrollLock) {
+                    this.removeScrollLock();
+                }
                 
                 this._activeDialogs = ArrayUtils.removeElement(this._activeDialogs, dialogHash);
                 this._activeDialogInstances = ArrayUtils.removeElement(this._activeDialogInstances, dialogRef);
@@ -485,7 +526,7 @@ export class DialogService extends SingletoneStrictClass {
                     
                 } else if (!NumericUtils.isInteger(selection.index)) {
                     
-                    throw new Error(`closeDialog() expects index to be an integer`);               
+                    throw new TypeError(`closeDialog() expects index to be an integer`);               
                 }
 
                 if(selection.index >= 0 && selection.value === null) {
@@ -704,8 +745,9 @@ export class DialogService extends SingletoneStrictClass {
      *            - maxWidth: see addDialog() docs
      *            - height: see addDialog() docs
      *            - maxHeight: see addDialog() docs
+     *            - scrollLock: addDialog() docs
      *            - modal: see addDialog() docs
-     * 
+     *
      * @returns A Promise that resolves once the user closes the dialog 
      */
     async addIFrameDialog(properties: {url:string,
@@ -715,6 +757,7 @@ export class DialogService extends SingletoneStrictClass {
                                        maxWidth?: string,
                                        height?: string,
                                        maxHeight?: string,
+                                       scrollLock?: boolean,
                                        modal?: boolean}): Promise<null> {
         
         if (this._isEnabled) {
@@ -727,6 +770,7 @@ export class DialogService extends SingletoneStrictClass {
                 maxWidth: properties.maxWidth ?? "1200px",
                 height: properties.height ?? "98vh",
                 maxHeight: properties.maxHeight ?? "3000px",
+                scrollLock: properties.scrollLock ?? false,
                 modal: properties.modal ?? false
             });
         }
@@ -748,6 +792,7 @@ export class DialogService extends SingletoneStrictClass {
      *            - maxWidth: see addDialog() docs
      *            - height: see addDialog() docs
      *            - maxHeight: see addDialog() docs
+     *            - scrollLock: addDialog() docs
      *            - modal: see addDialog() docs
      * 
      * @returns A Promise that resolves once the user closes the dialog 
@@ -759,6 +804,7 @@ export class DialogService extends SingletoneStrictClass {
                                       maxWidth?: string,
                                       height?: string,
                                       maxHeight?: string,
+                                      scrollLock?: boolean,
                                       modal?: boolean}): Promise<null> {
                                         
         if (this._isEnabled) {
@@ -771,6 +817,7 @@ export class DialogService extends SingletoneStrictClass {
                 maxWidth: properties.maxWidth ?? "1200px",
                 height: properties.height ?? "98vh",
                 maxHeight: properties.maxHeight ?? "3000px",
+                scrollLock: properties.scrollLock ?? false,
                 modal: properties.modal ?? false
             });
         }
@@ -793,6 +840,7 @@ export class DialogService extends SingletoneStrictClass {
      *            - maxWidth: see addDialog() docs
      *            - height: see addDialog() docs
      *            - maxHeight: see addDialog() docs
+     *            - scrollLock: addDialog() docs
      *            - modal: see addDialog() docs
      * 
      * @returns A Promise that resolves once the user closes the dialog 
@@ -804,6 +852,7 @@ export class DialogService extends SingletoneStrictClass {
                                     maxWidth?: string,
                                     height?: string,
                                     maxHeight?: string,
+                                    scrollLock?: boolean,
                                     modal?: boolean}): Promise<null> {
         
         if (this._isEnabled) {
@@ -816,6 +865,7 @@ export class DialogService extends SingletoneStrictClass {
                 maxWidth: properties.maxWidth ?? "1200px",
                 height: properties.height ?? "98vh",
                 maxHeight: properties.maxHeight ?? "3000px",
+                scrollLock: properties.scrollLock ?? false,
                 modal: properties.modal ?? false
             });
         }
@@ -833,6 +883,7 @@ export class DialogService extends SingletoneStrictClass {
      *            - maxWidth: see addDialog() docs
      *            - height: see addDialog() docs
      *            - maxHeight: see addDialog() docs
+     *            - scrollLock: addDialog() docs
      *            - modal: see addDialog() docs
      *            - title: The title to show at the top of the dialog
      *            - viewContainerRef: MANDATORY! or the component won't render. see addDialog() docs
@@ -844,6 +895,7 @@ export class DialogService extends SingletoneStrictClass {
                                               maxWidth?: string,
                                               height?: string,
                                               maxHeight?: string,
+                                              scrollLock?: boolean,
                                               modal?: boolean,
                                               title?: string,
                            			          viewContainerRef: ViewContainerRef}): Promise<Date|null> {
@@ -859,6 +911,7 @@ export class DialogService extends SingletoneStrictClass {
             maxWidth: properties.maxWidth ?? "96vw",
             height: properties.height ?? "auto",
             maxHeight: properties.maxHeight ?? "92vw",
+            scrollLock: properties.scrollLock ?? false,
             modal: properties.modal ?? false,
             texts: [properties.title ?? ''],
             viewContainerRef: properties.viewContainerRef
@@ -882,6 +935,7 @@ export class DialogService extends SingletoneStrictClass {
      *            - maxWidth: see addDialog() docs
      *            - height: see addDialog() docs
      *            - maxHeight: see addDialog() docs
+     *            - scrollLock: addDialog() docs
      *            - modal: see addDialog() docs
      *            - dialogClass: A custom component class to use instead of the default DialogErrorComponent.
      *              This custom class must extend DialogErrorComponent
@@ -896,6 +950,7 @@ export class DialogService extends SingletoneStrictClass {
                                       maxWidth?: string,
                                       height?: string,
                                       maxHeight?: string,
+                                      scrollLock?: boolean,
                                       modal?: boolean,
                                       dialogClass?:Type<DialogErrorComponent>}): Promise<null> {
 
@@ -914,6 +969,7 @@ export class DialogService extends SingletoneStrictClass {
                 maxWidth: properties.maxWidth ?? "500px",
                 height: properties.height ?? "auto",
                 maxHeight: properties.maxHeight ?? "92vw",
+                scrollLock: properties.scrollLock ?? false,
                 modal: properties.modal ?? false,
                 texts: texts,
                 options: [properties.option]
@@ -938,6 +994,7 @@ export class DialogService extends SingletoneStrictClass {
      *            - maxWidth: see addDialog() docs
      *            - height: see addDialog() docs
      *            - maxHeight: see addDialog() docs
+     *            - scrollLock: addDialog() docs
      *            - modal: see addDialog() docs
      *            - dialogClass: A custom component class to use instead of the default DialogSingleOptionComponent.
      *              This custom class must extend DialogSingleOptionComponent
@@ -952,6 +1009,7 @@ export class DialogService extends SingletoneStrictClass {
                                         maxWidth?: string,
                                         height?: string,
                                         maxHeight?: string,
+                                        scrollLock?: boolean,
                                         modal?: boolean,
                                         dialogClass?:Type<DialogSingleOptionComponent>}): Promise<null> {
     
