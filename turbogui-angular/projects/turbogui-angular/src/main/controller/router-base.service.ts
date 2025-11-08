@@ -208,7 +208,29 @@ export abstract class RouterBaseService implements OnDestroy {
             queryParamsHandling: 'merge'
         });
     }
+    
+    
+    /**
+     * Removes a specific query parameter from the current route.
+     * For example, if the current route is `/search?query=angular&page=2`, and you call this method with `key` as `page`,
+     * it will navigate to `/search?query=angular`.
+     * 
+     * @param key The key of the query parameter to remove.
+     */
+    removeQueryParam(key: string) {
+        
+        let currentRoute = this.router.routerState.root;
 
+        while (currentRoute.firstChild) {
+            currentRoute = currentRoute.firstChild;
+        }
+
+        this.router.navigate([], {
+            relativeTo: currentRoute,
+            queryParams: { [key]: null },
+            queryParamsHandling: 'merge'
+        });
+    }
 
 
     /**
