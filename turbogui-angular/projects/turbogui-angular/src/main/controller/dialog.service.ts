@@ -730,6 +730,35 @@ export class DialogService extends SingletoneStrictClass {
             this._renderer.removeChild(document.body, hiddenInput);
         }
     }
+
+
+    /**
+     * Show a native OS file download dialog to let the user download a file from a provided binary blob data.
+     * 
+     * @param blob The binary data containing the file to download. It must be a Blob object
+     * @param fileName The file name to be shown in the download dialog
+     * 
+     * @returns void
+     */
+    addFileDownloadBlobDialog(blob:Blob, fileName:string){
+        
+        if (this._isEnabled) {
+
+            const safeFileName = fileName
+                .replace(/[\/\\:*?"<>|\s]/g, '-')  // Replace invalid chars and spaces with -
+                .replace(/\.+/g, '.')             // Replace multiple dots with single dot
+                .replace(/\.([^.]+)$/, '.$1');    // Ensure only one dot before extension
+                
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            
+            a.href = url;
+            a.download = safeFileName;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        }      
+    }
     
     
     /**
