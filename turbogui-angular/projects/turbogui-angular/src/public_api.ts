@@ -45,7 +45,7 @@ export { GUINotification } from './main/model/classes/GUINotification';
 export { SingletoneStrictClass } from './main/model/classes/SingletoneStrictClass';
 export { View } from './main/model/classes/View';
 export { ViewService } from './main/model/classes/ViewService';
-export { DelayedMethodCallManager } from './main/managers/DelayedMethodCallManager';
+export { DebounceTimeManager } from './main/managers/DebounceTimeManager';
 export { FadeAnimationClass } from './main/view/animations/fade.animation';
 export { ElementClickOutsideDirective } from './main/view/directives/ElementClickOutsideDirective';
 export { ElementCreatedDirective } from './main/view/directives/ElementCreatedDirective';
