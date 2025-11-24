@@ -7,33 +7,7 @@
  * CopyRight : -> Copyright 2018 Edertone Advanded Solutions. https://www.edertone.com
  */
 
-/**
- * Manages the execution of a function with a debounce time.
- *
- * This class allows queuing multiple method calls, but ensures that only the last one
- * is executed after a specific window of time has passed without new calls.
- *
- * <strong style="color:red">IMPORTANT:</strong> You must call the <code>cancel()</code> method 
- * when your component or context is destroyed. Failure to do so may result in the 
- * callback executing after the object is gone, causing memory leaks or errors.
- * 
- * @example
- * // 1. Instantiate the manager (e.g. inside a Component)
- * const debouncer = new DebounceTimeManager(500);
- * 
- * // 2. Queue a function
- * debouncer.queue(() => console.log("Searching..."));
- * 
- * // 3. Check status
- * if (debouncer.isActive) {
- *    console.log("Waiting for user to stop typing...");
- * }
- * 
- * // Clean up when component is destroyed to prevent memory leaks
- * onDestroy() {
- * debouncer.cancel();
- * }
- */
+
 export class DebounceTimeManager {
    
     /**
@@ -48,6 +22,32 @@ export class DebounceTimeManager {
     private _setTimeoutHandler: any = null;
     
     /**
+     * Manages the execution of a function with a debounce time.
+     *
+     * This class allows queuing multiple method calls, but ensures that only the last one
+     * is executed after a specific window of time has passed without new calls.
+     *
+     * <strong style="color:red">IMPORTANT:</strong> You must call the <code>cancel()</code> method 
+     * when your component or context is destroyed. Failure to do so may result in the 
+     * callback executing after the object is gone, causing memory leaks or errors.
+     * 
+     * @example
+     * // 1. Instantiate the manager (e.g. inside a Component)
+     * const debouncer = new DebounceTimeManager(500);
+     * 
+     * // 2. Queue a function
+     * debouncer.queue(() => console.log("Searching..."));
+     * 
+     * // 3. Check status
+     * if (debouncer.isActive) {
+     *    console.log("Waiting for user to stop typing...");
+     * }
+     * 
+     * // Clean up when component is destroyed to prevent memory leaks
+     * onDestroy() {
+     * debouncer.cancel();
+     * }
+     * 
      * @param delay The amount of time (in milliseconds) to wait before executing the queued operation. 
      *              Defaults to 1000ms.
      */
@@ -56,6 +56,10 @@ export class DebounceTimeManager {
     /**
      * Returns true if a timer is currently running (meaning a method is queued and waiting to execute), 
      * false otherwise.
+     * 
+     * It can be used on UI components to show loading indicators or disable inputs while waiting for the debounce time to finish.
+     * 
+     * @returns A boolean indicating if a method is currently queued for execution.
      */
     public get isActive(): boolean {
         return this._setTimeoutHandler !== null;
