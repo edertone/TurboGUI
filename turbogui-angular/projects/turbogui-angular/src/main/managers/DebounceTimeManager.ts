@@ -78,6 +78,17 @@ export class DebounceTimeManager {
      * until that Promise resolves or rejects.
      * 
      * @param method The function to execute.
+     * 
+     * @example
+     * // Queue an async function
+     * debouncer.queue(async () => {
+     *     await myApiService.getData();
+     * });
+     * 
+     * // Queue a sync function
+     * debouncer.queue(() => {
+     *    console.log("Hello World");
+     * });
      */
     queue(method: () => void | Promise<void>) {
         this._isActive = true;
