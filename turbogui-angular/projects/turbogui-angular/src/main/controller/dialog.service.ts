@@ -595,47 +595,17 @@ export class DialogService extends SingletoneStrictClass {
 
         try {
             const filesBrowserPromise = new Promise<File[] | null>(resolve => {
-                let resolved = false;
-                let filesSelected = false;
-                let cancelTimeoutId: ReturnType<typeof setTimeout> | null = null;
-
-                const cleanup = () => {
-                    if (cancelTimeoutId !== null) {
-                        clearTimeout(cancelTimeoutId);
-                        cancelTimeoutId = null;
-                    }
-                    window.removeEventListener('focus', onWindowFocus, true);
-                    hiddenInput.removeEventListener('change', onChange);
-                };
-
-                const resolveOnce = (files: File[] | null) => {
-                    if (!resolved) {
-                        resolved = true;
-                        cleanup();
-                        resolve(files);
-                    }
-                };
-
                 const onChange = (event: Event) => {
-                    filesSelected = true;
                     const fileList = (event.target as HTMLInputElement).files;
-                    resolveOnce(fileList && fileList.length > 0 ? Array.from(fileList) : null);
+                    resolve(fileList && fileList.length > 0 ? Array.from(fileList) : null);
                 };
 
-                const onWindowFocus = () => {
-                    // Only start cancel detection after focus returns to window
-                    // Use a delay to allow the change event to fire first
-                    if (cancelTimeoutId === null) {
-                        cancelTimeoutId = setTimeout(() => {
-                            if (!filesSelected) {
-                                resolveOnce(null);
-                            }
-                        }, 300);
-                    }
+                const onCancel = () => {
+                    resolve(null);
                 };
 
-                hiddenInput.addEventListener('change', onChange);
-                window.addEventListener('focus', onWindowFocus, true);
+                hiddenInput.addEventListener('change', onChange, { once: true });
+                hiddenInput.addEventListener('cancel', onCancel, { once: true });
 
                 hiddenInput.click();
             });
