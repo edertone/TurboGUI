@@ -1,4 +1,4 @@
-# How to make the library available to the public:
+# How to make the library available to the public
 
 1 - Update all the project dependencies if necessary
     (See the related help file for docs on how to upgrade dependencies)
